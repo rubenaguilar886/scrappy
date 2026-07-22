@@ -141,6 +141,38 @@
     font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;
   }
   .btn-reset.show{display:block;}
+
+  /* ── Login / cuenta ──────────────────────────────── */
+  .login-box{margin-top:8px;}
+  .login-box input{
+    width:100%;border:1.5px solid var(--line);border-radius:10px;padding:13px 14px;
+    font-family:inherit;font-size:15px;background:var(--card);color:var(--ink);margin-bottom:12px;
+  }
+  .login-box input:focus{outline:none;border-color:var(--accent);}
+  .login-hint{font-size:12.5px;color:var(--sub);margin-top:10px;line-height:1.5;}
+  .login-hint a{color:var(--accent-deep);font-weight:600;text-decoration:none;}
+  .account-bar{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:10px 14px;background:var(--ok-soft);border:1.5px solid var(--ok);border-radius:10px;
+    margin-bottom:18px;font-size:12.5px;color:var(--ok);
+  }
+  .account-bar b{color:var(--ink);}
+  .account-bar button{
+    background:none;border:none;color:var(--sub);font-size:12px;font-weight:600;
+    text-decoration:underline;cursor:pointer;font-family:inherit;flex:0 0 auto;
+  }
+  .upgrade-banner{
+    display:none;margin-top:16px;padding:14px;background:var(--accent-soft);
+    border:1.5px solid var(--accent);border-radius:10px;font-size:13px;color:var(--accent-deep);
+    line-height:1.5;
+  }
+  .upgrade-banner.show{display:block;}
+  .card.locked{opacity:.6;}
+  .locked-tag{
+    font-size:10.5px;font-weight:600;background:#e5e7eb;color:#6b7280;
+    padding:3px 8px;border-radius:999px;white-space:nowrap;
+  }
+  .hidden{display:none !important;}
 </style>
 </head>
 <body>
@@ -154,36 +186,55 @@
   </header>
   <p class="tagline">Encuentra negocios sin web, listos para contactar.</p>
 
-  <div class="field">
-    <label for="rubro">Rubro</label>
-    <input id="rubro" type="text" placeholder="Ej. Tatuajes, veterinarias, spas">
+  <!-- Estado de sesión -->
+  <div class="account-bar hidden" id="accountBar">
+    <span>Sesión activa: <b id="accountEmail"></b></span>
+    <button onclick="logout()">Cerrar sesión</button>
   </div>
 
-  <div class="field">
-    <label for="ciudad">Ciudad / distrito</label>
-    <input id="ciudad" type="text" placeholder="Ej. Miraflores, Lima">
+  <!-- Login (magic link) -->
+  <div class="login-box" id="loginBox">
+    <div class="field">
+      <label for="loginEmail">Tu correo</label>
+      <input id="loginEmail" type="email" placeholder="tu@correo.com">
+    </div>
+    <button class="btn-search" onclick="requestLink()">Enviarme el link de acceso</button>
+    <p class="login-hint" id="loginHint">Te llega un link a tu correo — un clic y entras. No necesitas contraseña.</p>
   </div>
 
-  <div class="field">
-    <label for="servicio">Servicio que ofreces</label>
-    <input id="servicio" type="text" placeholder="Ej. Diseño de landing pages">
-  </div>
+  <div class="hidden" id="searchForm">
+    <div class="field">
+      <label for="rubro">Rubro</label>
+      <input id="rubro" type="text" placeholder="Ej. Tatuajes, veterinarias, spas">
+    </div>
 
-  <div class="toggle-row">
-    <span>Solo negocios sin sitio web</span>
-    <label class="switch">
-      <input type="checkbox" id="onlyNoWeb" checked>
-      <span class="track"></span>
-      <span class="knob"></span>
-    </label>
-  </div>
+    <div class="field">
+      <label for="ciudad">Ciudad / distrito</label>
+      <input id="ciudad" type="text" placeholder="Ej. Miraflores, Lima">
+    </div>
 
-  <button class="btn-search" id="btnSearch" onclick="runSearch()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-    Buscar prospectos
-  </button>
+    <div class="field">
+      <label for="servicio">Servicio que ofreces</label>
+      <input id="servicio" type="text" placeholder="Ej. Diseño de landing pages">
+    </div>
+
+    <div class="toggle-row">
+      <span>Solo negocios sin sitio web</span>
+      <label class="switch">
+        <input type="checkbox" id="onlyNoWeb" checked>
+        <span class="track"></span>
+        <span class="knob"></span>
+      </label>
+    </div>
+
+    <button class="btn-search" id="btnSearch" onclick="runSearch()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      Buscar prospectos
+    </button>
+  </div>
 
   <div class="error-banner" id="errorBanner"></div>
+  <div class="upgrade-banner" id="upgradeBanner"></div>
   <button class="btn-reset" id="btnReset" onclick="resetJob()">↺ Cancelar búsqueda atascada</button>
 
   <div class="loading" id="loading">
@@ -207,6 +258,84 @@
   var currentResults = [];
   var currentServicio = '';
   var pollTimer = null;
+
+  /* ── Sesión — cada navegador tiene su propia búsqueda ──────────── */
+  /* Antes toda la app compartía un solo job en el servidor: si dos    */
+  /* personas buscaban a la vez, una bloqueaba a la otra. Este ID,     */
+  /* generado una vez y guardado en localStorage, identifica a cada    */
+  /* usuario para que sus búsquedas corran de forma independiente.     */
+  function getOrCreateSessionId() {
+    var key = 'scrappy-session-id';
+    try {
+      var existing = localStorage.getItem(key);
+      if (existing) return existing;
+      var fresh = 'sid-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+      localStorage.setItem(key, fresh);
+      return fresh;
+    } catch (_) {
+      return 'sid-nostorage-' + Math.random().toString(36).slice(2, 10);
+    }
+  }
+  var SESSION_ID = getOrCreateSessionId();
+
+  function sessionFetch(url, opts) {
+    opts = opts || {};
+    opts.headers = Object.assign({}, opts.headers, { 'X-Scrappy-Session': SESSION_ID });
+    return fetch(url, opts);
+  }
+
+  /* ── Login (magic link) ─────────────────────────────────────────── */
+  window.requestLink = async function () {
+    var email = document.getElementById('loginEmail').value.trim();
+    var hint  = document.getElementById('loginHint');
+    if (!email || email.indexOf('@') < 0) {
+      hint.textContent = 'Escribe un correo válido.';
+      return;
+    }
+    hint.textContent = 'Enviando...';
+    try {
+      var res  = await fetch('/api/auth/request-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email }),
+      });
+      var data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'No se pudo enviar el link.');
+
+      if (data.devLink) {
+        // Fallback de desarrollo — sin proveedor de email configurado
+        // todavía, el link aparece aquí directo para poder probar.
+        hint.innerHTML = 'Aún no hay email configurado en el servidor — usa este link para entrar: ' +
+          '<a href="' + data.devLink + '">Entrar ahora</a>';
+      } else {
+        hint.textContent = 'Listo — revisa tu correo y haz clic en el link para entrar.';
+      }
+    } catch (e) {
+      hint.textContent = e.message;
+    }
+  };
+
+  window.logout = async function () {
+    try { await fetch('/api/auth/logout', { method: 'POST' }); } catch (_) {}
+    location.reload();
+  };
+
+  async function checkAuthOnLoad() {
+    try {
+      var res  = await fetch('/api/public/me');
+      var data = await res.json();
+      if (data.loggedIn) {
+        document.getElementById('loginBox').classList.add('hidden');
+        document.getElementById('searchForm').classList.remove('hidden');
+        document.getElementById('accountBar').classList.remove('hidden');
+        document.getElementById('accountEmail').textContent = data.email;
+      } else {
+        document.getElementById('loginBox').classList.remove('hidden');
+        document.getElementById('searchForm').classList.add('hidden');
+        document.getElementById('accountBar').classList.add('hidden');
+      }
+    } catch (_) {}
+  }
 
   /* ── Helpers ─────────────────────────────────────── */
   function esc(str) {
@@ -240,7 +369,7 @@
 
   window.resetJob = async function () {
     try {
-      await fetch('/api/reset', { method: 'POST' });
+      await sessionFetch('/api/public/reset', { method: 'POST' });
     } catch(_) {}
     currentJob = null;
     if (pollTimer) clearInterval(pollTimer);
@@ -284,14 +413,28 @@
     document.getElementById('results').classList.remove('show');
     setLoadingMsg('Iniciando búsqueda…');
 
-    /* 1 · Lanzar scrape */
+    document.getElementById('upgradeBanner').classList.remove('show');
+
+    /* 1 · Lanzar scrape (endpoint publico, requiere sesion y creditos) */
     try {
-      var res = await fetch('/api/scrape', {
+      var res = await sessionFetch('/api/public/scrape', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: rubro, location: ciudad, maxResults: 25, deepScan: false }),
+        body: JSON.stringify({ query: rubro, location: ciudad, deepScan: false }),
       });
       var data = await res.json();
+
+      if (res.status === 401) {
+        // Sesion vencida o cerrada en otra pestana — mostrar login de nuevo.
+        checkAuthOnLoad();
+        throw new Error('Tu sesión expiró. Vuelve a pedir tu link de acceso.');
+      }
+      if (res.status === 402) {
+        var banner = document.getElementById('upgradeBanner');
+        banner.textContent = data.error;
+        banner.classList.add('show');
+        throw new Error(data.error);
+      }
       if (!res.ok) throw new Error(data.error || 'Error al iniciar búsqueda.');
     } catch (e) {
       document.getElementById('loading').classList.remove('show');
@@ -304,7 +447,7 @@
     if (pollTimer) clearInterval(pollTimer);
     pollTimer = setInterval(async function () {
       try {
-        var r      = await fetch('/api/status');
+        var r      = await sessionFetch('/api/public/status');
         var status = await r.json();
         if (status.progress && status.progress.message) {
           setLoadingMsg(status.progress.message);
@@ -317,7 +460,13 @@
           if (status.error) { showError(status.error); return; }
 
           var results = status.results || [];
-          if (onlyNoWeb) results = results.filter(function (b) { return !b.website; });
+          if (onlyNoWeb) results = results.filter(function (b) { return b.locked || !b.website; });
+
+          if (status.metrics && status.metrics.lockedCount > 0) {
+            var banner = document.getElementById('upgradeBanner');
+            banner.textContent = 'Hay ' + status.metrics.lockedCount + ' prospectos más para este rubro y ciudad — compra un Paquete Ciudad o el Plan Pro para desbloquearlos.';
+            banner.classList.add('show');
+          }
 
           currentResults = results;
           renderResults(results, onlyNoWeb);
@@ -361,7 +510,7 @@
     var distrito = (biz.searchLocation || (biz.address || '').split(',')[0] || '').trim();
 
     var card = document.createElement('div');
-    card.className    = 'card';
+    card.className = biz.locked ? 'card locked' : 'card';
     card.dataset.leadId  = leadId;
     card.dataset.bizIdx  = i;
 
@@ -369,6 +518,18 @@
     if (biz.rating != null)      metaHtml += '<span><b>' + biz.rating + '★</b></span>';
     if (biz.reviewsCount != null) metaHtml += '<span>' + biz.reviewsCount + ' reseñas</span>';
     if (distrito)                 metaHtml += '<span>' + esc(distrito) + '</span>';
+
+    if (biz.locked) {
+      card.innerHTML =
+        '<div class="card-top">' +
+          '<div class="card-left">' +
+            '<div class="card-name">' + esc(biz.name) + '</div>' +
+          '</div>' +
+          '<div class="locked-tag">🔒 Bloqueado</div>' +
+        '</div>' +
+        '<div class="card-meta">' + metaHtml + '</div>';
+      return card;
+    }
 
     card.innerHTML =
       '<div class="card-top">' +
@@ -500,7 +661,7 @@
   /* una búsqueda anterior (de esta u otra sesión) sigue "running".    */
   (async function checkStaleJobOnLoad() {
     try {
-      var r = await fetch('/api/status');
+      var r = await sessionFetch('/api/public/status');
       var status = await r.json();
       if (status.running) {
         document.getElementById('btnReset').classList.add('show');
@@ -510,6 +671,8 @@
       }
     } catch (_) {}
   })();
+
+  checkAuthOnLoad();
 
 })();
 </script>

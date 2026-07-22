@@ -7,6 +7,30 @@ const BD_KEY = 'scrappy_bd';
 let bdCurrentStep = 1;
 const BD_TOTAL = 3;
 
+// ── Sesión — el servidor ya no comparte una sola búsqueda global entre
+// todos los usuarios; cada navegador (identificado por este ID) tiene su
+// propio job. Así, si alguien más está usando Scrappy (o el MVP móvil) al
+// mismo tiempo, ninguna búsqueda bloquea a la otra.
+function getOrCreateSessionId() {
+  const key = 'scrappy-session-id';
+  try {
+    const existing = localStorage.getItem(key);
+    if (existing) return existing;
+    const fresh = 'sid-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+    localStorage.setItem(key, fresh);
+    return fresh;
+  } catch (_) {
+    return 'sid-nostorage-' + Math.random().toString(36).slice(2, 10);
+  }
+}
+const SCRAPPY_SESSION_ID = getOrCreateSessionId();
+
+function sessionFetch(url, opts) {
+  opts = opts || {};
+  opts.headers = Object.assign({}, opts.headers, { 'X-Scrappy-Session': SCRAPPY_SESSION_ID });
+  return fetch(url, opts);
+}
+
 // ── View system ──────────────────────────────────────────────────────
 function showView(id) {
   document.querySelectorAll('.view').forEach(v => {
@@ -419,7 +443,7 @@ document.getElementById("produce-form")?.addEventListener("submit", async (e) =>
   setProgressBar(3);
 
   try {
-    const resp = await fetch("/api/scrape-produce", {
+    const resp = await sessionFetch("/api/scrape-produce", {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify({ ciiu: ciuuList, departamento: dep, sector, maxResults: max, enrich, rucType }),
@@ -522,7 +546,7 @@ form.addEventListener("submit", async (event) => {
   setProgressBar(3);
 
   try {
-    const response = await fetch("/api/scrape", {
+    const response = await sessionFetch("/api/scrape", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query, location, maxResults, deepScan }),
@@ -548,7 +572,7 @@ function startPolling() {
 
   pollInterval = setInterval(async () => {
     try {
-      const response = await fetch("/api/status");
+      const response = await sessionFetch("/api/status");
       const data = await response.json();
 
       if (data.progress?.message) {
@@ -640,7 +664,7 @@ function showProduceResults(businesses) {
     exportCsvBtn.textContent = "Descargar CSV";
     exportCsvBtn.onclick = async (e) => {
       e.preventDefault();
-      window.location.href = "/api/export/csv-produce";
+      window.location.href = "/api/export/csv-produce?sid=" + encodeURIComponent(SCRAPPY_SESSION_ID);
     };
   }
   if (exportJsonBtn) exportJsonBtn.style.display = "none";
