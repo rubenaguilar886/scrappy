@@ -495,6 +495,22 @@
     updateProgress();
   }
 
+  /* ── Chequeo al cargar: ¿hay un job del servidor ya corriendo? ──── */
+  /* Cubre el caso de refrescar la página o volver otro día mientras   */
+  /* una búsqueda anterior (de esta u otra sesión) sigue "running".    */
+  (async function checkStaleJobOnLoad() {
+    try {
+      var r = await fetch('/api/status');
+      var status = await r.json();
+      if (status.running) {
+        document.getElementById('btnReset').classList.add('show');
+        document.getElementById('loading').classList.add('show');
+        setLoadingMsg((status.progress && status.progress.message) || 'Hay una búsqueda en curso…');
+        document.getElementById('btnSearch').disabled = true;
+      }
+    } catch (_) {}
+  })();
+
 })();
 </script>
 </body>
