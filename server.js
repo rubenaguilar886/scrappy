@@ -902,6 +902,33 @@ app.get("/api/admin/user-detail", requireAdmin, async (req, res) => {
   }
 });
 
+// ── /api/admin/reset-test-state ───────────────────────────────────────
+// Solo para pruebas: borra prueba gratis usada, uso diario y (si se pide)
+// los paquetes ciudad de un usuario, para poder repetir tests limpios sin
+// crear una cuenta nueva cada vez. NO usar en producción con clientes reales.
+app.post("/api/admin/reset-test-state", requireAdmin, async (req, res) => {
+  try {
+    const { email, wipeCityPacks = false } = req.body || {};
+    if (!email) return res.status(400).json({ error: "Falta email." });
+    const userRes = await db.query("SELECT id FROM users WHERE email = $1", [String(email).trim().toLowerCase()]);
+    if (!userRes.rows.length) return res.status(404).json({ error: "Usuario no encontrado." });
+    const userId = userRes.rows[0].id;
+
+    await db.query("DELETE FROM trial_usage WHERE user_id = $1", [userId]);
+    await db.query("DELETE FROM daily_usage WHERE user_id = $1", [userId]);
+    if (wipeCityPacks) {
+      await db.query(
+        "DELETE FROM delivered_businesses WHERE city_pack_id IN (SELECT id FROM city_packs WHERE user_id = $1)",
+        [userId]
+      );
+      await db.query("DELETE FROM city_packs WHERE user_id = $1", [userId]);
+    }
+    res.json({ ok: true, message: "Estado de prueba reseteado." + (wipeCityPacks ? " (incluyendo paquetes ciudad)" : "") });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log("Scrappy corriendo en http://localhost:" + PORT);
 });
