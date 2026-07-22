@@ -758,6 +758,11 @@ app.post("/api/public/scrape", async (req, res) => {
       deepScan: Boolean(deepScan),
       onProgress: progressCallback,
     });
+
+    // Si mientras tanto el usuario canceló (o el job fue reemplazado por
+    // uno nuevo), NO gastar créditos por un resultado que nadie va a ver.
+    if (job.aborted || getJob(sid) !== job) return;
+
     const { unlocked, lockedCount, remainingAfter } = await credits.applyAccessToResults(access, results);
 
     job.results = unlocked;
@@ -794,7 +799,10 @@ app.get("/api/public/status", (req, res) => {
 });
 
 app.post("/api/public/reset", (req, res) => {
-  jobs.delete(getSessionId(req));
+  const sid = getSessionId(req);
+  const job = jobs.get(sid);
+  if (job) job.aborted = true; // evita que el scrape en curso cobre créditos al terminar
+  jobs.delete(sid);
   res.json({ ok: true });
 });
 
@@ -857,6 +865,38 @@ app.get("/api/admin/users", requireAdmin, async (_req, res) => {
       FROM users u ORDER BY u.created_at DESC LIMIT 200
     `);
     res.json({ users: result.rows });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── /api/admin/user-detail?email=... ─────────────────────────────────
+// Para depurar: cuánto crédito le queda a alguien y qué se le entregó.
+app.get("/api/admin/user-detail", requireAdmin, async (req, res) => {
+  try {
+    const email = String(req.query.email || "").trim().toLowerCase();
+    if (!email) return res.status(400).json({ error: "Falta ?email=..." });
+
+    const userRes = await db.query("SELECT id, email, created_at FROM users WHERE email = $1", [email]);
+    if (!userRes.rows.length) return res.status(404).json({ error: "Usuario no encontrado." });
+    const user = userRes.rows[0];
+
+    const subs = await db.query(
+      "SELECT id, status, daily_limit, created_at FROM subscriptions WHERE user_id = $1 ORDER BY created_at DESC",
+      [user.id]
+    );
+    const packs = await db.query(
+      `SELECT id, rubro, ciudad, credits_total, credits_used, purchased_at, expires_at
+       FROM city_packs WHERE user_id = $1 ORDER BY purchased_at DESC`,
+      [user.id]
+    );
+    const usage = await db.query(
+      "SELECT usage_date, count FROM daily_usage WHERE user_id = $1 ORDER BY usage_date DESC LIMIT 10",
+      [user.id]
+    );
+    const trial = await db.query("SELECT used_at FROM trial_usage WHERE user_id = $1", [user.id]);
+
+    res.json({ user, subscriptions: subs.rows, cityPacks: packs.rows, dailyUsage: usage.rows, trialUsed: trial.rows[0] || null });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
