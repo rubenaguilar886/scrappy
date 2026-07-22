@@ -194,6 +194,13 @@ app.get("/api/status", (_req, res) => {
   });
 });
 
+// ── /api/reset ────────────────────────────────────────────────────────
+// Cancela cualquier job atascado sin necesitar reiniciar el servidor.
+app.post("/api/reset", (_req, res) => {
+  currentJob = null;
+  res.json({ ok: true, message: "Job reseteado." });
+});
+
 // ── /api/scrape (Google Maps) ─────────────────────────────────────────
 app.post("/api/scrape", async (req, res) => {
   if (currentJob?.running) return res.status(409).json({ error: "Ya hay una busqueda en progreso." });

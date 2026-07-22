@@ -135,6 +135,12 @@
     border:1.5px solid #fca5a5;border-radius:10px;font-size:13px;color:#b91c1c;
   }
   .error-banner.show{display:block;}
+  .btn-reset{
+    display:none;width:100%;margin-top:10px;padding:10px;border-radius:10px;
+    border:1.5px solid var(--line);background:none;color:var(--sub);
+    font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;
+  }
+  .btn-reset.show{display:block;}
 </style>
 </head>
 <body>
@@ -178,6 +184,7 @@
   </button>
 
   <div class="error-banner" id="errorBanner"></div>
+  <button class="btn-reset" id="btnReset" onclick="resetJob()">↺ Cancelar búsqueda atascada</button>
 
   <div class="loading" id="loading">
     <div class="spinner"></div>
@@ -231,9 +238,22 @@
     document.getElementById('errorBanner').classList.remove('show');
   }
 
+  window.resetJob = async function () {
+    try {
+      await fetch('/api/reset', { method: 'POST' });
+    } catch(_) {}
+    currentJob = null;
+    if (pollTimer) clearInterval(pollTimer);
+    document.getElementById('loading').classList.remove('show');
+    document.getElementById('btnReset').classList.remove('show');
+    setSearching(false);
+    clearError();
+  };
+
   function setSearching(busy) {
     var btn = document.getElementById('btnSearch');
     btn.disabled = busy;
+    document.getElementById('btnReset').classList.toggle('show', busy);
     if (busy) {
       btn.innerHTML =
         '<div class="spinner" style="border-top-color:#fff;border-color:rgba(255,255,255,.3)"></div>' +
@@ -269,7 +289,7 @@
       var res = await fetch('/api/scrape', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: rubro, location: ciudad, maxResults: 100, deepScan: false }),
+        body: JSON.stringify({ query: rubro, location: ciudad, maxResults: 25, deepScan: false }),
       });
       var data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Error al iniciar búsqueda.');
