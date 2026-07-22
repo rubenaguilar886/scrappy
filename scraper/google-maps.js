@@ -3,14 +3,14 @@ const { extractContactChannels, normalizeWebsiteUrl, mergeContactData, phoneToWh
 const { enrichBusinessesFromWebsites } = require("./website-deep");
 const { computeReviewPower, computeReputationScore, computeOpportunityScore, computeOpportunityTier } = require("./classify");
 
-// Bajado desde 6/8 — en un servidor compartido (Railway) con memoria
-// limitada, abrir muchas páginas de Chromium a la vez puede saturar el
-// proceso y colgarlo sin lanzar ningún error capturable. Menos paralelismo
-// es más lento pero mucho más confiable en ese entorno.
-const CONCURRENCY       = 3;
+// La red de seguridad real contra colgados es BATCH_TIMEOUT_MS (abajo),
+// no la concurrencia baja. Con el timeout ya protegiendo, subimos de
+// nuevo el paralelismo (moderado, no al máximo original) para recuperar
+// rendimiento sin arriesgar saturar la memoria de Railway.
+const CONCURRENCY       = 5;
 const PAGE_WAIT_MS      = 550;
 const SCROLL_WAIT_MS    = 1000;
-const QUICK_CONCURRENCY = 4;
+const QUICK_CONCURRENCY = 6;
 const QUICK_WAIT_MS     = 150;
 
 // Si un lote entero no termina en este tiempo, se descarta y se sigue —
