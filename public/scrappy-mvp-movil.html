@@ -523,6 +523,7 @@
 
           currentResults = results;
           renderResults(results, onlyNoWeb);
+          checkAuthOnLoad(); // refresca el contador de creditos de los paquetes
         }
       } catch (_) {}
     }, 1500);
