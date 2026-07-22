@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dr. Miguel Alfaro — Medicina Estética y Láser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+
+/* ══ RESET & TOKENS ════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --navy:     #1B3A8C;
+  --navy2:    #142E70;
+  --navy3:    #0D2050;
+  --blue:     #4A90D9;
+  --blue2:    #5AA4E8;
+  --blue-lt:  #EBF3FC;
+  --blue-md:  #C6DDF5;
+  --sky:      #7AB8EA;
+  --white:    #FFFFFF;
+  --bg:       #F6F9FF;
+  --gray:     #4A5568;
+  --gray2:    #718096;
+  --gray3:    #A0AEC0;
+  --border:   #E2E8F4;
+  --black:    #111827;
+}
+
+body {
+  background: var(--white);
+  color: var(--gray);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img { display: block; }
+
+/* ══ NAV ════════════════════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: 68px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%;
+  background: rgba(255,255,255,.98);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 8px rgba(27,58,140,.06);
+}
+
+.nav-logo { text-decoration: none; display: flex; align-items: center; gap: 9px; }
+.logo-cross {
+  width: 26px; height: 26px; border-radius: 5px;
+  background: var(--navy); color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 900; flex-shrink: 0; line-height: 1;
+}
+.logo-text { display: flex; flex-direction: column; line-height: 1.1; gap: 1px; }
+.logo-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.15rem; font-weight: 700; color: var(--navy); letter-spacing: .02em;
+}
+.logo-spec {
+  font-family: 'Inter', sans-serif;
+  font-size: .5rem; font-weight: 500; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--gray3);
+}
+
+.nav-links { display: flex; gap: 28px; align-items: center; }
+.nav-a {
+  font-size: .68rem; font-weight: 500; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--gray2);
+  text-decoration: none; transition: color .2s;
+}
+.nav-a:hover { color: var(--navy); }
+
+.nav-cta {
+  padding: 9px 22px;
+  background: var(--navy); color: var(--white);
+  font-size: .68rem; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; text-decoration: none; border-radius: 6px;
+  transition: background .2s, transform .15s;
+}
+.nav-cta:hover { background: var(--navy2); transform: scale(.97); }
+
+/* ══ HERO ════════════════════════════════════════════════════════ */
+.hero {
+  margin-top: 68px;
+  position: relative; overflow: hidden;
+  min-height: calc(100vh - 68px);
+  background: linear-gradient(135deg, var(--navy3) 0%, var(--navy) 45%, #2352A8 70%, var(--blue) 100%);
+  display: grid; grid-template-columns: 1fr 1fr;
+  align-items: center;
+}
+
+/* Background grid pattern */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0px, rgba(255,255,255,.03) 1px, transparent 1px, transparent 60px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0px, rgba(255,255,255,.03) 1px, transparent 1px, transparent 60px);
+  pointer-events: none;
+}
+
+.hero-text {
+  position: relative; z-index: 2;
+  padding: 60px 5% 60px 8%;
+  display: flex; flex-direction: column;
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(74,144,217,.2); border: 1px solid rgba(74,144,217,.4);
+  border-radius: 50px; padding: 6px 16px;
+  font-size: .65rem; font-weight: 600; letter-spacing: .14em;
+  text-transform: uppercase; color: #90C4EF;
+  width: fit-content; margin-bottom: 24px;
+}
+.hero-eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--blue2); flex-shrink: 0; }
+
+.hero-h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(2.8rem, 5.5vw, 5.5rem);
+  font-weight: 900; line-height: .95;
+  text-transform: uppercase; letter-spacing: .01em;
+  color: var(--white); margin-bottom: 8px;
+}
+.hero-h1 .hl { color: var(--blue2); }
+.hero-h1 .block { display: block; }
+
+.hero-sub {
+  font-size: clamp(.9rem, 1.6vw, 1.15rem);
+  color: rgba(255,255,255,.6); line-height: 1.65;
+  max-width: 440px; margin-bottom: 32px;
+  font-weight: 300;
+}
+
+/* Condition pills */
+.hero-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 36px; }
+.h-pill {
+  padding: 8px 18px; border-radius: 6px;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+  font-size: .72rem; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: rgba(255,255,255,.9);
+  transition: background .2s, border-color .2s;
+}
+.h-pill:hover { background: rgba(74,144,217,.3); border-color: var(--blue2); }
+
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-white {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 28px; background: var(--white); color: var(--navy);
+  font-size: .72rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; text-decoration: none; border-radius: 6px;
+  transition: background .2s, transform .15s;
+}
+.btn-white:hover { background: var(--blue-lt); transform: translateY(-2px); }
+.btn-outline-white {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 28px; background: transparent;
+  border: 1.5px solid rgba(255,255,255,.4); color: rgba(255,255,255,.9);
+  font-size: .72rem; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; text-decoration: none; border-radius: 6px;
+  transition: background .2s, border-color .2s;
+}
+.btn-outline-white:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.8); }
+
+/* Trust strip */
+.hero-trust {
+  display: flex; gap: 24px; margin-top: 40px; flex-wrap: wrap;
+}
+.ht-item {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.ht-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.6rem; font-weight: 800; color: var(--white); line-height: 1;
+}
+.ht-lbl { font-size: .6rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.45); }
+.ht-divider { width: 1px; background: rgba(255,255,255,.15); height: 36px; align-self: center; }
+
+/* Hero image right */
+.hero-visual {
+  position: relative; z-index: 2;
+  display: flex; align-items: flex-end; justify-content: center;
+  padding: 40px 5% 0;
+  height: 100%;
+}
+
+.hero-doc-wrap {
+  position: relative;
+  width: 100%; max-width: 420px;
+  margin: 0 auto;
+}
+
+.hero-doc-img {
+  width: 100%;
+  height: 580px;
+  object-fit: cover; object-position: center top;
+  border-radius: 12px 12px 0 0;
+  display: block;
+}
+
+/* Floating tech badge */
+.hero-tech-badge {
+  position: absolute; bottom: 32px; left: -20px;
+  background: var(--white); border-radius: 10px;
+  padding: 14px 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.2);
+  display: flex; align-items: center; gap: 12px;
+}
+.htb-icon {
+  width: 40px; height: 40px; border-radius: 8px;
+  background: var(--navy); color: var(--white);
+  display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+}
+.htb-text { display: flex; flex-direction: column; gap: 2px; }
+.htb-name { font-size: .8rem; font-weight: 700; color: var(--navy); }
+.htb-sub  { font-size: .62rem; color: var(--gray3); letter-spacing: .04em; }
+
+/* ══ SHARED SECTION ════════════════════════════════════════════ */
+.sec { padding: 56px 5%; }
+.wrap { max-width: 1140px; margin: 0 auto; }
+
+.sec-eyebrow {
+  font-size: .6rem; font-weight: 700; letter-spacing: .28em;
+  text-transform: uppercase; color: var(--blue); display: block; margin-bottom: 10px;
+}
+.sec-h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 800;
+  color: var(--navy); text-transform: uppercase; letter-spacing: .02em;
+  line-height: 1.05; margin-bottom: 10px;
+}
+.sec-h2 span { color: var(--blue); }
+.blue-rule { width: 36px; height: 3px; background: var(--blue); border-radius: 2px; margin-bottom: 32px; }
+
+/* ══ LASER CO2 SECTION ═════════════════════════════════════════ */
+#laser { background: var(--navy); padding: 56px 5%; }
+
+.laser-grid {
+  display: grid; grid-template-columns: 1.1fr 1fr;
+  gap: 64px; align-items: center;
+}
+
+.laser-img-wrap { position: relative; }
+.laser-img {
+  width: 100%; height: 420px;
+  object-fit: cover; object-position: center;
+  border-radius: 10px;
+  filter: brightness(.9) saturate(1.1);
+}
+.laser-overlay-badge {
+  position: absolute; top: 20px; left: 20px;
+  background: var(--blue); color: var(--white);
+  padding: 8px 16px; border-radius: 6px;
+  font-size: .65rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+}
+
+.laser-eyebrow { color: var(--blue2) !important; }
+.laser-h2 { color: var(--white) !important; }
+.laser-h2 span { color: var(--blue2); }
+.laser-rule { background: var(--blue2) !important; margin-bottom: 20px; }
+.laser-intro { font-size: .85rem; color: rgba(255,255,255,.65); line-height: 1.8; margin-bottom: 28px; }
+
+.laser-benefits {
+  display: flex; flex-direction: column; gap: 12px;
+}
+.lb-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px;
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 8px; transition: background .2s;
+}
+.lb-item:hover { background: rgba(74,144,217,.12); }
+.lb-icon {
+  width: 36px; height: 36px; border-radius: 6px; flex-shrink: 0;
+  background: rgba(74,144,217,.2); border: 1px solid rgba(74,144,217,.3);
+  display: flex; align-items: center; justify-content: center; font-size: .9rem;
+}
+.lb-text { display: flex; flex-direction: column; gap: 2px; }
+.lb-title { font-size: .8rem; font-weight: 700; color: var(--white); line-height: 1.2; }
+.lb-desc  { font-size: .72rem; color: rgba(255,255,255,.5); line-height: 1.45; }
+
+/* ══ SERVICIOS ═════════════════════════════════════════════════ */
+#servicios { background: var(--bg); }
+
+.serv-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+}
+.serv-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 0; overflow: hidden;
+  transition: border-color .25s, transform .25s, box-shadow .25s;
+}
+.serv-card:hover {
+  border-color: var(--blue-md);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(27,58,140,.09);
+}
+.sc-head {
+  background: linear-gradient(135deg, var(--navy) 0%, #2453B0 100%);
+  padding: 22px 24px; display: flex; align-items: center; gap: 14px;
+}
+.sc-icon-wrap {
+  width: 50px; height: 50px; border-radius: 10px; flex-shrink: 0;
+  background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.2);
+  display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+}
+.sc-head-text { display: flex; flex-direction: column; gap: 3px; }
+.sc-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.25rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .04em; color: var(--white);
+}
+.sc-tag {
+  font-size: .6rem; font-weight: 600; letter-spacing: .14em;
+  text-transform: uppercase; color: rgba(255,255,255,.5);
+}
+.sc-body { padding: 20px 24px; }
+.sc-desc { font-size: .8rem; color: var(--gray); line-height: 1.75; margin-bottom: 16px; }
+.sc-bullets { display: flex; flex-direction: column; gap: 6px; }
+.sc-bullet {
+  display: flex; align-items: center; gap: 9px;
+  font-size: .76rem; color: var(--gray2);
+}
+.sc-bullet::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--blue); flex-shrink: 0;
+}
+
+/* ══ WHY DR ALFARO ═════════════════════════════════════════════ */
+#porque { background: var(--white); }
+
+.why-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.why-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 28px 22px;
+  transition: border-color .2s, box-shadow .2s;
+  position: relative; overflow: hidden;
+}
+.why-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(to right, var(--navy), var(--blue));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .32s cubic-bezier(.4,0,.2,1);
+}
+.why-card:hover::before { transform: scaleX(1); }
+.why-card:hover { border-color: var(--blue-md); box-shadow: 0 6px 20px rgba(27,58,140,.07); }
+.wc-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2.8rem; font-weight: 900; line-height: 1;
+  color: var(--blue-md); margin-bottom: 8px;
+}
+.wc-icon {
+  width: 46px; height: 46px; border-radius: 10px; margin-bottom: 14px;
+  background: var(--blue-lt); border: 1px solid var(--blue-md);
+  display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+}
+.wc-title {
+  font-size: .88rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; line-height: 1.25;
+}
+.wc-desc { font-size: .77rem; color: var(--gray2); line-height: 1.7; }
+
+/* ══ PROCESS ════════════════════════════════════════════════════ */
+#proceso { background: var(--bg); }
+
+.process-row {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 0; position: relative;
+}
+.process-row::before {
+  content: ''; position: absolute;
+  top: 28px; left: calc(12.5% + 24px); right: calc(12.5% + 24px);
+  height: 1.5px; background: var(--blue-md); z-index: 0;
+}
+.proc-step {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 0 16px; position: relative; z-index: 1;
+}
+.proc-num {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--white); border: 2px solid var(--blue);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.3rem; font-weight: 900; color: var(--navy);
+  margin-bottom: 16px; flex-shrink: 0;
+  box-shadow: 0 0 0 6px var(--bg);
+}
+.proc-icon { font-size: 1.4rem; margin-bottom: 12px; }
+.proc-title { font-size: .82rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+.proc-desc { font-size: .74rem; color: var(--gray2); line-height: 1.6; }
+
+/* ══ GALLERY / RESULTS ════════════════════════════════════════ */
+#resultados { background: var(--navy3); padding: 56px 5%; }
+
+.res-eyebrow { color: var(--blue2) !important; }
+.res-h2 { color: var(--white) !important; }
+.res-h2 span { color: var(--blue2); }
+.res-rule { background: var(--blue2) !important; }
+.res-intro { font-size: .82rem; color: rgba(255,255,255,.5); margin-bottom: 32px; max-width: 540px; }
+
+.results-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+}
+.res-cell { position: relative; overflow: hidden; border-radius: 8px; aspect-ratio: 1; }
+.res-cell img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .5s cubic-bezier(.4,0,.2,1);
+  filter: brightness(.9) saturate(.85);
+}
+.res-cell:hover img { transform: scale(1.06); filter: brightness(1) saturate(1); }
+.res-label {
+  position: absolute; bottom: 10px; left: 10px;
+  background: rgba(27,58,140,.85); color: var(--white);
+  font-size: .62rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; padding: 4px 10px; border-radius: 4px;
+}
+
+/* ══ REVIEWS ════════════════════════════════════════════════════ */
+#resenas { background: var(--blue-lt); }
+
+.rating-banner {
+  background: var(--navy); border-radius: 12px;
+  padding: 28px 32px; margin-bottom: 36px;
+  display: flex; align-items: center; gap: 40px; flex-wrap: wrap;
+}
+.rb-score {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 4.5rem; font-weight: 900; color: var(--white); line-height: 1;
+  flex-shrink: 0;
+}
+.rb-detail { display: flex; flex-direction: column; gap: 6px; }
+.rb-stars { display: flex; gap: 4px; }
+.rb-star { color: #F5C842; font-size: 1.2rem; }
+.rb-lbl { font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.4); }
+.g-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18);
+  border-radius: 50px; padding: 6px 14px; width: fit-content;
+}
+.g-badge svg { width: 13px; height: 13px; }
+.g-badge-lbl { font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.4); }
+.rb-quote {
+  flex: 1; min-width: 200px;
+  font-size: .82rem; font-style: italic; color: rgba(255,255,255,.55);
+  line-height: 1.7; border-left: 2px solid var(--blue); padding-left: 18px;
+}
+
+.carousel-outer { overflow: hidden; }
+.rev-track {
+  display: flex; gap: 16px;
+  transition: transform .65s cubic-bezier(.4,0,.2,1);
+}
+.rev-card {
+  flex: 0 0 calc(50% - 8px);
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 26px 24px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.rev-card:hover { border-color: var(--blue-md); box-shadow: 0 6px 20px rgba(27,58,140,.07); }
+.rev-stars { display: flex; gap: 3px; }
+.rev-star { color: #F5C842; font-size: .9rem; }
+.rev-body { font-size: .82rem; font-style: italic; color: var(--gray); line-height: 1.7; flex: 1; }
+.rev-author { display: flex; flex-direction: column; gap: 2px; }
+.rev-name { font-size: .74rem; font-weight: 700; color: var(--navy); letter-spacing: .04em; }
+.rev-date { font-size: .63rem; color: var(--gray3); }
+
+.c-dots { display: flex; gap: 8px; justify-content: center; margin-top: 22px; }
+.cdot { width: 22px; height: 2.5px; background: var(--blue-md); cursor: pointer; border-radius: 2px; transition: background .25s, width .25s; }
+.cdot.active { background: var(--navy); width: 40px; }
+
+/* ══ CONTACT ════════════════════════════════════════════════════ */
+#contacto { background: var(--white); border-top: 1px solid var(--border); }
+
+.contact-grid {
+  display: grid; grid-template-columns: 1fr 1.1fr; gap: 64px; align-items: start;
+}
+.contact-img-col { position: relative; }
+.contact-img { width: 100%; height: 480px; object-fit: cover; object-position: center 10%; border-radius: 10px; }
+.contact-img-badge {
+  position: absolute; bottom: 20px; right: 20px;
+  background: var(--navy); color: var(--white);
+  padding: 12px 16px; border-radius: 8px; text-align: center;
+  box-shadow: 0 4px 16px rgba(27,58,140,.3);
+}
+.cib-number {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.5rem; font-weight: 800; letter-spacing: .04em; line-height: 1;
+}
+.cib-label { font-size: .58rem; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-top: 3px; }
+
+.form-side { display: flex; flex-direction: column; }
+.f-field {
+  border-bottom: 1.5px solid var(--border); transition: border-color .2s;
+}
+.f-field:focus-within { border-color: var(--navy); }
+.f-field input, .f-field textarea, .f-field select {
+  width: 100%; padding: 16px 0;
+  background: none; border: none; color: var(--navy);
+  font-family: 'Inter', sans-serif; font-size: .8rem; font-weight: 300; outline: none;
+}
+.f-field input::placeholder, .f-field textarea::placeholder { color: var(--gray3); }
+.f-field textarea { resize: none; min-height: 90px; }
+.f-field select { color: var(--gray3); cursor: pointer; }
+.f-field select:focus { color: var(--navy); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; }
+
+.btn-submit {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 32px; background: var(--navy); color: var(--white);
+  font-family: 'Inter', sans-serif;
+  font-size: .72rem; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; border: none; border-radius: 6px;
+  cursor: pointer; transition: background .2s; width: fit-content; margin-top: 26px;
+}
+.btn-submit:hover { background: var(--navy2); }
+
+.contact-info { margin-top: 28px; display: flex; flex-direction: column; gap: 14px; }
+.ci-row { display: flex; align-items: flex-start; gap: 12px; font-size: .77rem; color: var(--gray2); line-height: 1.5; }
+.ci-tag { font-size: .58rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); min-width: 72px; flex-shrink: 0; padding-top: 1px; }
+
+/* ══ WA FLOAT ═══════════════════════════════════════════════════ */
+.wa-float {
+  position: fixed; bottom: 28px; right: 28px; z-index: 500;
+  width: 54px; height: 54px; background: #25D366; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 18px rgba(37,211,102,.4); text-decoration: none;
+  transition: transform .2s, box-shadow .2s;
+}
+.wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37,211,102,.55); }
+.wa-float svg { width: 27px; height: 27px; fill: #fff; }
+
+/* ══ FOOTER ══════════════════════════════════════════════════════ */
+footer {
+  background: var(--navy3); padding: 36px 5%;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.ft-logo { display: flex; align-items: center; gap: 9px; }
+.ft-cross {
+  width: 24px; height: 24px; border-radius: 4px;
+  background: var(--blue); color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 900; flex-shrink: 0;
+}
+.ft-lines { display: flex; flex-direction: column; gap: 2px; }
+.ft-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1rem; font-weight: 700; color: var(--white); letter-spacing: .02em;
+}
+.ft-spec { font-size: .45rem; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.25); }
+.ft-copy { font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.2); }
+.ft-links { display: flex; gap: 20px; }
+.ft-a { font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.22); text-decoration: none; transition: color .2s; }
+.ft-a:hover { color: var(--blue2); }
+
+/* ══ RESPONSIVE ══════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-visual { display: none; }
+  .hero-text { padding: 60px 5%; }
+  .laser-grid { grid-template-columns: 1fr; }
+  .laser-img-wrap { display: none; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .contact-img-col { display: none; }
+  .why-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .serv-grid { grid-template-columns: 1fr; }
+  .why-grid { grid-template-columns: 1fr; }
+  .process-row { grid-template-columns: 1fr 1fr; }
+  .process-row::before { display: none; }
+  .results-grid { grid-template-columns: 1fr 1fr; }
+  .rev-card { flex: 0 0 calc(100% - 8px); }
+  .form-row { grid-template-columns: 1fr; }
+  .nav-links .nav-a { display: none; }
+  .rating-banner { flex-direction: column; gap: 16px; align-items: flex-start; }
+  .rb-quote { display: none; }
+}
+@media (max-width: 500px) {
+  .hero-btns { flex-direction: column; align-items: flex-start; }
+  .hero-trust { gap: 14px; }
+  .process-row { grid-template-columns: 1fr; }
+}
+
+  </style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-cross">+</div>
+    <div class="logo-text">
+      <span class="logo-name">Dr. Miguel Alfaro</span>
+      <span class="logo-spec">Medicina Estética y Láser</span>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="#laser"      class="nav-a">Láser CO2</a>
+    <a href="#servicios"  class="nav-a">Servicios</a>
+    <a href="#porque"     class="nav-a">¿Por qué el Dr.?</a>
+    <a href="#resenas"    class="nav-a">Reseñas</a>
+    <a href="#contacto"   class="nav-a">Contacto</a>
+    <a href="https://wa.me/51987781986?text=Hola%20Dr.%20Alfaro%2C%20quisiera%20consultar%20sobre%20un%20tratamiento" class="nav-cta" target="_blank">Consultar ahora</a>
+  </div>
+</nav>
+
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <!-- LEFT: texto -->
+  <div class="hero-text">
+    <div class="hero-eyebrow">Medicina Estética y Láser · Lima, Perú</div>
+    <h1 class="hero-h1">
+      <span class="block">¿Es tiempo</span>
+      <span class="block">de tratar</span>
+      <span class="block hl">esa lesión?</span>
+    </h1>
+    <p class="hero-sub">Eliminamos verrugas, lunares, acrocordones y secuelas de acné con tecnología Láser CO2 de precisión. Sin cirugía. Sin suturas. Con resultados definitivos.</p>
+
+    <div class="hero-pills">
+      <div class="h-pill">Verrugas</div>
+      <div class="h-pill">Lunares</div>
+      <div class="h-pill">Acrocordones</div>
+      <div class="h-pill">Secuelas de Acné</div>
+    </div>
+
+    <div class="hero-btns">
+      <a href="https://wa.me/51987781986?text=Hola%20Dr.%20Alfaro%2C%20quiero%20consultar%20sobre%20un%20tratamiento%20con%20l%C3%A1ser%20CO2" class="btn-white" target="_blank">Escribir al Dr. Alfaro →</a>
+      <a href="#laser" class="btn-outline-white">Conocer el Láser CO2</a>
+    </div>
+
+    <div class="hero-trust">
+      <div class="ht-item">
+        <span class="ht-val">Láser</span>
+        <span class="ht-lbl">CO2 de alta precisión</span>
+      </div>
+      <div class="ht-divider"></div>
+      <div class="ht-item">
+        <span class="ht-val">0</span>
+        <span class="ht-lbl">Suturas necesarias</span>
+      </div>
+      <div class="ht-divider"></div>
+      <div class="ht-item">
+        <span class="ht-val">3–7</span>
+        <span class="ht-lbl">Días recuperación</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: foto del doctor -->
+  <div class="hero-visual">
+    <div class="hero-doc-wrap">
+      <img class="hero-doc-img"
+        src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=700&h=900&fit=crop&q=85&auto=format"
+        alt="Dr. Miguel Alfaro">
+      <div class="hero-tech-badge">
+        <div class="htb-icon">⚡</div>
+        <div class="htb-text">
+          <span class="htb-name">Tecnología Láser CO2</span>
+          <span class="htb-sub">Certificada · Alta precisión</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ TECNOLOGÍA LÁSER CO2 ══ -->
+<section id="laser">
+  <div class="wrap">
+    <div class="laser-grid">
+      <div class="laser-img-wrap">
+        <img class="laser-img"
+          src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=700&h=600&fit=crop&q=80&auto=format"
+          alt="Tecnología Láser CO2">
+        <div class="laser-overlay-badge">Láser CO2 · Alta precisión</div>
+      </div>
+
+      <div>
+        <span class="sec-eyebrow laser-eyebrow">Nuestra tecnología</span>
+        <h2 class="sec-h2 laser-h2">Tecnología<br><span>Láser CO2</span></h2>
+        <div class="blue-rule laser-rule"></div>
+        <p class="laser-intro">El Láser CO2 es la tecnología de referencia en dermatología estética para la eliminación de lesiones cutáneas. Actúa vaporizando el tejido con precisión milimétrica, sin dañar las zonas circundantes y con mínima molestia.</p>
+
+        <div class="laser-benefits">
+          <div class="lb-item">
+            <div class="lb-icon">🎯</div>
+            <div class="lb-text">
+              <span class="lb-title">Precisión milimétrica</span>
+              <span class="lb-desc">El haz láser actúa únicamente sobre la lesión, respetando el tejido sano adyacente.</span>
+            </div>
+          </div>
+          <div class="lb-item">
+            <div class="lb-icon">🩺</div>
+            <div class="lb-text">
+              <span class="lb-title">Sin suturas ni puntos</span>
+              <span class="lb-desc">A diferencia de la cirugía convencional, no requiere suturas ni un quirófano.</span>
+            </div>
+          </div>
+          <div class="lb-item">
+            <div class="lb-icon">⏱️</div>
+            <div class="lb-text">
+              <span class="lb-title">Recuperación rápida: 3–7 días</span>
+              <span class="lb-desc">La zona tratada cicatriza en pocos días, permitiendo volver a la rutina rápidamente.</span>
+            </div>
+          </div>
+          <div class="lb-item">
+            <div class="lb-icon">✅</div>
+            <div class="lb-text">
+              <span class="lb-title">Resultados definitivos</span>
+              <span class="lb-desc">En la mayoría de casos, la lesión no recurre tras una sola sesión de tratamiento.</span>
+            </div>
+          </div>
+          <div class="lb-item">
+            <div class="lb-icon">🔬</div>
+            <div class="lb-text">
+              <span class="lb-title">Seguro y clinicamente probado</span>
+              <span class="lb-desc">Tecnología certificada con décadas de uso en medicina estética y dermatológica.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ SERVICIOS ══ -->
+<section id="servicios" class="sec">
+  <div class="wrap">
+    <span class="sec-eyebrow">Tratamientos</span>
+    <h2 class="sec-h2">¿Qué lesiones <span>tratamos?</span></h2>
+    <div class="blue-rule"></div>
+
+    <div class="serv-grid">
+      <div class="serv-card">
+        <div class="sc-head">
+          <div class="sc-icon-wrap">🎯</div>
+          <div class="sc-head-text">
+            <span class="sc-name">Verrugas</span>
+            <span class="sc-tag">Verruca vulgaris · Eliminación definitiva</span>
+          </div>
+        </div>
+        <div class="sc-body">
+          <p class="sc-desc">Eliminación de verrugas de origen vírico de cualquier tamaño y localización mediante el láser CO2, sin necesidad de cirugía ni puntos de sutura.</p>
+          <div class="sc-bullets">
+            <span class="sc-bullet">Verrugas vulgares, plantares o filiformes</span>
+            <span class="sc-bullet">Una sola sesión en la mayoría de casos</span>
+            <span class="sc-bullet">Mínima molestia durante el procedimiento</span>
+            <span class="sc-bullet">Sin recurrencia en la zona tratada</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="serv-card">
+        <div class="sc-head">
+          <div class="sc-icon-wrap">🔵</div>
+          <div class="sc-head-text">
+            <span class="sc-name">Lunares</span>
+            <span class="sc-tag">Nevi benignos · Extirpación precisa</span>
+          </div>
+        </div>
+        <div class="sc-body">
+          <p class="sc-desc">Extirpación precisa de lunares benignos con mínima intervención. El láser CO2 elimina el tejido con exactitud y sin generar cicatrices visibles.</p>
+          <div class="sc-bullets">
+            <span class="sc-bullet">Evaluación previa de benignidad</span>
+            <span class="sc-bullet">Procedimiento ambulatorio de 10–20 min</span>
+            <span class="sc-bullet">Cicatriz mínima o imperceptible</span>
+            <span class="sc-bullet">Resultado estético superior a la cirugía</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="serv-card">
+        <div class="sc-head">
+          <div class="sc-icon-wrap">🟦</div>
+          <div class="sc-head-text">
+            <span class="sc-name">Acrocordones</span>
+            <span class="sc-tag">Fibromas cutáneos · "Pellejitos"</span>
+          </div>
+        </div>
+        <div class="sc-body">
+          <p class="sc-desc">Eliminación de acrocordones o fibromas cutáneos en cuello, axilas, párpados y zonas de roce. Rápido, efectivo y sin riesgo de cicatrices visibles.</p>
+          <div class="sc-bullets">
+            <span class="sc-bullet">Cuello, axilas, ingles, párpados</span>
+            <span class="sc-bullet">Múltiples lesiones en una sola sesión</span>
+            <span class="sc-bullet">Procedimiento indoloro con anestesia local</span>
+            <span class="sc-bullet">Recuperación inmediata</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="serv-card">
+        <div class="sc-head">
+          <div class="sc-icon-wrap">✨</div>
+          <div class="sc-head-text">
+            <span class="sc-name">Secuelas de Acné</span>
+            <span class="sc-tag">Cicatrices y manchas post-acné</span>
+          </div>
+        </div>
+        <div class="sc-body">
+          <p class="sc-desc">Tratamiento con láser CO2 fraccionado para reducir cicatrices atróficas, poros dilatados, marcas y manchas dérmicas dejadas por el acné.</p>
+          <div class="sc-bullets">
+            <span class="sc-bullet">Cicatrices tipo "icepick", "boxcar" y rodantes</span>
+            <span class="sc-bullet">Estimula producción natural de colágeno</span>
+            <span class="sc-bullet">Mejora textura y uniformidad del cutis</span>
+            <span class="sc-bullet">Resultados progresivos y duraderos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ POR QUÉ EL DR. ALFARO ══ -->
+<section id="porque" class="sec">
+  <div class="wrap">
+    <span class="sec-eyebrow">Confianza médica</span>
+    <h2 class="sec-h2">¿Por qué elegir al <span>Dr. Alfaro?</span></h2>
+    <div class="blue-rule"></div>
+
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="wc-icon">👨‍⚕️</div>
+        <div class="wc-title">Médico especialista con experiencia comprobada</div>
+        <div class="wc-desc">El Dr. Miguel Alfaro cuenta con formación especializada en medicina estética y el manejo de tecnología láser para el tratamiento de lesiones cutáneas.</div>
+      </div>
+      <div class="why-card">
+        <div class="wc-icon">⚡</div>
+        <div class="wc-title">Tecnología Láser CO2 de última generación</div>
+        <div class="wc-desc">Trabajamos con equipos de láser CO2 certificados que garantizan precisión, seguridad y resultados superiores en cada procedimiento.</div>
+      </div>
+      <div class="why-card">
+        <div class="wc-icon">🎯</div>
+        <div class="wc-title">Diagnóstico y plan personalizado antes de actuar</div>
+        <div class="wc-desc">Cada caso es evaluado individualmente. Nunca realizamos un procedimiento sin una consulta previa y un diagnóstico correcto de la lesión.</div>
+      </div>
+      <div class="why-card">
+        <div class="wc-icon">🛡️</div>
+        <div class="wc-title">Procedimientos seguros y sin complicaciones</div>
+        <div class="wc-desc">Todos nuestros tratamientos se realizan con protocolos de seguridad estrictos, anestesia local cuando es necesario y en un ambiente clínico controlado.</div>
+      </div>
+      <div class="why-card">
+        <div class="wc-icon">📋</div>
+        <div class="wc-title">Seguimiento post-tratamiento incluido</div>
+        <div class="wc-desc">Acompañamos al paciente durante el proceso de cicatrización y recuperación, con controles de seguimiento para garantizar el mejor resultado posible.</div>
+      </div>
+      <div class="why-card">
+        <div class="wc-icon">💬</div>
+        <div class="wc-title">Atención directa y rápida por WhatsApp</div>
+        <div class="wc-desc">Puedes enviar una foto de tu lesión por WhatsApp para una orientación inicial. El Dr. Alfaro responde personalmente y de forma oportuna.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ PROCESO ══ -->
+<section id="proceso" class="sec">
+  <div class="wrap">
+    <span class="sec-eyebrow">Cómo funciona</span>
+    <h2 class="sec-h2">El proceso <span>paso a paso</span></h2>
+    <div class="blue-rule"></div>
+
+    <div class="process-row">
+      <div class="proc-step">
+        <div class="proc-num">1</div>
+        <div class="proc-icon">📸</div>
+        <div class="proc-title">Envía una foto</div>
+        <div class="proc-desc">Manda una fotografía de la lesión por WhatsApp para una orientación inicial sin costo.</div>
+      </div>
+      <div class="proc-step">
+        <div class="proc-num">2</div>
+        <div class="proc-icon">🩺</div>
+        <div class="proc-title">Consulta y diagnóstico</div>
+        <div class="proc-desc">El Dr. Alfaro evalúa personalmente la lesión y determina si el láser es el tratamiento adecuado.</div>
+      </div>
+      <div class="proc-step">
+        <div class="proc-num">3</div>
+        <div class="proc-icon">⚡</div>
+        <div class="proc-title">Procedimiento láser</div>
+        <div class="proc-desc">Se aplica el láser CO2 con anestesia local. El procedimiento dura entre 10 y 30 minutos.</div>
+      </div>
+      <div class="proc-step">
+        <div class="proc-num">4</div>
+        <div class="proc-icon">✅</div>
+        <div class="proc-title">Seguimiento y alta</div>
+        <div class="proc-desc">Control post-tratamiento a los 7 días para verificar la cicatrización y dar el alta médica.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ RESULTADOS ══ -->
+<section id="resultados">
+  <div class="wrap">
+    <span class="sec-eyebrow res-eyebrow">Antes y después</span>
+    <h2 class="sec-h2 res-h2">Resultados <span>reales</span></h2>
+    <div class="blue-rule res-rule"></div>
+    <p class="res-intro">Cada caso es único. Los resultados varían según el tipo, tamaño y ubicación de la lesión. En la mayoría de casos se obtiene eliminación completa en una sola sesión.</p>
+
+    <div class="results-grid">
+      <div class="res-cell">
+        <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=500&h=500&fit=crop&q=80&auto=format" alt="Resultado tratamiento">
+        <span class="res-label">Resultado</span>
+      </div>
+      <div class="res-cell">
+        <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&h=500&fit=crop&q=80&auto=format" alt="Tratamiento láser">
+        <span class="res-label">Procedimiento</span>
+      </div>
+      <div class="res-cell">
+        <img src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=500&h=500&fit=crop&q=80&auto=format" alt="Piel tratada">
+        <span class="res-label">Recuperación</span>
+      </div>
+      <div class="res-cell">
+        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=500&h=500&fit=crop&q=80&auto=format" alt="Consulta médica">
+        <span class="res-label">Consulta</span>
+      </div>
+      <div class="res-cell">
+        <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=500&h=500&fit=crop&q=80&auto=format" alt="Tecnología láser">
+        <span class="res-label">Tecnología CO2</span>
+      </div>
+      <div class="res-cell">
+        <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=500&h=500&fit=crop&q=80&auto=format" alt="Doctor">
+        <span class="res-label">Dr. Alfaro</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ RESEÑAS ══ -->
+<section id="resenas" class="sec">
+  <div class="wrap">
+    <span class="sec-eyebrow">Testimonios</span>
+    <h2 class="sec-h2">Lo que dicen <span>nuestros pacientes</span></h2>
+    <div class="blue-rule"></div>
+
+    <div class="rating-banner">
+      <div class="rb-score">4.9</div>
+      <div class="rb-detail">
+        <div class="rb-stars">
+          <span class="rb-star">★</span><span class="rb-star">★</span><span class="rb-star">★</span>
+          <span class="rb-star">★</span><span class="rb-star">★</span>
+        </div>
+        <p class="rb-lbl">Calificación verificada · Google Reviews</p>
+        <div class="g-badge">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          <span class="g-badge-lbl">Google Reviews</span>
+        </div>
+      </div>
+      <blockquote class="rb-quote">"El Dr. Alfaro es un profesional excepcional. Me explicó todo el procedimiento con detalle y el resultado fue increíble. La verruga desapareció completamente."</blockquote>
+    </div>
+
+    <div class="carousel-outer">
+      <div class="rev-track" id="revTrack">
+        <div class="rev-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-body">"Tenía varias verrugas que me molestaban hace años. El Dr. Alfaro las eliminó en una sola sesión con el láser. Sin dolor, sin cicatrices. Resultado perfecto y definitivo."</p>
+          <div class="rev-author"><span class="rev-name">Carlos M.</span><span class="rev-date">Hace 1 semana</span></div>
+        </div>
+        <div class="rev-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-body">"Me quitó un lunar en la cara que me incomodaba. La atención fue muy profesional y el procedimiento duró menos de 15 minutos. A los 7 días no quedaba ni rastro. Muy recomendado."</p>
+          <div class="rev-author"><span class="rev-name">Miriam T.</span><span class="rev-date">Hace 2 semanas</span></div>
+        </div>
+        <div class="rev-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-body">"Fui por acrocordones en el cuello y quedé fascinada con el resultado. El doctor es muy claro en las explicaciones y transmite mucha confianza. Todo el proceso fue sencillo e indoloro."</p>
+          <div class="rev-author"><span class="rev-name">Patricia V.</span><span class="rev-date">Hace 3 semanas</span></div>
+        </div>
+        <div class="rev-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-body">"Llevé a mi mamá a tratar una verruga plantar que tenía hace más de 5 años. En una sola sesión con el láser CO2 fue eliminada. La recuperación fue rápida y sin complicaciones."</p>
+          <div class="rev-author"><span class="rev-name">Daniela R.</span><span class="rev-date">Hace 1 mes</span></div>
+        </div>
+        <div class="rev-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-body">"Fui por las secuelas de acné que arrastraba desde adolescente. El tratamiento láser mejoró notablemente mi cutis. El doctor es honesto y te dice exactamente qué esperar."</p>
+          <div class="rev-author"><span class="rev-name">Luis F.</span><span class="rev-date">Hace 1 mes</span></div>
+        </div>
+        <div class="rev-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-body">"Excelente médico. Me atendió con rapidez, me explicó el procedimiento con detalle y el resultado fue el que esperaba. El espacio es limpio y profesional. Sin duda lo recomiendo."</p>
+          <div class="rev-author"><span class="rev-name">Andrea G.</span><span class="rev-date">Hace 2 meses</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="c-dots" id="cDots"></div>
+  </div>
+</section>
+
+
+<!-- ══ CONTACTO ══ -->
+<section id="contacto" class="sec">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div>
+        <span class="sec-eyebrow">Consulta médica</span>
+        <h2 class="sec-h2">Agenda tu <span>consulta</span></h2>
+        <div class="blue-rule"></div>
+
+        <form onsubmit="handleForm(event)" class="form-side">
+          <div class="form-row">
+            <div class="f-field"><input type="text" placeholder="Tu nombre" required></div>
+            <div class="f-field"><input type="tel"  placeholder="WhatsApp" required></div>
+          </div>
+          <div class="f-field">
+            <select>
+              <option value="" disabled selected>Tipo de lesión a tratar</option>
+              <option>Verrugas</option>
+              <option>Lunares</option>
+              <option>Acrocordones</option>
+              <option>Secuelas de Acné</option>
+              <option>No sé / Quiero orientación</option>
+            </select>
+          </div>
+          <div class="f-field"><textarea placeholder="Describe brevemente tu lesión o consulta (puedes enviar foto por WhatsApp)"></textarea></div>
+          <button type="submit" class="btn-submit">Enviar consulta por WhatsApp →</button>
+        </form>
+
+        <div class="contact-info">
+          <div class="ci-row"><span class="ci-tag">WhatsApp</span><a href="https://wa.me/51987781986" style="color:var(--blue);text-decoration:none;font-weight:600;">+51 987 781 986</a></div>
+          <div class="ci-row"><span class="ci-tag">Consejo</span><span>Puedes enviar una foto de tu lesión por WhatsApp para una orientación inicial antes de agendar.</span></div>
+          <div class="ci-row"><span class="ci-tag">Horario</span><span>Lunes a Sábado: 9:00 am – 7:00 pm</span></div>
+        </div>
+      </div>
+
+      <div class="contact-img-col">
+        <img class="contact-img"
+          src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=700&h=900&fit=crop&q=80&auto=format"
+          alt="Dr. Miguel Alfaro consulta">
+        <div class="contact-img-badge">
+          <div class="cib-number">987 781 986</div>
+          <div class="cib-label">WhatsApp directo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="ft-logo">
+    <div class="ft-cross">+</div>
+    <div class="ft-lines">
+      <span class="ft-name">Dr. Miguel Alfaro</span>
+      <span class="ft-spec">Medicina Estética y Láser</span>
+    </div>
+  </div>
+  <div class="ft-links">
+    <a href="#laser"      class="ft-a">Láser CO2</a>
+    <a href="#servicios"  class="ft-a">Servicios</a>
+    <a href="#porque"     class="ft-a">Por qué el Dr.</a>
+    <a href="#resenas"    class="ft-a">Reseñas</a>
+    <a href="#contacto"   class="ft-a">Contacto</a>
+  </div>
+  <span class="ft-copy">© 2026 Dr. Miguel Alfaro · Medicina Estética y Láser · Lima, Perú</span>
+</footer>
+
+
+<!-- ══ WA FLOAT ══ -->
+<a href="https://wa.me/51987781986?text=Hola%20Dr.%20Alfaro%2C%20vengo%20de%20su%20p%C3%A1gina%20web.%20Quisiera%20consultar%20sobre%20un%20tratamiento."
+   class="wa-float" target="_blank" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zm-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884zm8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+
+<script>
+/* ── Carousel ── */
+const track = document.getElementById('revTrack');
+const dotsEl = document.getElementById('cDots');
+const cards  = track.querySelectorAll('.rev-card');
+let cur = 0, timer;
+
+function isMob() { return window.innerWidth <= 768; }
+function total() { return isMob() ? cards.length : Math.ceil(cards.length / 2); }
+
+function buildDots() {
+  dotsEl.innerHTML = '';
+  for (let i = 0; i < total(); i++) {
+    const d = document.createElement('div');
+    d.className = 'cdot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => go(i));
+    dotsEl.appendChild(d);
+  }
+}
+
+function go(idx) {
+  const n = total();
+  cur = ((idx % n) + n) % n;
+  const w   = cards[0].getBoundingClientRect().width;
+  const gap = 16;
+  const step = isMob() ? w + gap : (w + gap) * 2;
+  track.style.transform = `translateX(-${cur * step}px)`;
+  dotsEl.querySelectorAll('.cdot').forEach((d, i) => d.classList.toggle('active', i === cur));
+  clearInterval(timer);
+  timer = setInterval(() => go(cur + 1), 5000);
+}
+
+buildDots();
+timer = setInterval(() => go(cur + 1), 5000);
+window.addEventListener('resize', () => { buildDots(); go(0); });
+
+/* ── Scroll fade-in ── */
+const io = new IntersectionObserver(
+  entries => entries.forEach(e => {
+    if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; }
+  }),
+  { threshold: 0.04, rootMargin: '0px 0px -20px 0px' }
+);
+document.querySelectorAll('.serv-card, .why-card, .proc-step, .res-cell, .rev-card, .lb-item').forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(14px)';
+  el.style.transition = `opacity .5s ease ${(i % 4) * .07}s, transform .5s ease ${(i % 4) * .07}s`;
+  io.observe(el);
+});
+
+/* ── Form → WhatsApp ── */
+function handleForm(e) {
+  e.preventDefault();
+  const f = e.target.querySelectorAll('input, select, textarea');
+  const nombre  = f[0].value.trim();
+  const phone   = f[1].value.trim();
+  const lesion  = f[2].value !== '' ? f[2].value : '';
+  const detalle = f[3].value.trim();
+
+  let msg = `Hola Dr. Alfaro, vengo de su página web y quisiera consultar sobre un tratamiento.`;
+  if (nombre)  msg += `\n\n👤 Nombre: ${nombre}`;
+  if (phone)   msg += `\n📞 WhatsApp: ${phone}`;
+  if (lesion)  msg += `\n🔵 Lesión: ${lesion}`;
+  if (detalle) msg += `\n💬 Detalle: ${detalle}`;
+  msg += `\n\n¿Podría orientarme sobre el tratamiento adecuado?`;
+
+  window.open(`https://wa.me/51987781986?text=${encodeURIComponent(msg)}`, '_blank');
+  e.target.reset();
+}
+</script>
+
+</body>
+</html>

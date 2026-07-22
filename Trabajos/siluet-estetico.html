@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centro Estético Siluet by María Hilario</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+
+/* ══ RESET & TOKENS ════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --white:    #FFFFFF;
+  --bg:       #FAFAFA;
+  --bg2:      #FFF5FA;
+  --pink:     #E8187A;
+  --pink2:    #F02D90;
+  --pink-lt:  #FDE8F3;
+  --pink-dim: #F4B8DC;
+  --black:    #1A1A1A;
+  --black2:   #2D2D2D;
+  --muted:    #888;
+  --border:   #EAE0E8;
+  --border2:  #F5D5EA;
+}
+
+body {
+  background: var(--white);
+  color: var(--black);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img { display: block; }
+
+/* ══ NAV ════════════════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%; height: 68px;
+  background: rgba(255,255,255,.96);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo { text-decoration: none; display: flex; align-items: center; gap: 10px; }
+.logo-silhouette {
+  width: 38px; height: 44px; flex-shrink: 0;
+}
+.nl-lines { display: flex; flex-direction: column; line-height: 1.1; }
+.nl-top {
+  font-size: .6rem; font-weight: 500; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--muted);
+}
+.nl-siluet {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem; font-weight: 600;
+  color: var(--black); letter-spacing: .02em;
+}
+.nl-by {
+  font-family: 'Dancing Script', cursive;
+  font-size: .9rem; font-weight: 400;
+  color: var(--pink); letter-spacing: .01em;
+}
+
+.nav-links { display: flex; gap: 28px; align-items: center; }
+.nav-a {
+  font-size: .7rem; font-weight: 500; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--muted);
+  text-decoration: none; transition: color .2s;
+}
+.nav-a:hover { color: var(--pink); }
+
+.nav-cta {
+  padding: 9px 22px;
+  background: var(--pink); color: #fff;
+  font-size: .68rem; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase;
+  text-decoration: none; border-radius: 50px;
+  transition: background .2s, transform .15s;
+}
+.nav-cta:hover { background: var(--pink2); transform: scale(.97); }
+
+/* ══ HERO ════════════════════════════════════════════════════ */
+.hero {
+  position: relative; height: 100vh; min-height: 600px;
+  overflow: hidden; display: flex; align-items: center;
+}
+
+.hero-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center 20%;
+  filter: brightness(.92) saturate(.9);
+}
+
+/* Left-side gradient fade for text readability */
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,.97) 0%,
+    rgba(255,255,255,.85) 35%,
+    rgba(255,255,255,.3) 60%,
+    rgba(255,255,255,0) 100%
+  );
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative; z-index: 1;
+  padding: 0 5%; max-width: 620px;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--pink-lt); border: 1px solid var(--border2);
+  border-radius: 50px; padding: 6px 16px;
+  font-size: .68rem; font-weight: 600;
+  color: var(--pink); letter-spacing: .1em;
+  text-transform: uppercase; margin-bottom: 24px;
+}
+.hero-badge::before {
+  content: ''; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--pink); flex-shrink: 0;
+}
+
+.hero-by {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem); font-weight: 400;
+  color: var(--pink); margin-bottom: 8px;
+}
+
+.hero-h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.4rem, 5vw, 4.5rem);
+  font-weight: 600; line-height: 1.15;
+  color: var(--black); margin-bottom: 8px;
+  letter-spacing: -.01em;
+}
+.hero-h1 span { color: var(--pink); font-style: italic; }
+
+.hero-tagline {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(1.4rem, 2.8vw, 2rem);
+  color: var(--black2); margin-bottom: 24px; letter-spacing: .01em;
+}
+
+.hero-desc {
+  font-size: .84rem; color: var(--muted);
+  line-height: 1.8; max-width: 400px; margin-bottom: 36px;
+}
+
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.btn-pink {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 30px; background: var(--pink); color: #fff;
+  font-size: .72rem; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; text-decoration: none; border-radius: 50px;
+  transition: background .2s, transform .15s;
+}
+.btn-pink:hover { background: var(--pink2); transform: translateY(-2px); }
+
+.btn-outline-pink {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 30px; background: transparent;
+  border: 1.5px solid var(--pink); color: var(--pink);
+  font-size: .72rem; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; text-decoration: none; border-radius: 50px;
+  transition: background .2s, color .2s;
+}
+.btn-outline-pink:hover { background: var(--pink); color: #fff; }
+
+/* Trust badges */
+.hero-trust {
+  display: flex; gap: 20px; margin-top: 32px; flex-wrap: wrap;
+}
+.trust-item {
+  display: flex; align-items: center; gap: 8px;
+  font-size: .7rem; font-weight: 500; color: var(--muted); letter-spacing: .04em;
+}
+.trust-icon {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--pink-lt); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .9rem; flex-shrink: 0;
+}
+
+/* ══ SECTION SHARED ══════════════════════════════════════════ */
+.sec { padding: 56px 5%; }
+.wrap { max-width: 1140px; margin: 0 auto; }
+
+.sec-eyebrow {
+  font-size: .63rem; font-weight: 600; letter-spacing: .28em;
+  text-transform: uppercase; color: var(--pink); display: block; margin-bottom: 12px;
+}
+.sec-h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 600;
+  color: var(--black); line-height: 1.2; margin-bottom: 12px;
+}
+.pink-rule { width: 40px; height: 2px; background: var(--pink); border-radius: 2px; margin-bottom: 32px; }
+
+/* ══ INDIBA FEATURE ══════════════════════════════════════════ */
+#indiba {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.indiba-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 72px; align-items: center;
+}
+
+.indiba-img-wrap { position: relative; }
+.indiba-img {
+  width: 100%; height: 440px;
+  object-fit: cover; object-position: center 20%;
+  border-radius: 2px;
+}
+.indiba-badge {
+  position: absolute; top: 20px; right: 20px;
+  background: var(--pink); color: #fff;
+  padding: 8px 16px; font-size: .62rem;
+  font-weight: 700; letter-spacing: .16em;
+  text-transform: uppercase; text-align: center;
+  border-radius: 2px;
+}
+
+.indiba-quote {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  color: var(--pink); margin-bottom: 20px; line-height: 1.4;
+}
+.indiba-body {
+  font-size: .84rem; color: var(--muted);
+  line-height: 1.85; margin-bottom: 28px;
+}
+
+.highlight-box {
+  background: var(--pink-lt);
+  border-left: 3px solid var(--pink);
+  padding: 18px 20px;
+  margin-bottom: 28px;
+}
+.hb-text {
+  font-size: .82rem; font-weight: 500;
+  color: var(--black2); line-height: 1.7;
+}
+.hb-text strong { color: var(--pink); }
+
+/* ══ SERVICIOS ═══════════════════════════════════════════════ */
+#servicios { background: var(--white); }
+
+.serv-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.serv-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 28px 22px;
+  position: relative; overflow: hidden;
+  transition: border-color .25s, transform .25s, box-shadow .25s;
+}
+.serv-card:hover {
+  border-color: var(--pink-dim);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(232,24,122,.08);
+}
+.serv-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--pink); transform: scaleX(0); transform-origin: left;
+  transition: transform .32s cubic-bezier(.4,0,.2,1);
+}
+.serv-card:hover::before { transform: scaleX(1); }
+
+.sc-icon {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--pink-lt); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; margin-bottom: 16px;
+}
+.sc-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem; font-weight: 600;
+  color: var(--black); margin-bottom: 10px;
+}
+.sc-desc {
+  font-size: .78rem; color: var(--muted); line-height: 1.75;
+}
+
+/* ══ BENEFICIOS ══════════════════════════════════════════════ */
+#beneficios { background: var(--black); }
+
+.ben-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: #2A2A2A;
+  border: 1px solid #2A2A2A;
+}
+.ben-item {
+  background: var(--black);
+  padding: 32px 28px;
+  display: flex; align-items: flex-start; gap: 16px;
+  transition: background .2s;
+}
+.ben-item:hover { background: #111; }
+
+.ben-icon {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(232,24,122,.12);
+  border: 1px solid rgba(232,24,122,.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .95rem;
+}
+.ben-text { display: flex; flex-direction: column; gap: 4px; }
+.ben-title {
+  font-size: .82rem; font-weight: 600;
+  color: var(--white); line-height: 1.3;
+}
+.ben-desc { font-size: .74rem; color: rgba(255,255,255,.4); line-height: 1.55; }
+
+/* Quote banner */
+.quote-banner {
+  background: var(--pink);
+  padding: 32px 5%; text-align: center;
+}
+.qb-text {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(1.4rem, 3vw, 2.4rem);
+  color: #fff; letter-spacing: .02em;
+}
+
+/* ══ IDEAL PARA ══════════════════════════════════════════════ */
+#ideal { background: var(--bg2); }
+.ideal-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+}
+.ideal-card {
+  background: var(--white); border: 1px solid var(--border);
+  padding: 28px 22px; text-align: center;
+  transition: border-color .2s, box-shadow .2s;
+}
+.ideal-card:hover {
+  border-color: var(--pink-dim);
+  box-shadow: 0 8px 24px rgba(232,24,122,.07);
+}
+.ideal-icon { font-size: 1.8rem; margin-bottom: 14px; }
+.ideal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: .95rem; font-weight: 600;
+  color: var(--black); margin-bottom: 8px;
+}
+.ideal-desc { font-size: .75rem; color: var(--muted); line-height: 1.65; }
+
+/* ══ GALLERY ═════════════════════════════════════════════════ */
+#galeria { background: var(--white); padding: 56px 0; }
+#galeria .wrap { padding: 0 5%; }
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 260px 260px;
+  gap: 4px;
+}
+.g-cell { overflow: hidden; position: relative; }
+.g-cell.tall { grid-row: span 2; }
+.g-cell img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: brightness(.95) saturate(.85);
+  transition: transform .55s cubic-bezier(.4,0,.2,1), filter .4s;
+}
+.g-cell:hover img { transform: scale(1.04); filter: brightness(1) saturate(1); }
+
+/* ══ RESEÑAS ═════════════════════════════════════════════════ */
+#resenas { background: var(--bg2); }
+
+.rating-hero {
+  display: flex; align-items: center; gap: 32px;
+  margin-bottom: 40px; padding-bottom: 36px;
+  border-bottom: 1px solid var(--border);
+}
+.rating-score {
+  font-family: 'Playfair Display', serif;
+  font-size: 4.5rem; font-weight: 600; line-height: 1;
+  color: var(--pink);
+}
+.rating-detail { display: flex; flex-direction: column; gap: 8px; }
+.rating-stars { display: flex; gap: 4px; }
+.star { color: var(--pink); font-size: 1.2rem; }
+.rating-label { font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.g-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border: 1px solid var(--border);
+  background: var(--white); width: fit-content; border-radius: 50px;
+}
+.g-badge svg { width: 13px; height: 13px; }
+.g-badge-text { font-size: .62rem; letter-spacing: .1em; color: var(--muted); text-transform: uppercase; }
+
+/* Carousel */
+.carousel-wrap { overflow: hidden; }
+.reviews-track {
+  display: flex; gap: 16px;
+  transition: transform .65s cubic-bezier(.4,0,.2,1);
+}
+.review-card {
+  flex: 0 0 calc(50% - 8px);
+  background: var(--white); border: 1px solid var(--border);
+  padding: 28px 26px; display: flex; flex-direction: column; gap: 14px;
+  transition: border-color .25s, box-shadow .25s;
+}
+.review-card:hover { border-color: var(--pink-dim); box-shadow: 0 8px 24px rgba(232,24,122,.07); }
+.rev-stars { display: flex; gap: 3px; }
+.rev-star { color: var(--pink); font-size: .9rem; }
+.rev-text {
+  font-family: 'Playfair Display', serif;
+  font-size: .95rem; font-style: italic; font-weight: 400;
+  color: var(--black2); line-height: 1.7; flex: 1;
+}
+.rev-author { display: flex; flex-direction: column; gap: 2px; }
+.rev-name { font-size: .75rem; font-weight: 600; color: var(--black); letter-spacing: .04em; }
+.rev-date { font-size: .65rem; color: var(--muted); }
+
+.carousel-dots { display: flex; gap: 8px; justify-content: center; margin-top: 24px; }
+.cdot {
+  width: 20px; height: 2px; background: var(--border); cursor: pointer;
+  transition: background .25s, width .25s; border-radius: 2px;
+}
+.cdot.active { background: var(--pink); width: 36px; }
+
+/* ══ CONTACTO ════════════════════════════════════════════════ */
+#contacto { background: var(--white); border-top: 1px solid var(--border); }
+
+.contact-grid {
+  display: grid; grid-template-columns: 1fr 1.1fr;
+  gap: 72px; align-items: start;
+}
+
+.contact-img-wrap { position: relative; }
+.contact-img { width: 100%; height: 480px; object-fit: cover; object-position: center 15%; border-radius: 2px; }
+.contact-img-caption {
+  position: absolute; bottom: 16px; left: 16px;
+  font-size: .6rem; letter-spacing: .18em;
+  text-transform: uppercase; color: rgba(255,255,255,.6);
+}
+
+.contact-form { display: flex; flex-direction: column; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; }
+.f-field {
+  border-bottom: 1px solid var(--border); transition: border-color .2s;
+}
+.f-field:focus-within { border-color: var(--pink); }
+.f-field input, .f-field textarea {
+  width: 100%; padding: 17px 0;
+  background: none; border: none; color: var(--black);
+  font-family: 'Montserrat', sans-serif; font-size: .8rem;
+  font-weight: 300; outline: none;
+}
+.f-field input::placeholder, .f-field textarea::placeholder { color: var(--muted); }
+.f-field textarea { resize: none; min-height: 90px; }
+
+.btn-pink-submit {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 36px; background: var(--pink); color: #fff;
+  font-size: .72rem; font-weight: 600; letter-spacing: .14em;
+  text-transform: uppercase; border: none; border-radius: 50px;
+  cursor: pointer; transition: background .2s; width: fit-content; margin-top: 28px;
+}
+.btn-pink-submit:hover { background: var(--pink2); }
+
+.contact-info { margin-top: 32px; display: flex; flex-direction: column; gap: 16px; }
+.ci-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  font-size: .78rem; color: var(--muted); line-height: 1.6;
+}
+.ci-label {
+  font-size: .62rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--pink); min-width: 72px; flex-shrink: 0; padding-top: 1px;
+}
+
+/* ══ WHATSAPP FLOAT ══════════════════════════════════════════ */
+.wa-float {
+  position: fixed; bottom: 28px; right: 28px; z-index: 500;
+  width: 54px; height: 54px; background: #25D366; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 18px rgba(37,211,102,.38); text-decoration: none;
+  transition: transform .2s, box-shadow .2s;
+}
+.wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 26px rgba(37,211,102,.55); }
+.wa-float svg { width: 27px; height: 27px; fill: #fff; }
+
+/* ══ FOOTER ══════════════════════════════════════════════════ */
+footer {
+  background: var(--black);
+  padding: 40px 5%;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.ft-logo { display: flex; flex-direction: column; line-height: 1.2; }
+.ft-logo-siluet {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem; font-weight: 600; color: var(--white);
+}
+.ft-logo-by {
+  font-family: 'Dancing Script', cursive;
+  font-size: .9rem; color: var(--pink);
+}
+.ft-copy { font-size: .62rem; letter-spacing: .1em; color: rgba(255,255,255,.2); text-transform: uppercase; }
+.ft-links { display: flex; gap: 22px; }
+.ft-link {
+  font-size: .62rem; letter-spacing: .12em; text-transform: uppercase;
+  color: rgba(255,255,255,.25); text-decoration: none; transition: color .2s;
+}
+.ft-link:hover { color: var(--pink); }
+
+/* ══ RESPONSIVE ══════════════════════════════════════════════ */
+@media (max-width: 960px) {
+  .indiba-grid { grid-template-columns: 1fr; }
+  .indiba-img-wrap { display: none; }
+  .serv-grid { grid-template-columns: repeat(2, 1fr); }
+  .ben-grid { grid-template-columns: repeat(2, 1fr); }
+  .ideal-grid { grid-template-columns: repeat(2, 1fr); }
+  .contact-grid { grid-template-columns: 1fr; }
+  .contact-img-wrap { display: none; }
+  .review-card { flex: 0 0 calc(100% - 8px); }
+  .nav-links .nav-a { display: none; }
+  .rating-hero { flex-direction: column; gap: 12px; }
+  .hero-overlay { background: linear-gradient(to right, rgba(255,255,255,.97) 0%, rgba(255,255,255,.92) 60%, rgba(255,255,255,.7) 100%); }
+}
+@media (max-width: 600px) {
+  .serv-grid { grid-template-columns: 1fr; }
+  .ben-grid { grid-template-columns: 1fr; }
+  .ideal-grid { grid-template-columns: repeat(2, 1fr); }
+  .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .g-cell.tall { grid-row: span 1; }
+  .form-row { grid-template-columns: 1fr; }
+  .hero-btns { flex-direction: column; align-items: flex-start; }
+}
+
+  </style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <a href="#" class="nav-logo">
+    <!-- Silhouette SVG simplified -->
+    <svg class="logo-silhouette" viewBox="0 0 38 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 4 C19 4 14 7 13 11 C12 14 14 16 15 18 C16 20 15.5 22 14 24 C12 27 9 29 9 34 C9 39 13 44 19 44 C25 44 29 39 29 34 C29 29 26 27 24 24 C22.5 22 22 20 23 18 C24 16 26 14 25 11 C24 7 19 4 19 4Z" stroke="#1A1A1A" stroke-width="1.2" fill="none"/>
+      <path d="M15 28 C13 30 11 32 11 35 C11 38 14 41 19 41 C24 41 27 38 27 35 C27 32 25 30 23 28" stroke="#E8187A" stroke-width="1" fill="none"/>
+    </svg>
+    <div class="nl-lines">
+      <span class="nl-top">Centro Estético</span>
+      <span class="nl-siluet">Siluet</span>
+      <span class="nl-by">by María Hilario</span>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="#indiba"    class="nav-a">INDIBA</a>
+    <a href="#servicios" class="nav-a">Servicios</a>
+    <a href="#galeria"   class="nav-a">Galería</a>
+    <a href="#contacto"  class="nav-a">Contacto</a>
+    <a href="https://wa.me/51954158000?text=Hola%2C%20quiero%20agendar%20una%20cita%20en%20Siluet" class="nav-cta" target="_blank">Reservar cita</a>
+  </div>
+</nav>
+
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <img class="hero-img"
+    src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=1920&h=1080&fit=crop&q=85&auto=format"
+    alt="Centro Estético Siluet">
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">Tecnología clínicamente probada</div>
+    <p class="hero-by">by María Hilario</p>
+    <h1 class="hero-h1">Centro Estético<br><span>Siluet</span></h1>
+    <p class="hero-tagline">Activamos tu mejor versión.</p>
+    <p class="hero-desc">Especialistas en Lifting Facial con tecnología INDIBA — resultados visibles desde la primera sesión, sin dolor y sin tiempo de recuperación.</p>
+    <div class="hero-btns">
+      <a href="https://wa.me/51954158000?text=Hola%2C%20quiero%20agendar%20una%20cita%20en%20Siluet" class="btn-pink" target="_blank">Reservar cita ahora</a>
+      <a href="#indiba" class="btn-outline-pink">Conocer INDIBA →</a>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-item"><div class="trust-icon">✓</div>Sin dolor</div>
+      <div class="trust-item"><div class="trust-icon">✓</div>Sin agujas</div>
+      <div class="trust-item"><div class="trust-icon">✓</div>Sin recuperación</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ INDIBA FEATURE ══ -->
+<section id="indiba" class="sec">
+  <div class="wrap">
+    <div class="indiba-grid">
+      <div class="indiba-img-wrap">
+        <img class="indiba-img"
+          src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=700&h=700&fit=crop&q=80&auto=format"
+          alt="Lifting Facial INDIBA">
+        <div class="indiba-badge">INDIBA®<br>Radiofrecuencia</div>
+      </div>
+
+      <div>
+        <span class="sec-eyebrow">Tratamiento estrella</span>
+        <h2 class="sec-h2">Lifting Facial<br>con INDIBA®</h2>
+        <div class="pink-rule"></div>
+        <p class="indiba-quote">"Efecto lifting natural sin dolor, sin agujas, sin tiempo de recuperación."</p>
+        <p class="indiba-body">INDIBA es una tecnología de radiofrecuencia que actúa en profundidad, estimulando la producción de colágeno y elastina, mejorando la firmeza, elasticidad y calidad de la piel desde el interior.</p>
+        <div class="highlight-box">
+          <p class="hb-text"><strong>Resultados visibles desde las primeras sesiones.</strong> Piel más firme, joven y radiante en cada sesión — tratamiento cómodo, no invasivo y sin tiempo de recuperación.</p>
+        </div>
+        <a href="https://wa.me/51954158000?text=Hola%2C%20me%20interesa%20el%20Lifting%20Facial%20con%20INDIBA" class="btn-pink" target="_blank">Consultar disponibilidad →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ SERVICIOS ══ -->
+<section id="servicios" class="sec" style="background: var(--bg);">
+  <div class="wrap">
+    <span class="sec-eyebrow">Especialidades</span>
+    <h2 class="sec-h2">Nuestros tratamientos</h2>
+    <div class="pink-rule"></div>
+
+    <div class="serv-grid">
+      <div class="serv-card">
+        <div class="sc-icon">⚡</div>
+        <div class="sc-name">Lifting Facial INDIBA</div>
+        <div class="sc-desc">Radiofrecuencia de alta tecnología para un efecto lifting inmediato y progresivo. Estimula colágeno y elastina desde el interior.</div>
+      </div>
+      <div class="serv-card">
+        <div class="sc-icon">✨</div>
+        <div class="sc-name">Rejuvenecimiento</div>
+        <div class="sc-desc">Tratamientos integrales que combaten los signos del envejecimiento y devuelven a la piel su vitalidad y luminosidad natural.</div>
+      </div>
+      <div class="serv-card">
+        <div class="sc-icon">💫</div>
+        <div class="sc-name">Reafirmación</div>
+        <div class="sc-desc">Técnicas avanzadas para reafirmar y tonificar la piel flácida, recuperando firmeza y definición del contorno facial.</div>
+      </div>
+      <div class="serv-card">
+        <div class="sc-icon">🌟</div>
+        <div class="sc-name">Iluminación de Piel</div>
+        <div class="sc-desc">Tratamientos específicos para mejorar la luminosidad y textura de la piel, dejándola radiante y uniforme.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ BENEFICIOS ══ -->
+<section id="beneficios" class="sec">
+  <div class="wrap">
+    <span class="sec-eyebrow" style="color:rgba(232,24,122,.7);">Por qué elegirnos</span>
+    <h2 class="sec-h2" style="color:#fff; margin-bottom:32px;">Beneficios comprobados</h2>
+
+    <div class="ben-grid">
+      <div class="ben-item">
+        <div class="ben-icon">⚡</div>
+        <div class="ben-text">
+          <span class="ben-title">Efecto lifting inmediato y progresivo</span>
+          <span class="ben-desc">Resultados visibles desde la primera sesión con mejora continua.</span>
+        </div>
+      </div>
+      <div class="ben-item">
+        <div class="ben-icon">💪</div>
+        <div class="ben-text">
+          <span class="ben-title">Reafirma y tonifica la piel</span>
+          <span class="ben-desc">Recupera la firmeza y elasticidad de forma natural y duradera.</span>
+        </div>
+      </div>
+      <div class="ben-item">
+        <div class="ben-icon">✦</div>
+        <div class="ben-text">
+          <span class="ben-title">Reduce arrugas y líneas de expresión</span>
+          <span class="ben-desc">Acción profunda sobre las líneas finas y arrugas establecidas.</span>
+        </div>
+      </div>
+      <div class="ben-item">
+        <div class="ben-icon">🌟</div>
+        <div class="ben-text">
+          <span class="ben-title">Mejora luminosidad y textura</span>
+          <span class="ben-desc">Piel más uniforme, luminosa y de textura suave y sedosa.</span>
+        </div>
+      </div>
+      <div class="ben-item">
+        <div class="ben-icon">🔬</div>
+        <div class="ben-text">
+          <span class="ben-title">Estimula colágeno y elastina</span>
+          <span class="ben-desc">Activa la producción natural de proteínas estructurales de la piel.</span>
+        </div>
+      </div>
+      <div class="ben-item">
+        <div class="ben-icon">✓</div>
+        <div class="ben-text">
+          <span class="ben-title">Sin dolor · Sin agujas · Sin recuperación</span>
+          <span class="ben-desc">Tratamiento cómodo y seguro, listo para retomar tu día de inmediato.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quote banner -->
+<div class="quote-banner">
+  <p class="qb-text">Piel más firme, joven y radiante en cada sesión.</p>
+</div>
+
+
+<!-- ══ IDEAL PARA ══ -->
+<section id="ideal" class="sec">
+  <div class="wrap">
+    <span class="sec-eyebrow">Indicaciones</span>
+    <h2 class="sec-h2">Ideal para tratar</h2>
+    <div class="pink-rule"></div>
+
+    <div class="ideal-grid">
+      <div class="ideal-card">
+        <div class="ideal-icon">😌</div>
+        <div class="ideal-title">Flacidez Facial</div>
+        <div class="ideal-desc">Piel que ha perdido tonicidad y firmeza con el paso del tiempo.</div>
+      </div>
+      <div class="ideal-card">
+        <div class="ideal-icon">〰️</div>
+        <div class="ideal-title">Líneas de Expresión</div>
+        <div class="ideal-desc">Arrugas y líneas finas alrededor de los ojos, boca y frente.</div>
+      </div>
+      <div class="ideal-card">
+        <div class="ideal-icon">💎</div>
+        <div class="ideal-title">Pérdida de Firmeza</div>
+        <div class="ideal-desc">Contorno facial difuminado o caída del óvalo con la gravedad.</div>
+      </div>
+      <div class="ideal-card">
+        <div class="ideal-icon">✨</div>
+        <div class="ideal-title">Falta de Luminosidad</div>
+        <div class="ideal-desc">Piel apagada, sin brillo o con tono irregular y sin vida.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ GALERÍA ══ -->
+<section id="galeria">
+  <div class="wrap">
+    <span class="sec-eyebrow">Galería</span>
+    <h2 class="sec-h2" style="margin-bottom:32px;">Nuestros resultados</h2>
+
+    <div class="gallery-grid">
+      <div class="g-cell tall">
+        <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&h=800&fit=crop&q=80&auto=format" alt="Tratamiento facial">
+      </div>
+      <div class="g-cell">
+        <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&h=360&fit=crop&q=80&auto=format" alt="Radiofrecuencia">
+      </div>
+      <div class="g-cell">
+        <img src="https://images.unsplash.com/photo-1552693673-1bf958298935?w=600&h=360&fit=crop&q=80&auto=format" alt="Spa interior">
+      </div>
+      <div class="g-cell">
+        <img src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=600&h=360&fit=crop&q=80&auto=format" alt="Cuidado facial">
+      </div>
+      <div class="g-cell">
+        <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=600&h=360&fit=crop&q=80&auto=format" alt="Tratamiento">
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ RESEÑAS ══ -->
+<section id="resenas" class="sec">
+  <div class="wrap">
+    <span class="sec-eyebrow">Reseñas</span>
+    <h2 class="sec-h2">Lo que dicen nuestras clientas</h2>
+    <div class="pink-rule"></div>
+
+    <div class="rating-hero">
+      <div class="rating-score">4.9</div>
+      <div class="rating-detail">
+        <div class="rating-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          <span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="rating-label">Reseñas verificadas de clientes</p>
+        <div class="g-badge">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          <span class="g-badge-text">Google Reviews</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-wrap">
+      <div class="reviews-track" id="reviewsTrack">
+        <div class="review-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-text">"El Lifting Facial con INDIBA fue increíble. Desde la primera sesión noté mi piel más firme y luminosa. La atención de María es excelente y muy profesional."</p>
+          <div class="rev-author"><span class="rev-name">Claudia M.</span><span class="rev-date">Hace 1 semana</span></div>
+        </div>
+        <div class="review-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-text">"Vengo hace 3 meses y los resultados son impresionantes. Mi piel está visiblemente más joven y firme. Lo mejor es que es completamente indoloro y sin recuperación."</p>
+          <div class="rev-author"><span class="rev-name">Rosa T.</span><span class="rev-date">Hace 2 semanas</span></div>
+        </div>
+        <div class="review-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-text">"Probé varios centros estéticos y ninguno me dio los resultados que me dio Siluet. María es una especialista real, con criterio y mucho conocimiento. 100% recomendada."</p>
+          <div class="rev-author"><span class="rev-name">Patricia V.</span><span class="rev-date">Hace 3 semanas</span></div>
+        </div>
+        <div class="review-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-text">"Fui con muchas dudas sobre la radiofrecuencia y me fui completamente convencida. El tratamiento es muy cómodo y María te explica todo con total claridad. Resultados reales."</p>
+          <div class="rev-author"><span class="rev-name">Luciana P.</span><span class="rev-date">Hace 1 mes</span></div>
+        </div>
+        <div class="review-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-text">"El ambiente es muy limpio, moderno y profesional. Me sentí en manos expertas desde el momento en que llegué. Mi piel mejoró notablemente con solo 4 sesiones."</p>
+          <div class="rev-author"><span class="rev-name">Sandra R.</span><span class="rev-date">Hace 1 mes</span></div>
+        </div>
+        <div class="review-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-text">"Tenía flacidez en el óvalo facial y después de 6 sesiones con INDIBA el cambio es impresionante. Un lifting sin cirugía que realmente funciona. Agradecidísima."</p>
+          <div class="rev-author"><span class="rev-name">Mónica C.</span><span class="rev-date">Hace 2 meses</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="carousel-dots" id="carouselDots"></div>
+  </div>
+</section>
+
+
+<!-- ══ CONTACTO ══ -->
+<section id="contacto" class="sec">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div>
+        <span class="sec-eyebrow">Reservas</span>
+        <h2 class="sec-h2">Agenda tu cita</h2>
+        <div class="pink-rule"></div>
+
+        <form class="contact-form" onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="f-field"><input type="text" placeholder="Tu nombre"></div>
+            <div class="f-field"><input type="tel" placeholder="WhatsApp"></div>
+          </div>
+          <div class="f-field"><input type="text" placeholder="Tratamiento de interés"></div>
+          <div class="f-field"><textarea placeholder="¿Cuéntanos sobre tu piel o consulta?"></textarea></div>
+          <button type="submit" class="btn-pink-submit">Solicitar cita →</button>
+        </form>
+
+        <div class="contact-info">
+          <div class="ci-item">
+            <span class="ci-label">WhatsApp</span>
+            <a href="https://wa.me/51954158000" style="color:var(--pink);text-decoration:none;">+51 954 158 000</a>
+          </div>
+          <div class="ci-item">
+            <span class="ci-label">Horario</span>
+            <span>Lunes a Sábado: 9:00 am – 7:00 pm</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-img-wrap">
+        <img class="contact-img"
+          src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=700&h=900&fit=crop&q=80&auto=format"
+          alt="Centro Estético Siluet">
+        <span class="contact-img-caption">Centro Estético Siluet · by María Hilario</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="ft-logo">
+    <span class="ft-logo-siluet">Centro Estético Siluet</span>
+    <span class="ft-logo-by">by María Hilario</span>
+  </div>
+  <div class="ft-links">
+    <a href="#indiba"    class="ft-link">INDIBA</a>
+    <a href="#servicios" class="ft-link">Servicios</a>
+    <a href="#galeria"   class="ft-link">Galería</a>
+    <a href="#contacto"  class="ft-link">Contacto</a>
+  </div>
+  <span class="ft-copy">© 2026 Siluet by María Hilario</span>
+</footer>
+
+
+<!-- ══ WHATSAPP FLOAT ══ -->
+<a href="https://wa.me/51954158000?text=Hola%2C%20vengo%20de%20la%20p%C3%A1gina%20web%20de%20Siluet.%20Quisiera%20consultar%20sobre%20sus%20tratamientos."
+   class="wa-float" target="_blank" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zm-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884zm8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+
+<script>
+/* ── Reviews carousel ── */
+const track    = document.getElementById('reviewsTrack');
+const dotsWrap = document.getElementById('carouselDots');
+const cards    = track.querySelectorAll('.review-card');
+const isMobile = () => window.innerWidth <= 960;
+let current = 0, autoTimer;
+
+function totalSlides() { return isMobile() ? cards.length : Math.ceil(cards.length / 2); }
+
+function buildDots() {
+  dotsWrap.innerHTML = '';
+  for (let i = 0; i < totalSlides(); i++) {
+    const d = document.createElement('div');
+    d.className = 'cdot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(d);
+  }
+}
+
+function goTo(idx) {
+  const n = totalSlides();
+  current = ((idx % n) + n) % n;
+  const cardW = cards[0].getBoundingClientRect().width;
+  const gap = 16;
+  track.style.transform = `translateX(-${current * (isMobile() ? cardW + gap : (cardW + gap) * 2)}px)`;
+  dotsWrap.querySelectorAll('.cdot').forEach((d, i) => d.classList.toggle('active', i === current));
+  clearInterval(autoTimer);
+  autoTimer = setInterval(() => goTo(current + 1), 4200);
+}
+
+function resetTimer() {
+  clearInterval(autoTimer);
+  autoTimer = setInterval(() => goTo(current + 1), 4200);
+}
+
+buildDots(); resetTimer();
+window.addEventListener('resize', () => { buildDots(); goTo(0); });
+
+
+/* ── Scroll fade-in ── */
+const io = new IntersectionObserver(
+  entries => entries.forEach(e => {
+    if (e.isIntersecting) { e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; }
+  }),
+  { threshold: 0.05, rootMargin: '0px 0px -20px 0px' }
+);
+document.querySelectorAll('.serv-card, .ben-item, .ideal-card, .g-cell, .review-card, .indiba-grid').forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(16px)';
+  el.style.transition = `opacity .55s cubic-bezier(.16,1,.3,1) ${(i % 4) * 0.07}s, transform .55s cubic-bezier(.16,1,.3,1) ${(i % 4) * 0.07}s`;
+  io.observe(el);
+});
+
+
+/* ── Form → WhatsApp ── */
+function handleSubmit(e) {
+  e.preventDefault();
+  const fields   = e.target.querySelectorAll('input, textarea');
+  const nombre   = fields[0].value.trim();
+  const telefono = fields[1].value.trim();
+  const trat     = fields[2].value.trim();
+  const mensaje  = fields[3].value.trim();
+
+  let text = `Hola! Vengo de la página web de Siluet by María Hilario y quisiera reservar una cita.`;
+  if (nombre)   text += `\n\n👤 Nombre: ${nombre}`;
+  if (telefono) text += `\n📞 Teléfono: ${telefono}`;
+  if (trat)     text += `\n✨ Tratamiento: ${trat}`;
+  if (mensaje)  text += `\n💬 Consulta: ${mensaje}`;
+
+  window.open(`https://wa.me/51954158000?text=${encodeURIComponent(text)}`, '_blank');
+  e.target.reset();
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+<svg width="320" height="80" viewBox="0 0 320 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dark background so the logo works everywhere -->
+  <rect width="320" height="80" rx="0" fill="#080808"/>
+
+  <!-- Wordmark: SCRAPPY. -->
+  <text
+    x="12" y="52"
+    font-family="'Bebas Neue', Impact, 'Arial Narrow', sans-serif"
+    font-size="52"
+    fill="#FFFFFF"
+    letter-spacing="3"
+  >SCRAPPY.</text>
+
+  <!-- Gradient definitions -->
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#FF2828"/>
+      <stop offset="22%"  stop-color="#FF8800"/>
+      <stop offset="45%"  stop-color="#FFD200"/>
+      <stop offset="62%"  stop-color="#FFFFFF"/>
+      <stop offset="82%"  stop-color="#00AAFF"/>
+      <stop offset="100%" stop-color="#0044FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Accent: dot + gradient bar -->
+  <circle cx="15" cy="65" r="4" fill="#FF2828"/>
+  <rect x="22" y="62" width="160" height="5" rx="2.5" fill="url(#g)"/>
+
+  <!-- STUDIO label — right of gradient bar, light gray so visible on dark -->
+  <text
+    x="192" y="68"
+    font-family="'Inter', 'Helvetica Neue', Arial, sans-serif"
+    font-size="11"
+    font-weight="700"
+    fill="#555555"
+    letter-spacing="3"
+  >STUDIO</text>
+</svg>

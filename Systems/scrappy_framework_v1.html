@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scrappy — Framework Operativo v1</title>
+  <style>
+
+/* ══ RESET & BASE ══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --green:      #1A5C38;
+  --green-lt:   #EBF5EE;
+  --green-mid:  #2D7A50;
+  --gold:       #F4B942;
+  --gold-lt:    #FEF6E3;
+  --gold-drk:   #B8871A;
+  --gray:       #9CA3AF;
+  --gray-lt:    #F4F5F6;
+  --gray-bd:    #D1D5DB;
+  --black:      #111827;
+  --text:       #374151;
+  --bg:         #F8F9FA;
+  --white:      #FFFFFF;
+  --arrow:      #CBD5E1;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  padding: 0 0 60px;
+}
+
+/* ══ HEADER ════════════════════════════════════════════════════ */
+.page-header {
+  background: var(--green);
+  padding: 28px 40px 24px;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+  border-bottom: 3px solid var(--gold);
+}
+.header-left {}
+.logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.logo-s {
+  width: 34px; height: 34px;
+  background: var(--gold); border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; color: var(--green); flex-shrink: 0;
+}
+.page-title {
+  font-size: 20px; font-weight: 700; color: var(--white); letter-spacing: -.3px;
+}
+.page-sub {
+  font-size: 12px; color: rgba(255,255,255,.5);
+  letter-spacing: .06em; text-transform: uppercase; margin-left: 44px;
+}
+.header-meta {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+}
+.meta-tag {
+  font-size: 10px; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; color: rgba(255,255,255,.4);
+}
+.meta-date {
+  font-size: 12px; font-weight: 600; color: var(--gold);
+}
+
+/* ══ LEGEND ════════════════════════════════════════════════════ */
+.legend-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-bd);
+  padding: 10px 40px;
+  display: flex; align-items: center; gap: 28px; flex-wrap: wrap;
+}
+.legend-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gray); margin-right: 4px; }
+.leg { display: flex; align-items: center; gap: 8px; }
+.leg-dot {
+  width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0;
+}
+.leg-dot.built    { background: var(--green); }
+.leg-dot.progress { background: var(--gold); }
+.leg-dot.pending  { background: var(--gray-bd); border: 2px dashed var(--gray); }
+.leg-text { font-size: 11px; font-weight: 600; color: var(--text); }
+.leg-sub  { font-size: 10px; color: var(--gray); }
+
+/* ══ FLOW SECTION ══════════════════════════════════════════════ */
+.flow-section {
+  padding: 32px 40px 0;
+  overflow-x: auto;
+}
+
+.flow-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  min-width: fit-content;
+  padding-bottom: 8px;
+}
+
+/* ══ PHASE CARD ════════════════════════════════════════════════ */
+.phase {
+  width: 192px; flex-shrink: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+  position: relative;
+  transition: transform .18s, box-shadow .18s;
+}
+.phase:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.1), 0 12px 32px rgba(0,0,0,.08);
+}
+
+/* ── Built (green) ── */
+.phase.built .ph-head   { background: var(--green); }
+.phase.built .ph-body   { background: var(--white); border: 1.5px solid var(--green); border-top: none; }
+.phase.built .ph-badge  { background: rgba(255,255,255,.18); color: rgba(255,255,255,.9); }
+.phase.built .ph-metric { background: var(--green-lt); border-top: 1.5px solid #C8E6D2; color: var(--green); }
+
+/* ── In Progress (gold) ── */
+.phase.progress .ph-head  { background: var(--gold); }
+.phase.progress .ph-body  { background: var(--white); border: 1.5px solid var(--gold); border-top: none; }
+.phase.progress .ph-badge { background: rgba(0,0,0,.1); color: rgba(0,0,0,.65); }
+.phase.progress .ph-metric { background: var(--gold-lt); border-top: 1.5px solid #F5D88C; color: var(--gold-drk); }
+.phase.progress .ph-num   { color: rgba(0,0,0,.5) !important; }
+.phase.progress .ph-name  { color: var(--black) !important; }
+.phase.progress .ph-icon  { color: rgba(0,0,0,.7) !important; }
+
+/* ── Pending (gray) ── */
+.phase.pending .ph-head   { background: var(--gray-lt); border: 1.5px dashed var(--gray-bd); border-bottom: none; }
+.phase.pending .ph-body   { background: var(--white); border: 1.5px dashed var(--gray-bd); border-top: none; }
+.phase.pending .ph-badge  { background: var(--gray-bd); color: var(--gray); }
+.phase.pending .ph-metric { background: var(--gray-lt); border-top: 1.5px dashed var(--gray-bd); color: var(--gray); }
+.phase.pending .ph-num    { color: var(--gray) !important; }
+.phase.pending .ph-name   { color: var(--gray) !important; }
+.phase.pending .ph-icon   { color: var(--gray) !important; }
+
+.ph-head {
+  padding: 14px 14px 12px;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
+}
+.ph-head-left { display: flex; flex-direction: column; gap: 3px; }
+.ph-num {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: rgba(255,255,255,.65);
+}
+.ph-name {
+  font-size: 12.5px; font-weight: 700; line-height: 1.25;
+  color: var(--white); letter-spacing: -.1px;
+}
+.ph-icon { font-size: 22px; line-height: 1; color: rgba(255,255,255,.9); flex-shrink: 0; }
+
+.ph-badge {
+  display: inline-block; padding: 3px 8px;
+  font-size: 9px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; border-radius: 50px;
+  margin-top: 8px; width: fit-content;
+}
+
+.ph-body { padding: 12px 14px 14px; }
+.ph-desc { font-size: 11px; color: var(--text); line-height: 1.6; }
+
+.ph-features {
+  margin-top: 10px; display: flex; flex-direction: column; gap: 4px;
+}
+.ph-feat {
+  font-size: 10px; color: var(--text);
+  display: flex; align-items: flex-start; gap: 5px; line-height: 1.4;
+}
+.ph-feat::before { content: '·'; color: var(--gray); flex-shrink: 0; }
+
+.ph-metric {
+  padding: 8px 14px;
+  font-size: 10px; font-weight: 700; line-height: 1.35;
+}
+.pm-value { font-size: 15px; font-weight: 800; display: block; line-height: 1.1; margin-bottom: 1px; }
+
+/* ══ ARROW ═════════════════════════════════════════════════════ */
+.arrow-wrap {
+  display: flex; align-items: center;
+  padding-top: 55px; /* aligns with card body */
+  flex-shrink: 0;
+  width: 28px;
+}
+.arrow-line {
+  width: 100%; display: flex; flex-direction: column; align-items: center; gap: 0;
+}
+.a-shaft {
+  width: 100%; height: 1.5px; background: var(--arrow); position: relative;
+}
+.a-shaft::after {
+  content: '▶';
+  position: absolute; right: -6px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 8px; color: var(--arrow); line-height: 1;
+}
+
+/* ══ ROW SEPARATOR ═════════════════════════════════════════════ */
+.row-label {
+  padding: 20px 40px 8px;
+  display: flex; align-items: center; gap: 16px;
+}
+.rl-text {
+  font-size: 9px; font-weight: 700; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--gray);
+  white-space: nowrap;
+}
+.rl-line { flex: 1; height: 1px; background: var(--gray-bd); max-width: 600px; }
+
+/* ══ INSIGHT CARDS ═════════════════════════════════════════════ */
+.insights-section {
+  padding: 32px 40px 0;
+}
+.ins-header { margin-bottom: 16px; }
+.ins-title {
+  font-size: 11px; font-weight: 700; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--gray);
+}
+.ins-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+}
+.ins-card {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  display: flex; flex-direction: column; gap: 10px;
+  border: 1px solid var(--gray-bd);
+  transition: border-color .18s, box-shadow .18s;
+}
+.ins-card:hover { border-color: var(--green); box-shadow: 0 4px 16px rgba(26,92,56,.08); }
+.ins-card:nth-child(2) { border-top: 3px solid var(--gold); }
+.ins-card:nth-child(1) { border-top: 3px solid var(--green); }
+.ins-card:nth-child(3) { border-top: 3px solid #7C3AED; }
+.ins-card:nth-child(4) { border-top: 3px solid #EF4444; }
+
+.ic-icon { font-size: 22px; }
+.ic-label {
+  font-size: 9px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--gray);
+}
+.ic-title { font-size: 12.5px; font-weight: 700; color: var(--black); line-height: 1.3; }
+.ic-body  { font-size: 11px; color: var(--text); line-height: 1.65; flex: 1; }
+.ic-tag {
+  display: inline-block; padding: 3px 10px;
+  background: var(--green-lt); color: var(--green);
+  font-size: 9px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; border-radius: 50px; width: fit-content;
+}
+.ic-tag.gold { background: var(--gold-lt); color: var(--gold-drk); }
+.ic-tag.purple { background: #EDE9FE; color: #7C3AED; }
+.ic-tag.red { background: #FEE2E2; color: #B91C1C; }
+
+/* ══ FOOTER ════════════════════════════════════════════════════ */
+.page-footer {
+  margin: 40px 40px 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--gray-bd);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px;
+}
+.ft-left { font-size: 10px; color: var(--gray); }
+.ft-left strong { color: var(--green); }
+.ft-right {
+  font-size: 10px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--gray);
+}
+
+@media (max-width: 900px) {
+  .ins-grid { grid-template-columns: 1fr 1fr; }
+  .page-header { padding: 20px 20px 18px; }
+  .flow-section { padding: 24px 20px 0; }
+  .insights-section { padding: 24px 20px 0; }
+  .row-label { padding: 16px 20px 6px; }
+  .legend-bar { padding: 10px 20px; }
+  .page-footer { margin: 28px 20px 0; }
+}
+@media (max-width: 600px) {
+  .ins-grid { grid-template-columns: 1fr; }
+}
+
+  </style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="page-header">
+  <div class="header-left">
+    <div class="logo-row">
+      <div class="logo-s">S</div>
+      <span class="page-title">Framework Operativo de Scrappy</span>
+    </div>
+    <div class="page-sub">GTM Automation Engine · v1 · Estado actual</div>
+  </div>
+  <div class="header-meta">
+    <span class="meta-tag">Actualizado</span>
+    <span class="meta-date">Junio 2026</span>
+  </div>
+</header>
+
+<!-- ══ LEGEND ══ -->
+<div class="legend-bar">
+  <span class="legend-label">Estado:</span>
+  <div class="leg">
+    <div class="leg-dot built"></div>
+    <span class="leg-text">Construido</span>
+    <span class="leg-sub">— código productivo, en uso</span>
+  </div>
+  <div class="leg">
+    <div class="leg-dot progress"></div>
+    <span class="leg-text">En progreso</span>
+    <span class="leg-sub">— validado, proceso manual activo</span>
+  </div>
+  <div class="leg">
+    <div class="leg-dot pending"></div>
+    <span class="leg-text">Pendiente</span>
+    <span class="leg-sub">— próximo a construir</span>
+  </div>
+</div>
+
+<!-- ══ ROW 1: AUTOMATION LAYER (F0–F3) ══ -->
+<div class="row-label">
+  <span class="rl-text">Motor automatizado</span>
+  <div class="rl-line"></div>
+</div>
+
+<div class="flow-section">
+  <div class="flow-row">
+
+    <!-- F0 -->
+    <div class="phase built">
+      <div class="ph-head">
+        <div class="ph-head-left">
+          <span class="ph-num">Fase 0</span>
+          <span class="ph-name">Market Fit Engine</span>
+          <span class="ph-badge">CONSTRUIDO</span>
+        </div>
+        <span class="ph-icon">🎯</span>
+      </div>
+      <div class="ph-body">
+        <p class="ph-desc">LLM analiza la oferta del vendedor y genera keywords de búsqueda para Google Maps.</p>
+        <div class="ph-features">
+          <span class="ph-feat">Business Discovery (multi-paso)</span>
+          <span class="ph-feat">LLM → JSON de searchTerms</span>
+          <span class="ph-feat">Insight + topPriority ICP</span>
+          <span class="ph-feat">API: POST /api/market-fit</span>
+        </div>
+      </div>
+      <div class="ph-metric">
+        <span class="pm-value">6–12</span>
+        keywords generadas por rubro
+      </div>
+    </div>
+
+    <div class="arrow-wrap"><div class="arrow-line"><div class="a-shaft"></div></div></div>
+
+    <!-- F1 -->
+    <div class="phase built">
+      <div class="ph-head">
+        <div class="ph-head-left">
+          <span class="ph-num">Fase 1</span>
+          <span class="ph-name">Lead Discovery</span>
+          <span class="ph-badge">CONSTRUIDO</span>
+        </div>
+        <span class="ph-icon">🗺️</span>
+      </div>
+      <div class="ph-body">
+        <p class="ph-desc">GoogleMapsScraper con Playwright extrae datos reales de negocios locales.</p>
+        <div class="ph-features">
+          <span class="ph-feat">Playwright / Chromium headless</span>
+          <span class="ph-feat">BaseScraper + CLI Click (Python)</span>
+          <span class="ph-feat">Extrae: nombre, teléfono, web, rating, reseñas, coords, categoría</span>
+          <span class="ph-feat">Concurrencia 6–8 tabs</span>
+          <span class="ph-feat">Export CSV / JSON</span>
+        </div>
+      </div>
+      <div class="ph-metric">
+        <span class="pm-value">~120</span>
+        leads máximos por búsqueda
+      </div>
+    </div>
+
+    <div class="arrow-wrap"><div class="arrow-line"><div class="a-shaft"></div></div></div>
+
+    <!-- F2 -->
+    <div class="phase built">
+      <div class="ph-head">
+        <div class="ph-head-left">
+          <span class="ph-num">Fase 2</span>
+          <span class="ph-name">Lead Intelligence</span>
+          <span class="ph-badge">CONSTRUIDO</span>
+        </div>
+        <span class="ph-icon">🔬</span>
+      </div>
+      <div class="ph-body">
+        <p class="ph-desc">Deep crawl de cada lead: clasifica oportunidad, score de reputación y tier de prioridad.</p>
+        <div class="ph-features">
+          <span class="ph-feat">website-deep.js + contacts.js</span>
+          <span class="ph-feat">Audiencias: Web Opp / GBP Opp / Web+GBP</span>
+          <span class="ph-feat">OpportunityScore 0–100</span>
+          <span class="ph-feat">Tiers: A (≥80) · B (≥60) · C (≥40) · D</span>
+          <span class="ph-feat">reviewPower + reputationScore</span>
+        </div>
+      </div>
+      <div class="ph-metric">
+        <span class="pm-value">4 tiers</span>
+        A → D por oportunidad
+      </div>
+    </div>
+
+    <div class="arrow-wrap"><div class="arrow-line"><div class="a-shaft"></div></div></div>
+
+    <!-- F3 -->
+    <div class="phase built">
+      <div class="ph-head">
+        <div class="ph-head-left">
+          <span class="ph-num">Fase 3</span>
+          <span class="ph-name">Outreach Engine</span>
+          <span class="ph-badge">CONSTRUIDO</span>
+        </div>
+        <span class="ph-icon">✍️</span>
+      </div>
+      <div class="ph-body">
+        <p class="ph-desc">LLM genera mensajes personalizados por WhatsApp usando el lead como input.</p>
+        <div class="ph-features">
+          <span class="ph-feat">Framework: HOOK → HALLAZGO → SOLUCIÓN → CTA</span>
+          <span class="ph-feat">CoreAsset + Bottleneck derivados del lead</span>
+          <span class="ph-feat">Tono humano, no-vendedor</span>
+          <span class="ph-feat">API: POST /api/outreach</span>
+        </div>
+      </div>
+      <div class="ph-metric">
+        <span class="pm-value">1 msg</span>
+        personalizado por lead en &lt;3 seg
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ ROW 2: HUMAN LAYER (F4–F7) ══ -->
+<div class="row-label">
+  <span class="rl-text">Capa humana / en construcción</span>
+  <div class="rl-line"></div>
+</div>
+
+<div class="flow-section">
+  <div class="flow-row">
+
+    <!-- F4 -->
+    <div class="phase progress">
+      <div class="ph-head">
+        <div class="ph-head-left">
+          <span class="ph-num">Fase 4</span>
+          <span class="ph-name">Distribución</span>
+          <span class="ph-badge">EN PROGRESO</span>
+        </div>
+        <span class="ph-icon">📲</span>
+      </div>
+      <div class="ph-body">
+        <p class="ph-desc">Envío de mensajes por WhatsApp. Experimento A/B activo para optimizar canal.</p>
+        <div class="ph-features">
+          <span class="ph-feat">Canal A: WABA (Business API)</span>
+          <span class="ph-feat">Canal B: WhatsApp Personal</span>
+          <span class="ph-feat">A/B experiment activo — WABA ganó</span>
+          <span class="ph-feat">Proceso actualmente manual</span>
+        </div>
+      </div>
+      <div class="ph-metric">
+        <span class="pm-value">19.5% vs 15.4%</span>
+        WABA supera personal en respuesta
+      </div>
+    </div>
+
+    <div class="arrow-wrap"><div class="arrow-line"><div class="a-shaft"></div></div></div>
+
+    <!-- F5 -->
+    <div class="phase progress">
+      <div class="ph-head">
+        <div class="ph-head-left">
+          <span class="ph-num">Fase 5</span>
+          <span class="ph-name">Conversión</span>
+          <span class="ph-badge">EN PROGRESO</span>
+        </div>
+        <span class="ph-icon">🎬</span>
+      </div>
+      <div class="ph-body">
+        <p class="ph-desc">Flujo de conversión sin reuniones: texto → voz → demo en video.</p>
+        <div class="ph-features">
+          <span class="ph-feat">Texto → Nota de voz (humaniza)</span>
+          <span class="ph-feat">Nota de voz → Video demo (Loom)</span>
+          <span class="ph-feat">Video demo → Cierre directo</span>
+          <span class="ph-feat">Sin reuniones tradicionales</span>
+        </div>
+      </div>
+      <div class="ph-metric">
+        <span class="pm-value">2 demos</span>
+        enviadas esta semana · validado
+      </div>
+    </div>
+
+    <div class="arrow-wrap"><div class="arrow-line"><div class="a-shaft"></div></div></div>
+
+    <!-- F6 -->
+    <div class="phase progress">
+      <div class="ph-head">
+        <div class="ph-head-left">
+          <span class="ph-num">Fase 6</span>
+          <span class="ph-name">Follow-up</span>
+          <span class="ph-badge">EN PROGRESO</span>
+        </div>
+        <span class="ph-icon">🔁</span>
+      </div>
+      <div class="ph-body">
+        <p class="ph-desc">Reglas de seguimiento con máximo 3 toques por lead antes de marcar como Perdido.</p>
+        <div class="ph-features">
+          <span class="ph-feat">Respondió → seguimiento +1 día</span>
+          <span class="ph-feat">No respondió → +2 días</span>
+          <span class="ph-feat">Máximo 3 toques por lead</span>
+          <span class="ph-feat">→ Perdido tras 3 sin respuesta</span>
+          <span class="ph-feat">Manual · pendiente automatizar</span>
+        </div>
+      </div>
+      <div class="ph-metric">
+        <span class="pm-value">3 toques</span>
+        máximo por lead
+      </div>
+    </div>
+
+    <div class="arrow-wrap"><div class="arrow-line"><div class="a-shaft"></div></div></div>
+
+    <!-- F7 -->
+    <div class="phase progress">
+      <div class="ph-head">
+        <div class="ph-head-left">
+          <span class="ph-num">Fase 7</span>
+          <span class="ph-name">CRM & Métricas</span>
+          <span class="ph-badge">EN PROGRESO</span>
+        </div>
+        <span class="ph-icon">📊</span>
+      </div>
+      <div class="ph-body">
+        <p class="ph-desc">Pipeline en Google Sheets con experimento A/B activo y métricas de conversión.</p>
+        <div class="ph-features">
+          <span class="ph-feat">Scrappy_Studio_CRM.xlsx activo</span>
+          <span class="ph-feat">Pipeline: Contactado → Demo → Cierre</span>
+          <span class="ph-feat">Experimento A/B en curso</span>
+          <span class="ph-feat">Métricas diarias · 14 días rolling</span>
+          <span class="ph-feat">Próxima acción por lead</span>
+        </div>
+      </div>
+      <div class="ph-metric">
+        <span class="pm-value">14 días</span>
+        ventana de métricas rolling
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ INSIGHT CARDS ══ -->
+<div class="insights-section" style="margin-top: 36px;">
+  <div class="ins-header">
+    <span class="ins-title">Insights y contexto estratégico</span>
+  </div>
+  <div class="ins-grid">
+
+    <div class="ins-card">
+      <span class="ic-icon">⚡</span>
+      <span class="ic-label">Ventaja competitiva</span>
+      <div class="ic-title">WhatsApp + Video Demo reemplaza el ciclo de ventas tradicional</div>
+      <div class="ic-body">En Latam, WhatsApp tiene +90% de apertura vs email. La secuencia texto → nota de voz → video demo cierra sin reuniones, reduciendo el ciclo de semanas a días.</div>
+      <span class="ic-tag">Diferenciador clave</span>
+    </div>
+
+    <div class="ins-card">
+      <span class="ic-icon">✅</span>
+      <span class="ic-label">Validado esta semana</span>
+      <div class="ic-title">WABA gana el A/B · centros de estética responden · 2 demos enviadas</div>
+      <div class="ic-body">WABA logra 19.5% vs 15.4% del canal personal. Centros estéticos (Mariela, Siluet) son el rubro de mayor respuesta. 2 demos Loom enviadas con buena recepción.</div>
+      <span class="ic-tag gold">Esta semana</span>
+    </div>
+
+    <div class="ins-card">
+      <span class="ic-icon">🏆</span>
+      <span class="ic-label">Próximo hito</span>
+      <div class="ic-title">Cerrar Mariela + Siluet → 3 clientes → escalar a B2B</div>
+      <div class="ic-body">Con 3 clientes pagando se valida el modelo retainer. El siguiente paso es escalar a empresas B2B con mayor ticket y construir el playbook de outreach replicable.</div>
+      <span class="ic-tag purple">En proceso</span>
+    </div>
+
+    <div class="ins-card">
+      <span class="ic-icon">🔧</span>
+      <span class="ic-label">Qué falta</span>
+      <div class="ic-title">Automatizar F4–F5, CRM propio, modelo B2B retainer + bono</div>
+      <div class="ic-body">Las fases 4–6 aún son manuales. El CRM está en Excel. El modelo de pricing no está definido. Prioridad: automatizar envío y seguimiento, luego migrar a CRM nativo de Scrappy.</div>
+      <span class="ic-tag red">Gap crítico</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<div class="page-footer">
+  <div class="ft-left">
+    <strong>Scrappy</strong> — GTM Automation Engine para negocios locales en Latam ·
+    Fases 0–3 construidas · Fases 4–7 en proceso manual activo
+  </div>
+  <div class="ft-right">Scrappy Framework v1 · Jun 2026</div>
+</div>
+
+</body>
+</html>

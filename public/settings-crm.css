@@ -1,0 +1,198 @@
+/* ══════════════════════════════════════════
+   CRM Leads table — Scrappy
+   Comparte tokens de styles.css / settings.css
+══════════════════════════════════════════ */
+
+.crm-content-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+.crm-toast {
+  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  background: rgba(74, 222, 128, .12);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, .25);
+}
+.crm-toast.err {
+  background: rgba(248, 113, 113, .12);
+  color: #f87171;
+  border-color: rgba(248, 113, 113, .25);
+}
+.crm-toast.warn {
+  background: rgba(251, 191, 36, .12);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, .25);
+}
+
+.crm-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border, #252525);
+  border-radius: 10px;
+  cursor: grab;
+}
+
+.crm-table-wrap.dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.crm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.crm-table th {
+  text-align: left;
+  padding: 10px 12px;
+  background: var(--bg2, #111);
+  color: #9CA3AF;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  border-bottom: 1px solid var(--border, #252525);
+  white-space: nowrap;
+}
+
+.crm-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border, #1c1c1c);
+  vertical-align: top;
+  color: #e2e8f0;
+}
+
+.crm-table tr:last-child td { border-bottom: none; }
+
+.crm-empty {
+  text-align: center;
+  color: #6b7280;
+  padding: 32px 12px !important;
+}
+
+.crm-negocio { font-weight: 600; white-space: nowrap; }
+.crm-muted { color: #6b7280; }
+
+.crm-etapa-select {
+  background: var(--bg2, #111);
+  border: 1px solid var(--border, #252525);
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 12px;
+  padding: 5px 8px;
+  min-width: 150px;
+  outline: none;
+}
+.crm-etapa-select:focus { border-color: var(--purple, #7C3AED); }
+
+.crm-msg-cell {
+  max-width: 260px;
+  font-size: 12px;
+  color: #9CA3AF;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.crm-msg-cell.expanded {
+  white-space: pre-wrap;
+  max-width: 360px;
+}
+
+/* ── Selector inline de número (fila extra bajo la que cambia de etapa) ── */
+.crm-inline-row td {
+  background: rgba(124, 58, 237, .06);
+  border-bottom: 1px solid var(--border, #1c1c1c);
+}
+
+.crm-inline-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.crm-inline-label {
+  font-size: 12px;
+  color: #9CA3AF;
+  margin-right: 4px;
+}
+
+.crm-line-btn {
+  background: var(--bg2, #111);
+  border: 1px solid var(--border, #252525);
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 12px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.crm-line-btn:hover { border-color: #4b5563; }
+.crm-line-btn.selected {
+  border-color: var(--purple, #7C3AED);
+  color: #c4b5fd;
+  background: rgba(124, 58, 237, .12);
+}
+.crm-line-btn .crm-suggested-tag {
+  font-size: 9px;
+  color: #7C3AED;
+  margin-left: 4px;
+}
+
+.crm-inline-confirm, .crm-inline-cancel {
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.crm-inline-confirm {
+  background: var(--purple, #7C3AED);
+  color: #fff;
+}
+.crm-inline-confirm:hover { opacity: .88; }
+.crm-inline-confirm:disabled { opacity: .4; cursor: not-allowed; }
+.crm-inline-cancel {
+  background: none;
+  color: #9CA3AF;
+  border: 1px solid var(--border, #252525);
+}
+.crm-inline-cancel:hover { color: #e2e8f0; }
+
+/* ── Borrar (individual y masivo) — solo DB local, nunca Sheets ── */
+.crm-delete-all-btn {
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid var(--border, #252525);
+  border-radius: 8px;
+  color: #f87171;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.crm-delete-all-btn:hover { border-color: #f87171; background: rgba(248, 113, 113, .08); }
+
+.crm-row-actions { text-align: center; width: 36px; }
+
+.crm-row-delete-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: .55;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+.crm-row-delete-btn:hover { opacity: 1; background: rgba(248, 113, 113, .1); }
+
+@media (max-width: 900px) {
+  .st-content { padding: 24px 16px 60px; }
+}

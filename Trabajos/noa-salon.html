@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOA SALON — Asesor Colorista · Magdalena, Lima</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+
+/* ══ RESET & TOKENS ════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --bg:       #080808;
+  --bg2:      #101010;
+  --bg3:      #161616;
+  --bg4:      #1E1E1E;
+  --gold:     #C9913A;
+  --gold2:    #E0B04A;
+  --gold3:    #F0C860;
+  --gold-dim: #7A5820;
+  --white:    #F5F3EF;
+  --muted:    #777;
+  --border:   #242424;
+  --g-gold:   linear-gradient(110deg, #A06820 0%, #E8C050 35%, #F5D878 55%, #C9913A 80%, #A06820 100%);
+}
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img { display: block; }
+
+/* Gold gradient text */
+.gt {
+  background: var(--g-gold);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* ══ NAV ════════════════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%; height: 70px;
+  background: rgba(8,8,8,.96);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(201,145,58,.18);
+}
+
+.nav-logo {
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none;
+}
+.logo-badge {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: #000; border: 1.5px solid var(--gold-dim);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  line-height: 1; padding: 4px;
+}
+.lb-noa {
+  font-family: 'Cinzel', serif;
+  font-size: .65rem; font-weight: 700;
+  background: var(--g-gold);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  letter-spacing: .08em;
+}
+.lb-salon {
+  font-family: 'Cinzel', serif;
+  font-size: .38rem; font-weight: 400;
+  color: rgba(201,145,58,.65);
+  letter-spacing: .12em;
+}
+.logo-text { display: flex; flex-direction: column; line-height: 1; }
+.lt-name {
+  font-family: 'Cinzel', serif;
+  font-size: .95rem; font-weight: 600;
+  background: var(--g-gold);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  letter-spacing: .18em;
+}
+.lt-sub {
+  font-size: .58rem; font-weight: 400;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--muted); margin-top: 2px;
+}
+
+.nav-links { display: flex; gap: 30px; align-items: center; }
+.nav-a {
+  font-size: .7rem; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none;
+  transition: color .2s;
+}
+.nav-a:hover { color: var(--gold2); }
+
+.nav-cta {
+  padding: 9px 22px;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold2); font-size: .68rem; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase;
+  text-decoration: none; transition: background .2s, border-color .2s, color .2s;
+}
+.nav-cta:hover { background: var(--gold2); border-color: var(--gold2); color: #000; }
+
+/* ══ HERO ════════════════════════════════════════════════════ */
+.hero {
+  position: relative; height: 100vh; min-height: 640px;
+  overflow: hidden; display: flex;
+  align-items: center; justify-content: center; text-align: center;
+}
+
+.hero-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center 30%;
+  filter: brightness(.35) saturate(.6);
+}
+
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(8,8,8,.4) 0%,
+    rgba(8,8,8,.1) 40%,
+    rgba(8,8,8,.25) 70%,
+    rgba(8,8,8,.75) 100%
+  );
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 0 24px;
+}
+
+/* Gold horizontal rule with diamond */
+.hero-orn {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 24px;
+}
+.ho-line { width: 48px; height: 1px; background: rgba(201,145,58,.4); }
+.ho-diamond {
+  width: 5px; height: 5px;
+  background: var(--gold2); transform: rotate(45deg);
+}
+
+.hero-eyebrow {
+  font-size: .68rem; font-weight: 500;
+  letter-spacing: .32em; text-transform: uppercase;
+  color: rgba(201,145,58,.7); margin-bottom: 16px;
+}
+
+.hero-noa {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(5rem, 14vw, 14rem);
+  font-weight: 900; letter-spacing: .12em;
+  background: var(--g-gold);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  line-height: 0.9; margin-bottom: 4px;
+}
+
+.hero-salon {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.1rem, 3.5vw, 3rem);
+  font-weight: 400; letter-spacing: .55em;
+  color: rgba(245,243,239,.75); margin-bottom: 4px;
+}
+
+.hero-ac {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(.6rem, 1.2vw, .85rem); font-weight: 300;
+  letter-spacing: .45em; text-transform: uppercase;
+  color: rgba(201,145,58,.55); margin-bottom: 36px;
+}
+
+.hero-tagline-main {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.4rem, 3.2vw, 2.8rem);
+  font-weight: 400; line-height: 1.5;
+  letter-spacing: .06em; text-align: center;
+  background: var(--g-gold);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  margin-bottom: 40px; max-width: 90vw;
+  text-shadow: none;
+}
+
+.btn-gold {
+  display: inline-block; padding: 13px 40px;
+  background: rgba(8,8,8,.5);
+  border: 1px solid rgba(201,145,58,.5);
+  color: var(--gold2); font-size: .7rem; font-weight: 500;
+  letter-spacing: .22em; text-transform: uppercase;
+  text-decoration: none;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  transition: background .25s, border-color .25s, color .25s;
+}
+.btn-gold:hover { background: var(--gold2); border-color: var(--gold2); color: #000; }
+
+.hero-loc {
+  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+  z-index: 1; font-size: .6rem; letter-spacing: .22em;
+  text-transform: uppercase; color: rgba(245,243,239,.28); white-space: nowrap;
+}
+
+/* ══ SECTION SHARED ══════════════════════════════════════════ */
+.sec { padding: 56px 5%; }
+.wrap { max-width: 1140px; margin: 0 auto; }
+
+.sec-eyebrow {
+  font-size: .63rem; font-weight: 500; letter-spacing: .28em;
+  text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 14px;
+}
+.sec-h2 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 600;
+  letter-spacing: .08em; color: var(--white); line-height: 1.2; margin-bottom: 14px;
+}
+.gold-rule { width: 44px; height: 1px; background: var(--gold); margin-bottom: 36px; }
+
+/* ══ INTRO ═══════════════════════════════════════════════════ */
+#intro {
+  background: var(--bg2); padding: 56px 5%;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.intro-inner {
+  max-width: 680px; margin: 0 auto; text-align: center;
+  display: flex; flex-direction: column; align-items: center;
+}
+.intro-h {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 400;
+  letter-spacing: .08em; color: var(--white);
+  line-height: 1.45; margin-bottom: 20px;
+}
+.intro-h span { background: var(--g-gold); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.intro-text {
+  font-size: .83rem; color: var(--muted); line-height: 1.9;
+}
+
+/* ══ SERVICIOS ═══════════════════════════════════════════════ */
+#servicios { background: var(--bg); }
+
+.serv-panel {
+  display: grid; grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--border);
+}
+
+.serv-list { list-style: none; }
+.serv-li {
+  display: flex; align-items: center; gap: 18px;
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; user-select: none;
+  transition: background .22s;
+}
+.serv-li:last-child { border-bottom: none; }
+.serv-li.active, .serv-li:hover { background: var(--bg2); }
+
+.sl-num {
+  font-family: 'Cinzel', serif;
+  font-size: .75rem; font-weight: 400;
+  color: var(--gold-dim); letter-spacing: .1em;
+  flex-shrink: 0; min-width: 22px;
+  transition: color .22s;
+}
+.serv-li.active .sl-num, .serv-li:hover .sl-num { color: var(--gold2); }
+
+.sl-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.05rem; font-weight: 400;
+  letter-spacing: .1em; flex: 1;
+  color: rgba(245,243,239,.6);
+  transition: color .22s;
+}
+.serv-li.active .sl-name, .serv-li:hover .sl-name { color: var(--white); }
+
+.sl-arrow {
+  font-size: .85rem; color: var(--border);
+  transition: color .22s, transform .22s;
+}
+.serv-li.active .sl-arrow, .serv-li:hover .sl-arrow {
+  color: var(--gold); transform: translateX(4px);
+}
+
+.serv-detail {
+  border-left: 1px solid var(--border);
+  padding: 44px 40px;
+  display: flex; align-items: center;
+  background: var(--bg2);
+  min-height: 300px;
+}
+.sd-inner { display: flex; flex-direction: column; gap: 14px; }
+.sd-num {
+  font-family: 'Cinzel', serif;
+  font-size: .78rem; font-weight: 400;
+  color: var(--gold); letter-spacing: .14em;
+}
+.sd-name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+  font-weight: 600; letter-spacing: .1em;
+  background: var(--g-gold);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  line-height: 1.2;
+}
+.sd-rule { width: 30px; height: 1px; background: var(--gold); }
+.sd-desc {
+  font-size: .82rem; color: var(--muted);
+  line-height: 1.85; max-width: 320px;
+}
+.sd-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 6px; font-size: .67rem;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--gold2); text-decoration: none;
+  transition: gap .2s;
+}
+.sd-cta:hover { gap: 14px; }
+
+/* ══ GALLERY ═════════════════════════════════════════════════ */
+#galeria { background: var(--bg2); padding: 56px 0; }
+#galeria .wrap { padding: 0 5%; }
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 270px 270px;
+  gap: 3px;
+}
+.g-cell { overflow: hidden; position: relative; }
+.g-cell.tall { grid-row: span 2; }
+
+.g-cell img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: brightness(.88) saturate(.75);
+  transition: transform .55s cubic-bezier(.4,0,.2,1), filter .4s;
+}
+.g-cell:hover img { transform: scale(1.05); filter: brightness(1) saturate(1); }
+
+.g-label {
+  position: absolute; bottom: 12px; left: 14px;
+  font-size: .6rem; font-weight: 500;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(245,243,239,.5);
+  pointer-events: none;
+}
+
+/* ══ RESEÑAS ═════════════════════════════════════════════════ */
+#resenas { background: var(--bg); }
+
+.rating-hero {
+  display: flex; align-items: center; gap: 36px;
+  margin-bottom: 48px; padding-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+.rating-score {
+  font-family: 'Cinzel', serif;
+  font-size: 5rem; font-weight: 700; line-height: 1;
+  background: var(--g-gold);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.rating-detail { display: flex; flex-direction: column; gap: 10px; }
+.rating-stars { display: flex; gap: 4px; }
+.star { color: var(--gold2); font-size: 1.25rem; }
+.rating-label {
+  font-size: .68rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--muted);
+}
+.g-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 12px; border: 1px solid var(--border); width: fit-content;
+}
+.g-badge svg { width: 14px; height: 14px; flex-shrink: 0; }
+.g-badge-text { font-size: .62rem; letter-spacing: .12em; color: var(--muted); text-transform: uppercase; }
+
+/* Carousel */
+.carousel-wrap { overflow: hidden; }
+.reviews-track {
+  display: flex; gap: 16px;
+  transition: transform .65s cubic-bezier(.4,0,.2,1);
+}
+.review-card {
+  flex: 0 0 calc(50% - 8px);
+  background: var(--bg2); border: 1px solid var(--border);
+  padding: 28px 26px; display: flex; flex-direction: column; gap: 16px;
+  transition: border-color .25s;
+}
+.review-card:hover { border-color: var(--gold-dim); }
+.rev-stars { display: flex; gap: 3px; }
+.rev-star { color: var(--gold2); font-size: .9rem; }
+.rev-text {
+  font-size: .9rem; font-style: italic; font-weight: 300;
+  color: rgba(245,243,239,.7); line-height: 1.7; flex: 1;
+}
+.rev-author { display: flex; flex-direction: column; gap: 3px; }
+.rev-name { font-size: .75rem; font-weight: 500; color: var(--white); letter-spacing: .06em; }
+.rev-date { font-size: .65rem; color: var(--muted); letter-spacing: .08em; }
+
+.carousel-dots { display: flex; gap: 8px; justify-content: center; margin-top: 28px; }
+.cdot {
+  width: 20px; height: 2px; background: var(--border); cursor: pointer;
+  transition: background .25s, width .25s;
+}
+.cdot.active { background: var(--gold2); width: 36px; }
+
+/* ══ CONTACTO ════════════════════════════════════════════════ */
+#contacto { background: var(--bg2); border-top: 1px solid var(--border); }
+
+.contact-grid {
+  display: grid; grid-template-columns: 1fr 1.1fr;
+  gap: 72px; align-items: start;
+}
+
+.contact-img-wrap { position: relative; }
+.contact-img { width: 100%; height: 480px; object-fit: cover; object-position: center 20%; }
+.contact-img-caption {
+  position: absolute; bottom: 16px; left: 16px;
+  font-size: .6rem; letter-spacing: .18em;
+  text-transform: uppercase; color: rgba(245,243,239,.4);
+}
+
+.contact-form { display: flex; flex-direction: column; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; }
+
+.f-field {
+  border-bottom: 1px solid var(--border); transition: border-color .2s;
+}
+.f-field:focus-within { border-color: var(--gold); }
+.f-field input, .f-field textarea {
+  width: 100%; padding: 17px 0;
+  background: none; border: none; color: var(--white);
+  font-family: 'Montserrat', sans-serif; font-size: .8rem;
+  font-weight: 300; outline: none;
+}
+.f-field input::placeholder, .f-field textarea::placeholder {
+  color: var(--muted); font-size: .78rem;
+}
+.f-field textarea { resize: none; min-height: 90px; }
+
+.btn-submit {
+  display: inline-block; padding: 13px 40px;
+  background: var(--gold); color: #000;
+  font-size: .7rem; font-weight: 600;
+  letter-spacing: .22em; text-transform: uppercase;
+  border: none; cursor: pointer;
+  transition: background .25s; width: fit-content; margin-top: 28px;
+}
+.btn-submit:hover { background: var(--gold3); }
+
+.contact-info { margin-top: 32px; display: flex; flex-direction: column; gap: 16px; }
+.ci-item {
+  display: flex; align-items: flex-start; gap: 16px;
+  font-size: .78rem; color: var(--muted); line-height: 1.6;
+}
+.ci-label {
+  font-size: .62rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--gold); min-width: 72px; flex-shrink: 0; padding-top: 1px;
+}
+
+/* ══ WHATSAPP FLOAT ══════════════════════════════════════════ */
+.wa-float {
+  position: fixed; bottom: 28px; right: 28px; z-index: 500;
+  width: 54px; height: 54px; background: #25D366; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 18px rgba(37,211,102,.38); text-decoration: none;
+  transition: transform .2s, box-shadow .2s;
+}
+.wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 26px rgba(37,211,102,.55); }
+.wa-float svg { width: 27px; height: 27px; fill: #fff; }
+
+/* ══ FOOTER ══════════════════════════════════════════════════ */
+footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 40px 5%;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.ft-logo {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem; font-weight: 700; letter-spacing: .2em;
+  background: var(--g-gold);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-decoration: none;
+}
+.ft-copy { font-size: .62rem; letter-spacing: .1em; color: rgba(245,243,239,.18); text-transform: uppercase; }
+.ft-links { display: flex; gap: 24px; }
+.ft-link {
+  font-size: .63rem; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(245,243,239,.25); text-decoration: none; transition: color .2s;
+}
+.ft-link:hover { color: var(--gold2); }
+
+/* ══ RESPONSIVE ══════════════════════════════════════════════ */
+@media (max-width: 960px) {
+  .serv-panel { grid-template-columns: 1fr; }
+  .serv-detail { border-left: none; border-top: 1px solid var(--border); }
+  .contact-grid { grid-template-columns: 1fr; }
+  .contact-img-wrap { display: none; }
+  .review-card { flex: 0 0 calc(100% - 8px); }
+  .nav-links .nav-a { display: none; }
+  .rating-hero { flex-direction: column; gap: 14px; }
+}
+@media (max-width: 600px) {
+  .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .g-cell.tall { grid-row: span 1; }
+  .form-row { grid-template-columns: 1fr; }
+}
+
+  </style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-badge">
+      <span class="lb-noa">NOA</span>
+      <span class="lb-salon">SALON</span>
+    </div>
+    <div class="logo-text">
+      <span class="lt-name">NOA SALON</span>
+      <span class="lt-sub">Asesor Colorista</span>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="#servicios" class="nav-a">Servicios</a>
+    <a href="#galeria"   class="nav-a">Galería</a>
+    <a href="#resenas"   class="nav-a">Reseñas</a>
+    <a href="#contacto"  class="nav-a">Contacto</a>
+    <a href="https://wa.me/51994602534?text=Hola%2C%20quiero%20agendar%20una%20cita%20en%20NOA%20SALON" class="nav-cta" target="_blank">Reservar</a>
+  </div>
+</nav>
+
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <img class="hero-img"
+    src="https://images.unsplash.com/photo-1562322140-8baeececf3df?w=1920&h=1080&fit=crop&q=85&auto=format"
+    alt="NOA SALON">
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-orn">
+      <div class="ho-line"></div>
+      <div class="ho-diamond"></div>
+      <div class="ho-line"></div>
+    </div>
+    <p class="hero-eyebrow">NOA SALON · Magdalena · Lima</p>
+    <h1 class="hero-tagline-main">Donde el color se convierte en arte<br>y cada cliente en una obra maestra.</h1>
+    <a href="#servicios" class="btn-gold">Descubrir servicios</a>
+  </div>
+
+  <p class="hero-loc">Jr. San Martín 691 · Magdalena del Mar</p>
+</section>
+
+
+<!-- ══ INTRO ══ -->
+<section id="intro">
+  <div class="intro-inner">
+    <span class="sec-eyebrow">NOA SALON</span>
+    <h2 class="intro-h">Arte del color.<br><span>Transformación real.</span></h2>
+    <p class="intro-text">En NOA SALON somos especialistas en colorimetría y diseño capilar. Cada servicio está pensado para realzar tu personalidad con técnicas de color de vanguardia, adaptadas a tu tono de piel, estilo de vida y objetivos.</p>
+  </div>
+</section>
+
+
+<!-- ══ SERVICIOS ══ -->
+<section id="servicios" class="sec">
+  <div class="wrap">
+    <span class="sec-eyebrow">Especialidades</span>
+    <h2 class="sec-h2">Nuestros servicios</h2>
+    <div class="gold-rule"></div>
+
+    <div class="serv-panel">
+      <ul class="serv-list" id="servList">
+        <li class="serv-li active" data-idx="0"><span class="sl-num">01</span><span class="sl-name">Color</span><span class="sl-arrow">→</span></li>
+        <li class="serv-li" data-idx="1"><span class="sl-num">02</span><span class="sl-name">Diseño</span><span class="sl-arrow">→</span></li>
+        <li class="serv-li" data-idx="2"><span class="sl-num">03</span><span class="sl-name">MakeUp</span><span class="sl-arrow">→</span></li>
+        <li class="serv-li" data-idx="3"><span class="sl-num">04</span><span class="sl-name">Cuidado</span><span class="sl-arrow">→</span></li>
+        <li class="serv-li" data-idx="4"><span class="sl-num">05</span><span class="sl-name">Rélax</span><span class="sl-arrow">→</span></li>
+        <li class="serv-li" data-idx="5"><span class="sl-num">06</span><span class="sl-name">Pestañas</span><span class="sl-arrow">→</span></li>
+        <li class="serv-li" data-idx="6"><span class="sl-num">07</span><span class="sl-name">Uñas</span><span class="sl-arrow">→</span></li>
+        <li class="serv-li" data-idx="7"><span class="sl-num">08</span><span class="sl-name">Maquillaje</span><span class="sl-arrow">→</span></li>
+      </ul>
+
+      <div class="serv-detail">
+        <div class="sd-inner">
+          <span class="sd-num" id="sdNum">01</span>
+          <h3 class="sd-name" id="sdName">Color</h3>
+          <div class="sd-rule"></div>
+          <p class="sd-desc" id="sdDesc">Coloración profesional a medida — mechas, balayage, babylights, tintes y técnicas personalizadas para tu tipo de cabello y tono de piel.</p>
+          <a href="https://wa.me/51994602534?text=Hola%2C%20me%20interesa%20el%20servicio%20de%20Color" class="sd-cta" target="_blank" id="sdCta">Reservar este servicio →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ GALERÍA ══ -->
+<section id="galeria">
+  <div class="wrap">
+    <span class="sec-eyebrow">Portafolio</span>
+    <h2 class="sec-h2" style="margin-bottom:36px;">Nuestras transformaciones</h2>
+
+    <div class="gallery-grid">
+      <div class="g-cell tall">
+        <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&h=800&fit=crop&q=80&auto=format" alt="Coloración">
+        <span class="g-label">Coloración</span>
+      </div>
+      <div class="g-cell">
+        <img src="https://images.unsplash.com/photo-1560869713-7d0a29430803?w=600&h=380&fit=crop&q=80&auto=format" alt="Balayage">
+        <span class="g-label">Balayage</span>
+      </div>
+      <div class="g-cell">
+        <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&h=380&fit=crop&q=80&auto=format" alt="Diseño">
+        <span class="g-label">Diseño</span>
+      </div>
+      <div class="g-cell">
+        <img src="https://images.unsplash.com/photo-1519735777090-ec97162dc266?w=600&h=380&fit=crop&q=80&auto=format" alt="Color">
+        <span class="g-label">Color</span>
+      </div>
+      <div class="g-cell">
+        <img src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=600&h=380&fit=crop&q=80&auto=format" alt="Cuidado">
+        <span class="g-label">Cuidado</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ RESEÑAS ══ -->
+<section id="resenas" class="sec">
+  <div class="wrap">
+    <span class="sec-eyebrow">Reseñas</span>
+    <h2 class="sec-h2">Lo que dicen nuestros clientes</h2>
+    <div class="gold-rule"></div>
+
+    <div class="rating-hero">
+      <div class="rating-score">4.8</div>
+      <div class="rating-detail">
+        <div class="rating-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          <span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="rating-label">Reseñas verificadas</p>
+        <div class="g-badge">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          <span class="g-badge-text">Google Reviews</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-wrap">
+      <div class="reviews-track" id="reviewsTrack">
+        <div class="review-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-text">"El mejor colorista de Lima sin duda. Mi balayage quedó exactamente como lo tenía en mente. Se nota la experiencia y el ojo que tienen para el color."</p>
+          <div class="rev-author"><span class="rev-name">Andrea M.</span><span class="rev-date">Hace 1 semana</span></div>
+        </div>
+        <div class="review-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-text">"Vine para una coloración completa y el resultado superó todas mis expectativas. El asesoramiento de color es increíble — te explican todo antes de comenzar."</p>
+          <div class="rev-author"><span class="rev-name">Camila R.</span><span class="rev-date">Hace 2 semanas</span></div>
+        </div>
+        <div class="review-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-text">"Llevo meses viniendo para mis mechas y cada vez el resultado es mejor. El equipo es muy profesional y el ambiente del salón es muy agradable y moderno."</p>
+          <div class="rev-author"><span class="rev-name">Valeria S.</span><span class="rev-date">Hace 3 semanas</span></div>
+        </div>
+        <div class="review-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-text">"Mi corte y color quedaron increíbles. Lo que más me gustó fue la asesoría personalizada — te dicen qué colores y cortes van mejor con tu tono de piel. 100% recomendado."</p>
+          <div class="rev-author"><span class="rev-name">Daniela T.</span><span class="rev-date">Hace 1 mes</span></div>
+        </div>
+        <div class="review-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-text">"Vine por recomendación de una amiga para hacerme un tratamiento de color y fue la mejor decisión. El proceso es muy cuidadoso y el resultado dura muchísimo."</p>
+          <div class="rev-author"><span class="rev-name">Fiorella C.</span><span class="rev-date">Hace 1 mes</span></div>
+        </div>
+        <div class="review-card">
+          <div class="rev-stars"><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span><span class="rev-star">★</span></div>
+          <p class="rev-text">"La atención es excelente desde que llegas. Me hicieron un diseño de color totalmente personalizado y quedé enamorada del resultado. Ya tengo mi próxima cita agendada."</p>
+          <div class="rev-author"><span class="rev-name">Luciana P.</span><span class="rev-date">Hace 2 meses</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="carousel-dots" id="carouselDots"></div>
+  </div>
+</section>
+
+
+<!-- ══ CONTACTO ══ -->
+<section id="contacto" class="sec">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div>
+        <span class="sec-eyebrow">Reservas</span>
+        <h2 class="sec-h2">Agenda tu cita</h2>
+        <div class="gold-rule"></div>
+
+        <form class="contact-form" onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="f-field"><input type="text" placeholder="Tu nombre"></div>
+            <div class="f-field"><input type="tel" placeholder="WhatsApp"></div>
+          </div>
+          <div class="f-field"><input type="text" placeholder="Servicio de interés"></div>
+          <div class="f-field"><textarea placeholder="¿Algo que debamos saber? (opcional)"></textarea></div>
+          <button type="submit" class="btn-submit">Solicitar cita →</button>
+        </form>
+
+        <div class="contact-info">
+          <div class="ci-item">
+            <span class="ci-label">Dirección</span>
+            <span>Jr. San Martín 691, Magdalena del Mar, Lima</span>
+          </div>
+          <div class="ci-item">
+            <span class="ci-label">WhatsApp</span>
+            <a href="https://wa.me/51994602534" style="color:var(--gold2);text-decoration:none;">+51 994 602 534</a>
+          </div>
+          <div class="ci-item">
+            <span class="ci-label">Horario</span>
+            <span>Lunes a Sábado: 9:00 am – 7:00 pm</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-img-wrap">
+        <img class="contact-img"
+          src="https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=700&h=900&fit=crop&q=80&auto=format"
+          alt="NOA SALON">
+        <span class="contact-img-caption">NOA SALON · Magdalena</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <a href="#" class="ft-logo">NOA SALON</a>
+  <div class="ft-links">
+    <a href="#servicios" class="ft-link">Servicios</a>
+    <a href="#galeria"   class="ft-link">Galería</a>
+    <a href="#resenas"   class="ft-link">Reseñas</a>
+    <a href="#contacto"  class="ft-link">Contacto</a>
+  </div>
+  <span class="ft-copy">© 2026 NOA SALON · Magdalena, Lima</span>
+</footer>
+
+
+<!-- ══ WHATSAPP FLOAT ══ -->
+<a href="https://wa.me/51994602534?text=Hola%2C%20vengo%20de%20la%20p%C3%A1gina%20web%20de%20NOA%20SALON.%20Quisiera%20hacer%20una%20consulta%20sobre%20sus%20servicios."
+   class="wa-float" target="_blank" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zm-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884zm8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+
+<script>
+/* ── Services interactive list ── */
+const services = [
+  { num:'01', name:'Color',       desc:'Coloración profesional a medida — mechas, balayage, babylights, tintes y técnicas personalizadas para tu tipo de cabello y tono de piel.' },
+  { num:'02', name:'Diseño',      desc:'Cortes y diseños capilares que transforman tu imagen. Asesoría personalizada para el estilo que mejor expresa tu personalidad.' },
+  { num:'03', name:'MakeUp',      desc:'Maquillaje profesional de tendencia. Looks naturales, editoriales o de noche, adaptados a tu facciones y ocasión.' },
+  { num:'04', name:'Cuidado',     desc:'Tratamientos de hidratación, reconstrucción y nutrición profunda para un cabello sano, brillante y libre de daño.' },
+  { num:'05', name:'Rélax',       desc:'Masajes capilares y tratamientos relajantes que combinan bienestar con resultados visibles. Una experiencia para cuerpo y cabello.' },
+  { num:'06', name:'Pestañas',    desc:'Extensiones, lifting y tinte de pestañas para una mirada impactante y sin esfuerzo en tu rutina diaria.' },
+  { num:'07', name:'Uñas',        desc:'Manicure y pedicure con las últimas tendencias. Gel, acrílico, semipermanente y nail art personalizado.' },
+  { num:'08', name:'Maquillaje',  desc:'Sesiones de maquillaje artístico y social para novias, galas, fotografía y eventos especiales. Resultados que duran toda la noche.' },
+];
+
+const items  = document.querySelectorAll('.serv-li');
+const sdNum  = document.getElementById('sdNum');
+const sdName = document.getElementById('sdName');
+const sdDesc = document.getElementById('sdDesc');
+const sdCta  = document.getElementById('sdCta');
+
+function setService(idx) {
+  items.forEach(li => li.classList.remove('active'));
+  items[idx].classList.add('active');
+  const s = services[idx];
+  sdNum.textContent  = s.num;
+  sdName.textContent = s.name;
+  sdDesc.textContent = s.desc;
+  sdCta.href = `https://wa.me/51994602534?text=Hola%2C%20me%20interesa%20el%20servicio%20de%20${encodeURIComponent(s.name)}%20en%20NOA%20SALON`;
+}
+
+items.forEach(li => {
+  li.addEventListener('mouseenter', () => setService(+li.dataset.idx));
+  li.addEventListener('click',      () => setService(+li.dataset.idx));
+});
+
+
+/* ── Reviews carousel ── */
+const track    = document.getElementById('reviewsTrack');
+const dotsWrap = document.getElementById('carouselDots');
+const cards    = track.querySelectorAll('.review-card');
+const isMobile = () => window.innerWidth <= 960;
+let current = 0, autoTimer;
+
+function totalSlides() { return isMobile() ? cards.length : Math.ceil(cards.length / 2); }
+
+function buildDots() {
+  dotsWrap.innerHTML = '';
+  for (let i = 0; i < totalSlides(); i++) {
+    const d = document.createElement('div');
+    d.className = 'cdot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(d);
+  }
+}
+
+function goTo(idx) {
+  const n = totalSlides();
+  current = ((idx % n) + n) % n;
+  const cardW = cards[0].getBoundingClientRect().width;
+  const gap = 16;
+  const perCard = cardW + gap;
+  track.style.transform = `translateX(-${current * (isMobile() ? perCard : perCard * 2)}px)`;
+  dotsWrap.querySelectorAll('.cdot').forEach((d, i) => d.classList.toggle('active', i === current));
+  resetTimer();
+}
+
+function resetTimer() {
+  clearInterval(autoTimer);
+  autoTimer = setInterval(() => goTo(current + 1), 4000);
+}
+
+buildDots();
+resetTimer();
+window.addEventListener('resize', () => { buildDots(); goTo(0); });
+
+
+/* ── Scroll fade-in ── */
+const io = new IntersectionObserver(
+  entries => entries.forEach(e => {
+    if (e.isIntersecting) { e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; }
+  }),
+  { threshold: 0.05, rootMargin: '0px 0px -20px 0px' }
+);
+document.querySelectorAll('.serv-panel, .g-cell, .review-card, .intro-inner').forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(16px)';
+  el.style.transition = `opacity .55s cubic-bezier(.16,1,.3,1) ${(i % 4) * 0.06}s, transform .55s cubic-bezier(.16,1,.3,1) ${(i % 4) * 0.06}s`;
+  io.observe(el);
+});
+
+
+/* ── Form → WhatsApp ── */
+function handleSubmit(e) {
+  e.preventDefault();
+  const fields  = e.target.querySelectorAll('input, textarea');
+  const nombre   = fields[0].value.trim();
+  const telefono = fields[1].value.trim();
+  const servicio = fields[2].value.trim();
+  const mensaje  = fields[3].value.trim();
+
+  let text = `Hola! Vengo de la página web de NOA SALON y quisiera reservar una cita.`;
+  if (nombre)   text += `\n\n👤 Nombre: ${nombre}`;
+  if (telefono) text += `\n📞 Teléfono: ${telefono}`;
+  if (servicio) text += `\n✂️ Servicio: ${servicio}`;
+  if (mensaje)  text += `\n💬 Mensaje: ${mensaje}`;
+
+  window.open(`https://wa.me/51994602534?text=${encodeURIComponent(text)}`, '_blank');
+  e.target.reset();
+}
+</script>
+
+</body>
+</html>

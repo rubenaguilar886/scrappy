@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scrappy Studio — Brand Kit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --b0: #060606; --b1: #0A0A0A; --b2: #111111; --b3: #1E1E1E;
+      --warm: #F5F3EF; --warm2: #EEEAE4;
+      --t1: #F2F2F2; --t2: #9A9A9A; --t3: #4A4A4A;
+      --g: linear-gradient(90deg,#FF2828 0%,#FF8C00 22%,#FFD200 45%,#FFF 62%,#00AAFF 82%,#0044FF 100%);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #F5F3EF; color: #111; -webkit-font-smoothing: antialiased; }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 5%; }
+
+    /* ─── COVER ─── */
+    .cover {
+      background: #080808;
+      padding: 80px 5% 72px;
+      position: relative; overflow: hidden;
+    }
+    .cover::before {
+      content: '';
+      position: absolute; top: -20%; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 600px;
+      background: radial-gradient(ellipse at 50% 28%, rgba(255,110,15,.50) 0%, rgba(200,45,0,.18) 35%, transparent 65%);
+      pointer-events: none;
+    }
+    .cover-inner { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 0 5%; }
+    .cover-kicker { font-size: 10px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: #555; margin-bottom: 24px; }
+    .cover-brand {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: clamp(64px, 10vw, 110px);
+      line-height: 0.88; color: #F2F2F2;
+      letter-spacing: 1px; margin-bottom: 20px;
+    }
+    .cover-spec { display: flex; align-items: center; gap: 6px; margin-bottom: 28px; }
+    .cover-dot { width: 10px; height: 10px; border-radius: 50%; background: #FF2828; flex-shrink: 0; }
+    .cover-bar { width: 220px; height: 5px; border-radius: 100px; background: linear-gradient(90deg,#FF2828 0%,#FF8C00 22%,#FFD200 45%,#FFF 62%,#00AAFF 82%,#0044FF 100%); }
+    .cover-sub { font-size: 15px; color: #5A5A5A; line-height: 1.6; }
+
+    /* ─── SECTIONS ─── */
+    .section { padding: 72px 0; border-bottom: 1px solid #E5E2DC; }
+    .section:last-child { border-bottom: none; }
+    .sec-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #AAAAAA; margin-bottom: 10px; }
+    .sec-title { font-family: 'Bebas Neue', Impact, sans-serif; font-size: clamp(36px, 5vw, 56px); color: #111; line-height: 0.92; margin-bottom: 40px; }
+
+    /* ─── LOGO SECTION ─── */
+    .logo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .logo-card {
+      border-radius: 12px; overflow: hidden;
+      border: 1px solid #E5E2DC;
+      display: flex; flex-direction: column;
+    }
+    .logo-card-preview {
+      display: flex; align-items: center; justify-content: center;
+      padding: 48px 32px; flex: 1;
+    }
+    .logo-card-preview.dark  { background: #080808; }
+    .logo-card-preview.light { background: #F5F3EF; }
+    .logo-card-meta {
+      padding: 14px 20px;
+      background: #fff; border-top: 1px solid #E5E2DC;
+      font-size: 12px; font-weight: 600; color: #666;
+      letter-spacing: .5px;
+    }
+
+    /* Inline logo (reproduced in HTML) */
+    .logo-inline { display: flex; flex-direction: column; gap: 5px; }
+    .logo-row { display: flex; align-items: baseline; gap: 10px; }
+    .logo-name { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 28px; letter-spacing: 3px; line-height: 1; }
+    .logo-name.on-dark { color: #F2F2F2; }
+    .logo-name.on-light { color: #111; }
+    .lp-dark { background: linear-gradient(90deg,#FF2828,#FF8C00); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .lp-light { background: linear-gradient(90deg,#FF2828,#FF8C00); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .logo-tag { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
+    .logo-tag.on-dark  { color: #4A4A4A; }
+    .logo-tag.on-light { color: #AAAAAA; }
+    .spec-row { display: flex; align-items: center; gap: 4px; }
+    .spec-dot-sm { width: 7px; height: 7px; border-radius: 50%; background: #FF2828; flex-shrink: 0; }
+    .spec-bar-sm { width: 88px; height: 3px; border-radius: 100px; background: linear-gradient(90deg,#FF2828 0%,#FF8C00 22%,#FFD200 45%,#FFF 62%,#00AAFF 82%,#0044FF 100%); }
+
+    /* WA square logo preview */
+    .wa-preview {
+      width: 140px; height: 140px; border-radius: 50%;
+      background: #080808; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .wa-preview::before {
+      content: '';
+      position: absolute; top: -10%; left: 50%; transform: translateX(-50%);
+      width: 100%; height: 80%;
+      background: radial-gradient(ellipse, rgba(255,110,15,.35) 0%, transparent 70%);
+    }
+    .wa-s {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 100px; line-height: 1;
+      color: transparent;
+      -webkit-text-stroke: 1px #333;
+      position: relative; z-index: 1;
+      margin-top: 10px;
+    }
+
+    /* ─── COLORS ─── */
+    .colors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; }
+    .color-chip { border-radius: 10px; overflow: hidden; border: 1px solid rgba(0,0,0,.06); }
+    .color-swatch { height: 80px; }
+    .color-info { padding: 12px 14px; background: #fff; }
+    .color-name { font-size: 12px; font-weight: 700; color: #111; margin-bottom: 3px; }
+    .color-hex  { font-size: 12px; color: #888; font-family: 'Courier New', monospace; }
+
+    .gradient-strip {
+      height: 48px; border-radius: 10px;
+      background: linear-gradient(90deg,#FF2828 0%,#FF8C00 22%,#FFD200 45%,#FFF 62%,#00AAFF 82%,#0044FF 100%);
+      border: 1px solid rgba(0,0,0,.06);
+      margin-bottom: 14px;
+    }
+    .gradient-stops { display: flex; gap: 8px; flex-wrap: wrap; }
+    .stop-pill {
+      display: flex; align-items: center; gap: 6px;
+      background: #fff; border: 1px solid #E5E2DC;
+      padding: 6px 10px; border-radius: 6px;
+      font-size: 11px; color: #555;
+    }
+    .stop-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(0,0,0,.12); }
+
+    /* ─── TYPOGRAPHY ─── */
+    .type-card { background: #fff; border: 1px solid #E5E2DC; border-radius: 12px; padding: 32px 28px; margin-bottom: 16px; }
+    .type-specimen-bebas { font-family: 'Bebas Neue', Impact, sans-serif; font-size: clamp(52px, 8vw, 88px); line-height: 0.9; color: #111; letter-spacing: 1px; }
+    .type-specimen-inter { font-size: 17px; color: #444; line-height: 1.7; max-width: 560px; }
+    .type-meta { margin-top: 20px; padding-top: 20px; border-top: 1px solid #F0EDE8; display: flex; gap: 32px; flex-wrap: wrap; }
+    .type-meta-item { display: flex; flex-direction: column; gap: 3px; }
+    .type-meta-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #AAAAAA; }
+    .type-meta-val   { font-size: 13px; font-weight: 600; color: #333; }
+    .type-scale { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+    .ts-row { display: flex; align-items: baseline; gap: 16px; }
+    .ts-label { font-size: 11px; color: #AAA; min-width: 60px; font-weight: 600; }
+
+    /* ─── USAGE ─── */
+    .usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .usage-card { border-radius: 10px; border: 1px solid #E5E2DC; overflow: hidden; }
+    .usage-header { padding: 10px 16px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+    .usage-header.do   { background: rgba(74,222,128,.12); color: #166534; }
+    .usage-header.dont { background: rgba(239,68,68,.08); color: #991B1B; }
+    .usage-body { padding: 16px; background: #fff; }
+    .usage-item { font-size: 13px; color: #444; line-height: 1.5; padding: 6px 0; border-bottom: 1px solid #F0EDE8; }
+    .usage-item:last-child { border-bottom: none; }
+    .usage-item::before { margin-right: 8px; }
+    .do   .usage-item::before { content: '✓'; color: #22C55E; }
+    .dont .usage-item::before { content: '✗'; color: #EF4444; }
+
+    /* ─── FOOTER ─── */
+    .bk-footer { background: #080808; padding: 40px 5%; text-align: center; }
+    .bk-footer-logo { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 18px; letter-spacing: 4px; color: #3A3A3A; margin-bottom: 8px; }
+    .bk-footer-note { font-size: 12px; color: #333; }
+
+    @media print {
+      .section { break-inside: avoid; }
+    }
+    @media (max-width: 640px) {
+      .logo-grid, .usage-grid { grid-template-columns: 1fr; }
+      .colors-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── COVER ── -->
+<div class="cover">
+  <div class="cover-inner">
+    <p class="cover-kicker">Brand Identity · 2026</p>
+    <div class="cover-brand">SCRAPPY<br>STUDIO.</div>
+    <div class="cover-spec">
+      <div class="cover-dot"></div>
+      <div class="cover-bar"></div>
+    </div>
+    <p class="cover-sub">Brand Kit · Logotipo · Colores · Tipografía · Guía de uso</p>
+  </div>
+</div>
+
+
+<!-- ── LOGO ── -->
+<div class="wrap">
+<section class="section">
+  <p class="sec-label">Identidad</p>
+  <h2 class="sec-title">LOGOTIPO.</h2>
+
+  <div class="logo-grid">
+
+    <!-- Logo sobre oscuro -->
+    <div class="logo-card">
+      <div class="logo-card-preview dark">
+        <div class="logo-inline">
+          <div class="logo-row">
+            <span class="logo-name on-dark">SCRAPPY<span class="lp-dark">.</span></span>
+            <span class="logo-tag on-dark">Studio</span>
+          </div>
+          <div class="spec-row">
+            <div class="spec-dot-sm"></div>
+            <div class="spec-bar-sm"></div>
+          </div>
+        </div>
+      </div>
+      <div class="logo-card-meta">Versión principal · Fondo oscuro</div>
+    </div>
+
+    <!-- Logo sobre claro -->
+    <div class="logo-card">
+      <div class="logo-card-preview light">
+        <div class="logo-inline">
+          <div class="logo-row">
+            <span class="logo-name on-light">SCRAPPY<span class="lp-light">.</span></span>
+            <span class="logo-tag on-light">Studio</span>
+          </div>
+          <div class="spec-row">
+            <div class="spec-dot-sm"></div>
+            <div class="spec-bar-sm"></div>
+          </div>
+        </div>
+      </div>
+      <div class="logo-card-meta">Versión secundaria · Fondo claro</div>
+    </div>
+
+  </div>
+
+  <!-- WhatsApp profile -->
+  <div style="margin-top:20px;">
+    <div class="logo-card" style="flex-direction:row; align-items:center; gap:32px; padding:28px 28px; background:#fff; border-radius:12px;">
+      <div class="wa-preview">
+        <div class="wa-s">S.</div>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:#111;margin-bottom:6px;">Foto de perfil — WhatsApp Business</div>
+        <div style="font-size:13px;color:#666;line-height:1.6;margin-bottom:12px;">Usa el archivo <code style="background:#F0EDE8;padding:2px 6px;border-radius:4px;font-size:12px;">logo-square.svg</code> como foto de perfil. WhatsApp recorta en círculo, así que el ícono "S." queda perfectamente centrado.</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#AAAAAA;">640 × 640 px · Formato SVG → exportar a PNG</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Archivos -->
+  <div style="margin-top:20px;background:#fff;border:1px solid #E5E2DC;border-radius:12px;overflow:hidden;">
+    <div style="padding:14px 20px;background:#F5F3EF;border-bottom:1px solid #E5E2DC;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#888;">Archivos incluidos</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;">
+      <div style="padding:18px 20px;border-right:1px solid #E5E2DC;">
+        <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:4px;">logo.svg</div>
+        <div style="font-size:12px;color:#888;">Horizontal · Navbar / web</div>
+      </div>
+      <div style="padding:18px 20px;border-right:1px solid #E5E2DC;">
+        <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:4px;">logo-square.svg</div>
+        <div style="font-size:12px;color:#888;">Cuadrado · WhatsApp / avatar</div>
+      </div>
+      <div style="padding:18px 20px;">
+        <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:4px;">index.html</div>
+        <div style="font-size:12px;color:#888;">Landing page completa</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── COLORES ── -->
+<section class="section">
+  <p class="sec-label">Paleta</p>
+  <h2 class="sec-title">COLORES.</h2>
+
+  <!-- Colores oscuros -->
+  <p style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#AAAAAA;margin-bottom:14px;">Fondos oscuros</p>
+  <div class="colors-grid" style="margin-bottom:32px;">
+    <div class="color-chip">
+      <div class="color-swatch" style="background:#060606;"></div>
+      <div class="color-info"><div class="color-name">Negro base</div><div class="color-hex">#060606</div></div>
+    </div>
+    <div class="color-chip">
+      <div class="color-swatch" style="background:#0A0A0A;"></div>
+      <div class="color-info"><div class="color-name">Negro suave</div><div class="color-hex">#0A0A0A</div></div>
+    </div>
+    <div class="color-chip">
+      <div class="color-swatch" style="background:#111111;"></div>
+      <div class="color-info"><div class="color-name">Gris oscuro</div><div class="color-hex">#111111</div></div>
+    </div>
+    <div class="color-chip">
+      <div class="color-swatch" style="background:#1E1E1E;border:1px solid #2A2A2A;"></div>
+      <div class="color-info"><div class="color-name">Borde oscuro</div><div class="color-hex">#1E1E1E</div></div>
+    </div>
+  </div>
+
+  <!-- Colores claros -->
+  <p style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#AAAAAA;margin-bottom:14px;">Fondos claros</p>
+  <div class="colors-grid" style="margin-bottom:32px;">
+    <div class="color-chip">
+      <div class="color-swatch" style="background:#F5F3EF;border:1px solid #E5E2DC;"></div>
+      <div class="color-info"><div class="color-name">Warm</div><div class="color-hex">#F5F3EF</div></div>
+    </div>
+    <div class="color-chip">
+      <div class="color-swatch" style="background:#EEEAE4;border:1px solid #E5E2DC;"></div>
+      <div class="color-info"><div class="color-name">Warm 2</div><div class="color-hex">#EEEAE4</div></div>
+    </div>
+    <div class="color-chip">
+      <div class="color-swatch" style="background:#EDE9E3;border:1px solid #E5E2DC;"></div>
+      <div class="color-info"><div class="color-name">Warm 3</div><div class="color-hex">#EDE9E3</div></div>
+    </div>
+  </div>
+
+  <!-- Texto -->
+  <p style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#AAAAAA;margin-bottom:14px;">Texto</p>
+  <div class="colors-grid" style="margin-bottom:40px;">
+    <div class="color-chip">
+      <div class="color-swatch" style="background:#F2F2F2;border:1px solid #E5E2DC;"></div>
+      <div class="color-info"><div class="color-name">Texto claro 1</div><div class="color-hex">#F2F2F2</div></div>
+    </div>
+    <div class="color-chip">
+      <div class="color-swatch" style="background:#9A9A9A;"></div>
+      <div class="color-info"><div class="color-name">Texto claro 2</div><div class="color-hex">#9A9A9A</div></div>
+    </div>
+    <div class="color-chip">
+      <div class="color-swatch" style="background:#111111;border:1px solid #E5E2DC;"></div>
+      <div class="color-info"><div class="color-name">Texto oscuro 1</div><div class="color-hex">#111111</div></div>
+    </div>
+    <div class="color-chip">
+      <div class="color-swatch" style="background:#666666;"></div>
+      <div class="color-info"><div class="color-name">Texto oscuro 2</div><div class="color-hex">#666666</div></div>
+    </div>
+  </div>
+
+  <!-- Gradient -->
+  <p style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#AAAAAA;margin-bottom:14px;">Elemento firma — Spectrum Gradient</p>
+  <div class="gradient-strip"></div>
+  <div class="gradient-stops">
+    <div class="stop-pill"><div class="stop-dot" style="background:#FF2828;"></div>#FF2828 · 0%</div>
+    <div class="stop-pill"><div class="stop-dot" style="background:#FF8C00;"></div>#FF8C00 · 22%</div>
+    <div class="stop-pill"><div class="stop-dot" style="background:#FFD200;"></div>#FFD200 · 45%</div>
+    <div class="stop-pill"><div class="stop-dot" style="background:#FFFFFF;border:1px solid #DDD;"></div>#FFFFFF · 62%</div>
+    <div class="stop-pill"><div class="stop-dot" style="background:#00AAFF;"></div>#00AAFF · 82%</div>
+    <div class="stop-pill"><div class="stop-dot" style="background:#0044FF;"></div>#0044FF · 100%</div>
+  </div>
+  <div style="margin-top:14px;padding:14px 16px;background:#fff;border:1px solid #E5E2DC;border-radius:8px;">
+    <code style="font-size:12px;color:#666;">linear-gradient(90deg, #FF2828 0%, #FF8C00 22%, #FFD200 45%, #FFFFFF 62%, #00AAFF 82%, #0044FF 100%)</code>
+  </div>
+</section>
+
+
+<!-- ── TIPOGRAFÍA ── -->
+<section class="section">
+  <p class="sec-label">Tipografía</p>
+  <h2 class="sec-title">FUENTES.</h2>
+
+  <!-- Bebas Neue -->
+  <div class="type-card">
+    <div class="type-specimen-bebas">BEBAS NEUE<br>ABCDEFGHIJKLM<br>0123456789.</div>
+    <div class="type-meta">
+      <div class="type-meta-item"><span class="type-meta-label">Fuente</span><span class="type-meta-val">Bebas Neue</span></div>
+      <div class="type-meta-item"><span class="type-meta-label">Peso</span><span class="type-meta-val">Regular (400)</span></div>
+      <div class="type-meta-item"><span class="type-meta-label">Uso</span><span class="type-meta-val">Headings, títulos, logo, cifras</span></div>
+      <div class="type-meta-item"><span class="type-meta-label">Descarga</span><span class="type-meta-val">Google Fonts</span></div>
+    </div>
+    <div class="type-scale">
+      <div class="ts-row"><span class="ts-label">114px</span><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:clamp(40px,7vw,114px);line-height:1;color:#111">Hero H1</span></div>
+      <div class="ts-row"><span class="ts-label">84px</span><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:clamp(36px,6vw,84px);line-height:1;color:#111">Sección H2</span></div>
+      <div class="ts-row"><span class="ts-label">48px</span><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:48px;line-height:1;color:#111">Stat / Número</span></div>
+      <div class="ts-row"><span class="ts-label">21px</span><span style="font-family:'Bebas Neue',Impact,sans-serif;font-size:21px;letter-spacing:3px;color:#111">NAVBAR LOGO</span></div>
+    </div>
+  </div>
+
+  <!-- Inter -->
+  <div class="type-card">
+    <div class="type-specimen-inter">Inter — La tipografía de cuerpo de Scrappy Studio. Limpia, moderna y altamente legible en cualquier tamaño. Se usa para párrafos, labels, botones y cualquier texto que no sea heading.</div>
+    <div class="type-meta">
+      <div class="type-meta-item"><span class="type-meta-label">Fuente</span><span class="type-meta-val">Inter</span></div>
+      <div class="type-meta-item"><span class="type-meta-label">Pesos</span><span class="type-meta-val">400, 500, 600, 700</span></div>
+      <div class="type-meta-item"><span class="type-meta-label">Uso</span><span class="type-meta-val">Body, labels, botones, UI</span></div>
+      <div class="type-meta-item"><span class="type-meta-label">Descarga</span><span class="type-meta-val">Google Fonts</span></div>
+    </div>
+    <div class="type-scale">
+      <div class="ts-row"><span class="ts-label">17px</span><span style="font-size:17px;color:#444;line-height:1.3">Párrafo principal</span></div>
+      <div class="ts-row"><span class="ts-label">14–15px</span><span style="font-size:14px;color:#555;line-height:1.3">Descripción de tarjeta</span></div>
+      <div class="ts-row"><span class="ts-label">12px 700</span><span style="font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#888">KICKER / LABEL</span></div>
+      <div class="ts-row"><span class="ts-label">13–15px 700</span><span style="font-size:14px;font-weight:700;color:#111;background:linear-gradient(90deg,#FF2828,#FF8C00,#FFD200,#FFF,#00AAFF,#0044FF);-webkit-background-clip:text;background-clip:text;color:transparent">Botón gradiente</span></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── GUÍA DE USO ── -->
+<section class="section">
+  <p class="sec-label">Guidelines</p>
+  <h2 class="sec-title">GUÍA DE USO.</h2>
+
+  <div class="usage-grid">
+    <div class="usage-card">
+      <div class="usage-header do">✓ &nbsp;Sí hacer</div>
+      <div class="usage-body do">
+        <div class="usage-item">Usar el logo sobre fondo oscuro (#080808) como principal</div>
+        <div class="usage-item">Respetar el espacio mínimo alrededor del logo (= altura de la barra gradiente)</div>
+        <div class="usage-item">Usar Bebas Neue solo en mayúsculas</div>
+        <div class="usage-item">Aplicar el gradient spectrum como elemento firma (barras, botones, puntos de acento)</div>
+        <div class="usage-item">Usar fondos warm (#F5F3EF / #EEEAE4) para secciones claras</div>
+        <div class="usage-item">Mantener el "." del logotipo en gradient rojo→naranja</div>
+      </div>
+    </div>
+    <div class="usage-card">
+      <div class="usage-header dont">✗ &nbsp;No hacer</div>
+      <div class="usage-body dont">
+        <div class="usage-item">No usar el logo sobre fondos de color saturado</div>
+        <div class="usage-item">No cambiar los colores del gradient spectrum</div>
+        <div class="usage-item">No usar Bebas Neue en minúsculas ni italic</div>
+        <div class="usage-item">No estirar ni distorsionar el logo</div>
+        <div class="usage-item">No usar azul (#0044FF) como color de fondo principal</div>
+        <div class="usage-item">No agregar sombras ni efectos al logotipo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── LINKS FUENTES ── -->
+<section class="section" style="border-bottom:none;padding-bottom:0;">
+  <p class="sec-label">Recursos</p>
+  <h2 class="sec-title">DESCARGAS.</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <a href="https://fonts.google.com/specimen/Bebas+Neue" target="_blank" style="text-decoration:none;display:block;background:#fff;border:1px solid #E5E2DC;border-radius:10px;padding:20px 22px;transition:box-shadow .2s;" onmouseover="this.style.boxShadow='0 4px 20px rgba(0,0,0,.08)'" onmouseout="this.style.boxShadow='none'">
+      <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:4px;">Bebas Neue → Google Fonts</div>
+      <div style="font-size:12px;color:#888;">fonts.google.com/specimen/Bebas+Neue</div>
+    </a>
+    <a href="https://fonts.google.com/specimen/Inter" target="_blank" style="text-decoration:none;display:block;background:#fff;border:1px solid #E5E2DC;border-radius:10px;padding:20px 22px;transition:box-shadow .2s;" onmouseover="this.style.boxShadow='0 4px 20px rgba(0,0,0,.08)'" onmouseout="this.style.boxShadow='none'">
+      <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:4px;">Inter → Google Fonts</div>
+      <div style="font-size:12px;color:#888;">fonts.google.com/specimen/Inter</div>
+    </a>
+  </div>
+</section>
+
+</div><!-- /wrap -->
+
+
+<!-- ── FOOTER ── -->
+<div class="bk-footer">
+  <div class="bk-footer-logo">SCRAPPY STUDIO.</div>
+  <div class="bk-footer-note">Brand Kit · Uso interno · 2025</div>
+</div>
+
+</body>
+</html>

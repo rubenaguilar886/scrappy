@@ -1,0 +1,17 @@
+node_modules/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+output/
+*.csv
+*.json
+!package.json
+!package-lock.json
+!tone-config.json
+.env
+google-credentials.json
+.vscode/
+.idea/

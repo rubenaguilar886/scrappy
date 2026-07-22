@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sacred Ink Studio — Tatuajes en Lima, Perú</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,900;1,500;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+
+/* ════════ RESET & TOKENS ════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
+
+:root {
+  --bg:     #080808;
+  --bg2:    #0F0F0F;
+  --bg3:    #161616;
+  --bg4:    #1E1E1E;
+  --border: #222;
+  --cream:  #EDE9E1;
+  --cream2: #BDB5A8;
+  --gold:   #C8A96E;
+  --gold2:  #8B6E3A;
+  --gray:   #5A5A5A;
+  --gray2:  #2E2E2E;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--cream);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 5%; }
+
+/* ════════ SCROLL ANIMATIONS ════════ */
+.up {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1);
+}
+.up.show { opacity: 1; transform: translateY(0); }
+.d1{transition-delay:.1s} .d2{transition-delay:.2s}
+.d3{transition-delay:.3s} .d4{transition-delay:.4s}
+
+/* ════════ HERO ZOOM ════════ */
+@keyframes hero-zoom {
+  0%   { transform: scale(1.0)  translate(0%,    0%); }
+  33%  { transform: scale(1.20) translate(-1.5%, -1%); }
+  66%  { transform: scale(1.15) translate( 1%,   -2%); }
+  100% { transform: scale(1.0)  translate(0%,    0%); }
+}
+
+/* ════════ HERO LOAD ANIMATIONS ════════ */
+@keyframes hfu {
+  from { opacity:0; transform:translateY(22px); filter:blur(5px); }
+  to   { opacity:1; transform:translateY(0);    filter:blur(0);   }
+}
+@keyframes hfd {
+  from { opacity:0; transform:translateY(-14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.hafd { animation: hfd .7s cubic-bezier(.22,1,.36,1) both; }
+.hafu { animation: hfu .9s cubic-bezier(.22,1,.36,1) both; }
+.hd1  { animation-delay:100ms } .hd2 { animation-delay:220ms }
+.hd3  { animation-delay:360ms } .hd4 { animation-delay:500ms }
+.hd5  { animation-delay:640ms }
+@media(prefers-reduced-motion:reduce){ .hafd,.hafu{animation:none} }
+
+/* ════════ GALLERY PLACEHOLDER ART ════════ */
+.gal-1  { background: url('https://images.unsplash.com/photo-1597852075234-fd721ac361d3?w=600&h=900&fit=crop&q=80&auto=format') center/cover; }
+.gal-2  { background: url('https://images.unsplash.com/photo-1479767574301-a01c78234a0c?w=600&h=400&fit=crop&q=80&auto=format') center/cover; }
+.gal-3  { background: url('https://images.unsplash.com/photo-1482375702222-03a768d5ea3c?w=600&h=400&fit=crop&q=80&auto=format') center/cover; }
+.gal-4  { background: url('https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?w=600&h=900&fit=crop&q=80&auto=format') center/cover; }
+.gal-5  { background: url('https://images.unsplash.com/photo-1542744383-8c330d91f4b1?w=600&h=400&fit=crop&q=80&auto=format') center/cover; }
+.gal-6  { background: url('https://images.unsplash.com/photo-1513078094721-e7b6e0394a6a?w=600&h=400&fit=crop&q=80&auto=format') center/cover; }
+
+/* ════════ NAVBAR ════════ */
+.navbar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 40px;
+  transition: background .35s, border-color .35s, padding .35s, backdrop-filter .35s;
+}
+.navbar.scrolled {
+  background: rgba(8,8,8,.94);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 13px 40px;
+}
+
+/* Logo */
+.nav-logo {
+  display: flex; flex-direction: column;
+  text-decoration: none; flex-shrink: 0;
+}
+.nav-logo-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; font-weight: 700;
+  color: var(--cream); letter-spacing: .5px; line-height: 1;
+}
+.nav-logo-sub {
+  font-size: 7.5px; font-weight: 600; letter-spacing: 3.5px;
+  text-transform: uppercase; color: var(--gold); margin-top: 2px;
+}
+
+/* Desktop pill */
+.nav-pill {
+  display: flex;
+  align-items: center;
+  background: rgba(14,8,4,.75);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(200,169,110,.16);
+  border-radius: 100px;
+  padding: 5px 5px 5px 22px;
+  gap: 0;
+}
+.nav-pill-a {
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: .6px;
+  color: rgba(237,233,225,.55);
+  text-decoration: none;
+  padding: 8px 13px;
+  white-space: nowrap;
+  transition: color .18s;
+}
+.nav-pill-a:first-child { color: rgba(237,233,225,.88); font-weight: 600; }
+.nav-pill-a:hover { color: var(--cream); }
+.nav-pill-cta {
+  background: var(--gold);
+  color: var(--bg);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border-radius: 100px;
+  text-decoration: none;
+  margin-left: 6px;
+  white-space: nowrap;
+  transition: background .18s;
+  flex-shrink: 0;
+}
+.nav-pill-cta:hover { background: #d9bc84; }
+
+/* Right side */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+.nav-right-a {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(237,233,225,.60);
+  text-decoration: none;
+  transition: color .18s;
+  white-space: nowrap;
+}
+.nav-right-a:hover { color: var(--cream); }
+
+/* Hamburger */
+.nav-hbtn {
+  display: none;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: rgba(200,169,110,.10);
+  border: 1px solid rgba(200,169,110,.20);
+  align-items: center; justify-content: center;
+  cursor: pointer; color: var(--cream);
+  flex-shrink: 0;
+  transition: background .2s;
+  position: relative;
+}
+.nav-hbtn:hover { background: rgba(200,169,110,.20); }
+.nav-hbtn svg {
+  width: 18px; height: 18px;
+  stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round;
+  position: absolute;
+  transition: opacity .3s, transform .3s;
+}
+.nav-hbtn .ic-x { opacity: 0; transform: rotate(-90deg) scale(.5); }
+.nav-hbtn.open .ic-ham { opacity: 0; transform: rotate(90deg) scale(.5); }
+.nav-hbtn.open .ic-x  { opacity: 1; transform: rotate(0) scale(1); }
+
+/* Mobile overlay */
+.mob-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 190;
+  background: rgba(8,8,8,.45);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s;
+}
+.mob-overlay.open { opacity: 1; pointer-events: auto; }
+
+/* Mobile drawer */
+.mob-drawer {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: 85%; max-width: 320px;
+  z-index: 195;
+  background: rgba(8,8,8,.97);
+  backdrop-filter: blur(30px);
+  border-left: 1px solid #1c1c1c;
+  display: flex; flex-direction: column;
+  padding: 90px 32px 32px;
+  transform: translateX(100%);
+  transition: transform .5s cubic-bezier(.22,1,.36,1);
+}
+.mob-drawer.open { transform: translateX(0); }
+.mob-drawer-a {
+  font-family: 'Playfair Display', serif;
+  font-size: 23px; font-weight: 700;
+  color: var(--cream);
+  text-decoration: none;
+  padding: 15px 0;
+  border-bottom: 1px solid #1a1a1a;
+  opacity: 0;
+  transform: translateX(28px);
+  transition: opacity .45s, transform .45s;
+}
+.mob-drawer-a:hover { color: var(--gold); }
+.mob-drawer.open .mob-drawer-a:nth-child(1) { opacity:1;transform:none;transition-delay:120ms }
+.mob-drawer.open .mob-drawer-a:nth-child(2) { opacity:1;transform:none;transition-delay:190ms }
+.mob-drawer.open .mob-drawer-a:nth-child(3) { opacity:1;transform:none;transition-delay:260ms }
+.mob-drawer.open .mob-drawer-a:nth-child(4) { opacity:1;transform:none;transition-delay:330ms }
+.mob-drawer-cta {
+  margin-top: 28px;
+  display: inline-block; text-align: center;
+  background: var(--gold); color: var(--bg);
+  font-size: 10.5px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 14px 28px;
+  text-decoration: none;
+  border-radius: 2px;
+  opacity: 0;
+  transform: translateX(28px);
+  transition: opacity .45s .4s, transform .45s .4s, background .18s;
+}
+.mob-drawer.open .mob-drawer-cta { opacity:1; transform:none; }
+.mob-drawer-cta:hover { background: #d9bc84; }
+
+/* ════════ HERO ════════ */
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 100svh;
+  min-height: 100vh; /* fallback */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Video/photo container */
+#vbg {
+  position: absolute; inset: 0; z-index: 0;
+  overflow: hidden;
+}
+#vbg img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  animation: hero-zoom 14s ease-in-out infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+
+/* Overlays */
+.hero-ov-top {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(8,8,8,.72) 0%, rgba(8,8,8,.22) 38%, transparent 62%);
+}
+.hero-ov-bot {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 54%;
+  z-index: 1; pointer-events: none;
+  background: linear-gradient(to top, #080808 0%, transparent 100%);
+}
+.hero-ov-vig {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 44%, rgba(8,8,8,.52) 100%);
+}
+
+/* Hero body */
+.hero-body {
+  position: relative; z-index: 10;
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 110px 24px 60px;
+}
+.hero-eyebrow {
+  font-size: 8.5px; font-weight: 600; letter-spacing: 4.5px;
+  text-transform: uppercase; color: var(--gold);
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 24px;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ''; display: block;
+  width: 26px; height: 1px; background: var(--gold);
+}
+.hero-h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3rem, 9.5vw, 7.5rem);
+  font-weight: 900;
+  line-height: .95;
+  letter-spacing: -.03em;
+  color: var(--cream);
+  margin-bottom: 26px;
+}
+.hero-h1 em { font-style: italic; color: var(--gold); }
+.hero-sub {
+  font-size: clamp(.875rem, 1.4vw, 1rem);
+  color: rgba(237,233,225,.52);
+  line-height: 1.72;
+  max-width: 400px;
+  margin-bottom: 36px;
+}
+.hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.btn-gold {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: var(--gold); color: var(--bg);
+  padding: 14px 28px; font-size: 11px;
+  font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  text-decoration: none; border-radius: 2px;
+  transition: background .18s, transform .15s;
+}
+.btn-gold:hover { background: #d9bc84; transform: translateY(-2px); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: transparent; color: var(--cream2);
+  padding: 14px 28px; font-size: 11px;
+  font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
+  text-decoration: none; border: 1px solid rgba(237,233,225,.18);
+  border-radius: 2px; transition: border-color .18s, color .18s;
+}
+.btn-ghost:hover { border-color: rgba(237,233,225,.4); color: var(--cream); }
+
+/* Bottom-left CTA block */
+.hero-bl {
+  position: absolute;
+  left: 40px; bottom: 40px; z-index: 10;
+  max-width: 290px;
+}
+.hero-bl-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 8.5px; font-weight: 700; letter-spacing: 3.5px;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 10px;
+}
+.hero-bl-text {
+  font-size: 12px; color: rgba(237,233,225,.60);
+  line-height: 1.68; margin-bottom: 18px;
+}
+.hero-bl-btns { display: flex; align-items: center; gap: 20px; }
+.hero-bl-btn-prim {
+  background: var(--gold); color: var(--bg);
+  font-size: 9.5px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 10px 22px; border-radius: 2px;
+  text-decoration: none; transition: background .18s;
+  white-space: nowrap;
+}
+.hero-bl-btn-prim:hover { background: #d9bc84; }
+.hero-bl-btn-link {
+  font-size: 11.5px; font-weight: 600;
+  color: rgba(237,233,225,.65);
+  text-decoration: none; transition: color .18s;
+  white-space: nowrap;
+}
+.hero-bl-btn-link:hover { color: var(--cream); }
+
+/* Bottom-right video link */
+.hero-br {
+  position: absolute;
+  right: 40px; bottom: 40px; z-index: 10;
+  display: flex; align-items: center; gap: 10px;
+}
+.hero-br-play {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(200,169,110,.18);
+  border: 1px solid rgba(200,169,110,.28);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  transition: background .2s;
+}
+.hero-br-play:hover { background: rgba(200,169,110,.32); }
+.hero-br-play svg { width: 10px; height: 10px; fill: var(--gold); margin-left: 1.5px; }
+.hero-br-label { font-size: 12px; font-weight: 500; color: rgba(237,233,225,.65); }
+.hero-br-dur   { font-size: 12px; color: rgba(237,233,225,.30); }
+
+/* ════════ SERVICES STRIP ════════ */
+.strip {
+  background: var(--bg3);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 48px 5%;
+}
+.strip-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.strip-item {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 0 32px; border-right: 1px solid var(--border);
+}
+.strip-item:first-child { padding-left: 0; }
+.strip-item:last-child  { border-right: none; }
+.strip-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.strip-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px; font-weight: 600; color: var(--cream); margin-bottom: 5px;
+}
+.strip-desc { font-size: 12px; color: var(--gray); line-height: 1.6; }
+
+/* ════════ SECTION SHARED ════════ */
+.sec { padding: 110px 5%; }
+
+.sec-label {
+  font-size: 9px; font-weight: 600; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--gold);
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+}
+.sec-label::before {
+  content: ''; width: 28px; height: 1px; background: var(--gold);
+}
+.sec-h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 5vw, 54px);
+  font-weight: 700; line-height: 1.12;
+  letter-spacing: -.3px; color: var(--cream);
+}
+.sec-h2 em { font-style: italic; color: var(--gold); }
+
+/* ════════ EL ESTUDIO ════════ */
+#estudio { background: var(--bg); }
+.estudio-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+}
+.estudio-img {
+  aspect-ratio: 4/5;
+  background:
+    linear-gradient(to top, rgba(8,8,8,.7) 0%, transparent 50%),
+    url('https://images.unsplash.com/photo-1624918959325-4ab1f51306d1?w=700&h=875&fit=crop&q=80&auto=format');
+  background-size: cover;
+  background-position: center;
+  border-radius: 2px; position: relative; overflow: hidden;
+}
+.estudio-img::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(45deg, rgba(200,169,110,.02) 0, rgba(200,169,110,.02) 1px, transparent 0, transparent 12px);
+}
+.estudio-img::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 40% 40%, rgba(200,169,110,.1) 0%, transparent 55%);
+}
+.estudio-img-caption {
+  position: absolute; bottom: 24px; left: 24px; z-index: 1;
+  font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--gold2);
+}
+.estudio-text .sec-h2 { margin-bottom: 24px; }
+.estudio-body {
+  font-size: 15px; color: var(--cream2); line-height: 1.82;
+  margin-bottom: 16px;
+}
+.estudio-cta { margin-top: 36px; }
+
+/* ════════ GALLERY ════════ */
+#trabajos { background: var(--bg2); }
+.gal-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 48px;
+}
+.gal-link {
+  font-size: 11px; font-weight: 500; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--gold); text-decoration: none;
+  border-bottom: 1px solid var(--gold2); padding-bottom: 2px;
+  transition: color .18s;
+}
+.gal-link:hover { color: var(--cream); }
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.gal-item {
+  position: relative; overflow: hidden; cursor: pointer;
+  border-radius: 2px;
+}
+.gal-item:nth-child(1) { grid-row: span 2; }
+.gal-item:nth-child(4) { grid-row: span 2; }
+.gal-item-inner {
+  width: 100%; height: 100%; min-height: 220px;
+  position: relative;
+  transition: transform .4s cubic-bezier(.16,1,.3,1);
+}
+.gal-item:hover .gal-item-inner { transform: scale(1.04); }
+.gal-item::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(45deg, rgba(255,255,255,.012) 0, rgba(255,255,255,.012) 1px, transparent 0, transparent 10px);
+  z-index: 1;
+}
+.gal-item-overlay {
+  position: absolute; inset: 0; z-index: 2;
+  background: linear-gradient(to top, rgba(8,8,8,.8) 0%, transparent 50%);
+  opacity: 0; transition: opacity .3s;
+  display: flex; align-items: flex-end; padding: 20px;
+}
+.gal-item:hover .gal-item-overlay { opacity: 1; }
+.gal-item-tag {
+  font-size: 9px; font-weight: 600; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--gold);
+}
+.gal-item-inner::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 40% 40%, rgba(200,169,110,.07) 0%, transparent 60%);
+}
+
+/* ════════ ARTISTAS ════════ */
+#artistas { background: var(--bg); }
+.artistas-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 24px; margin-top: 48px;
+}
+.artista-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 2px; overflow: hidden;
+  transition: border-color .25s, transform .25s;
+}
+.artista-card:hover { border-color: var(--gold2); transform: translateY(-4px); }
+.artista-photo {
+  aspect-ratio: 3/4; position: relative;
+  display: flex; align-items: flex-end;
+}
+.artista-photo-bg {
+  position: absolute; inset: 0;
+}
+.artista-photo::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(8,8,8,.95) 0%, rgba(8,8,8,.2) 60%, transparent 100%);
+}
+.artista-initials {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -60%);
+  font-family: 'Playfair Display', serif;
+  font-size: 56px; font-weight: 900;
+  color: rgba(200,169,110,.18); letter-spacing: -3px; z-index: 1;
+  user-select: none;
+}
+.artista-info {
+  position: relative; z-index: 2; padding: 20px;
+}
+.artista-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 700; color: var(--cream);
+  margin-bottom: 4px;
+}
+.artista-role {
+  font-size: 10px; font-weight: 500; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--gold);
+}
+.artista-body {
+  padding: 20px; border-top: 1px solid var(--border);
+  font-size: 13px; color: var(--cream2); line-height: 1.65;
+}
+.artista-social {
+  padding: 16px 20px; border-top: 1px solid var(--border);
+  display: flex; gap: 12px;
+}
+.artista-social a {
+  font-size: 10px; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--gray);
+  text-decoration: none; transition: color .18s;
+}
+.artista-social a:hover { color: var(--gold); }
+
+.ap-1 { background: url('https://images.unsplash.com/photo-1568515045052-f9a854d70bfd?w=500&h=500&fit=crop&q=80&auto=format') center/cover; }
+.ap-2 { background: url('https://images.unsplash.com/photo-1605647533135-51b5906087d0?w=500&h=500&fit=crop&q=80&auto=format') center/cover; }
+.ap-3 { background: url('https://images.unsplash.com/photo-1595747644932-abb68f85f419?w=500&h=500&fit=crop&q=80&auto=format') center/cover; }
+
+/* ════════ FAQ ════════ */
+#faq { background: var(--bg2); }
+.faq-layout {
+  display: grid; grid-template-columns: 1fr 1.4fr;
+  gap: 80px; align-items: start;
+}
+.faq-left .sec-h2 { margin-bottom: 20px; }
+.faq-left-body { font-size: 14.5px; color: var(--cream2); line-height: 1.75; margin-bottom: 32px; }
+.faq-list { display: flex; flex-direction: column; }
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-item:first-child { border-top: 1px solid var(--border); }
+.faq-q {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 20px; padding: 22px 0; cursor: pointer; list-style: none;
+  font-size: 14.5px; font-weight: 500; color: var(--cream);
+  transition: color .18s; user-select: none;
+}
+.faq-q::-webkit-details-marker { display: none; }
+.faq-q:hover { color: var(--gold); }
+.faq-icon {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 13px; color: var(--gray);
+  transition: transform .3s, border-color .2s;
+}
+details[open] .faq-icon { transform: rotate(45deg); border-color: var(--gold); color: var(--gold); }
+.faq-a { padding: 0 0 20px; font-size: 13.5px; color: var(--cream2); line-height: 1.72; }
+
+/* ════════ RESERVAS ════════ */
+#reservas {
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(200,169,110,.06) 0%, transparent 50%),
+    var(--bg3);
+  border-top: 1px solid var(--border);
+}
+.reservas-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: start;
+}
+.res-left .sec-h2 { margin-bottom: 20px; }
+.res-lead { font-size: 14.5px; color: var(--cream2); line-height: 1.75; margin-bottom: 36px; }
+.res-info { display: flex; flex-direction: column; gap: 16px; }
+.res-info-item { display: flex; align-items: flex-start; gap: 14px; }
+.res-info-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+.res-info-text { font-size: 13px; color: var(--cream2); line-height: 1.55; }
+.res-info-text strong { display: block; color: var(--cream); font-size: 12px; letter-spacing: .3px; margin-bottom: 2px; }
+
+.res-form { display: flex; flex-direction: column; gap: 14px; padding-top: 4px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label {
+  font-size: 9.5px; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--gray);
+}
+.form-input, .form-select, .form-textarea {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 2px; padding: 12px 14px;
+  font-family: 'Inter', sans-serif; font-size: 13.5px;
+  color: var(--cream); outline: none;
+  transition: border-color .18s;
+}
+.form-input::placeholder, .form-textarea::placeholder { color: var(--gray); }
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold2); }
+.form-select { appearance: none; cursor: pointer; }
+.form-textarea { resize: vertical; min-height: 100px; }
+.btn-form {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--gold); color: var(--bg);
+  padding: 15px 28px; font-size: 11px;
+  font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+  border: none; border-radius: 2px; cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background .18s, transform .15s; width: 100%;
+}
+.btn-form:hover { background: #d9bc84; transform: translateY(-1px); }
+.form-note { font-size: 11px; color: var(--gray); text-align: center; }
+
+/* ════════ FOOTER ════════ */
+footer {
+  background: #050505;
+  border-top: 1px solid var(--border);
+  padding: 56px 5% 32px;
+}
+.footer-grid {
+  display: grid; grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 60px; margin-bottom: 48px;
+}
+.ft-logo-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-weight: 700; color: var(--cream);
+  margin-bottom: 4px;
+}
+.ft-logo-sub {
+  font-size: 8px; font-weight: 600; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 16px;
+}
+.ft-body { font-size: 13px; color: var(--gray); line-height: 1.7; margin-bottom: 20px; }
+.ft-social { display: flex; gap: 16px; }
+.ft-social a {
+  font-size: 10px; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--gray2);
+  text-decoration: none; transition: color .18s;
+}
+.ft-social a:hover { color: var(--gold); }
+.ft-col-title {
+  font-size: 9.5px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 18px;
+}
+.ft-links { display: flex; flex-direction: column; gap: 10px; }
+.ft-link {
+  font-size: 13px; color: var(--gray); text-decoration: none;
+  transition: color .18s;
+}
+.ft-link:hover { color: var(--cream); }
+.ft-contact { display: flex; flex-direction: column; gap: 10px; }
+.ft-contact-item { font-size: 13px; color: var(--gray); line-height: 1.5; }
+.ft-contact-item span { display: block; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold2); margin-bottom: 2px; }
+.footer-bottom {
+  padding-top: 28px; border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.ft-copy { font-size: 11px; color: var(--gray2); }
+.ft-credit { font-size: 11px; color: var(--gray2); }
+.ft-credit a { color: var(--gold2); text-decoration: none; }
+
+/* ════════ ARTISTAS CAROUSEL ════════ */
+.artistas-carousel-wrap { overflow: hidden; }
+.carousel-controls { display: none; } /* desktop: hidden */
+
+/* ════════ RESPONSIVE ════════ */
+@media (max-width: 960px) {
+  .navbar { padding: 16px 24px; }
+  .navbar.scrolled { padding: 11px 24px; }
+  .nav-pill { display: none; }
+  .nav-right-a { display: none; }
+  .nav-hbtn { display: flex; }
+  .mob-overlay { display: block; }
+  .hero-br { display: none; }
+  .strip-grid { grid-template-columns: repeat(2,1fr); gap: 32px; }
+  .strip-item { border-right: none; padding: 0; }
+  .estudio-grid, .faq-layout, .reservas-grid { grid-template-columns: 1fr; gap: 48px; }
+  .gallery { grid-template-columns: repeat(2,1fr); }
+  /* Artistas → carousel */
+  .artistas-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0 !important;
+    margin-top: 48px;
+    transition: transform .48s cubic-bezier(.22,1,.36,1);
+    will-change: transform;
+  }
+  .artista-card {
+    flex: 0 0 100% !important;
+    min-width: 100% !important;
+    transform: none !important;
+  }
+  .carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 22px;
+  }
+  .carousel-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(200,169,110,.10);
+    border: 1px solid rgba(200,169,110,.18);
+    color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+    transition: background .2s;
+  }
+  .carousel-btn:hover { background: rgba(200,169,110,.22); }
+  .carousel-btn:disabled { opacity: .28; cursor: default; pointer-events: none; }
+  .carousel-btn svg { stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .carousel-dots { display: flex; gap: 8px; }
+  .carousel-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(200,169,110,.22);
+    transition: background .25s; cursor: pointer;
+  }
+  .carousel-dot.on { background: var(--gold); }
+  .gal-item:nth-child(1), .gal-item:nth-child(4) { grid-row: span 1; }
+  .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  .form-row { grid-template-columns: 1fr; }
+  .hero-bl { left: 20px; bottom: 24px; right: 20px; max-width: none; }
+  .hero-bl-btn-prim, .hero-bl-btn-link { font-size: 10px; }
+}
+
+  </style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<nav class="navbar hafd" id="navbar">
+  <a href="#" class="nav-logo">
+    <span class="nav-logo-name">Sacred Ink</span>
+    <span class="nav-logo-sub">Studio · Lima</span>
+  </a>
+
+  <!-- Desktop pill -->
+  <div class="nav-pill">
+    <a href="#estudio"  class="nav-pill-a">El Estudio</a>
+    <a href="#trabajos" class="nav-pill-a">Trabajos</a>
+    <a href="#artistas" class="nav-pill-a">Artistas</a>
+    <a href="#faq"      class="nav-pill-a">FAQ</a>
+    <a href="#reservas" class="nav-pill-cta">Reservar</a>
+  </div>
+
+  <!-- Right side -->
+  <div class="nav-right">
+    <a href="https://instagram.com" class="nav-right-a">Instagram</a>
+    <a href="https://wa.me/51999999999" class="nav-right-a">WhatsApp</a>
+
+    <!-- Hamburger -->
+    <button class="nav-hbtn" id="hbtn" aria-label="Abrir menú">
+      <svg class="ic-ham" viewBox="0 0 24 24">
+        <line x1="4" y1="7"  x2="20" y2="7"/>
+        <line x1="4" y1="12" x2="20" y2="12"/>
+        <line x1="4" y1="17" x2="20" y2="17"/>
+      </svg>
+      <svg class="ic-x" viewBox="0 0 24 24">
+        <line x1="6" y1="6"  x2="18" y2="18"/>
+        <line x1="18" y1="6" x2="6"  y2="18"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile overlay -->
+<div class="mob-overlay" id="mob-overlay"></div>
+
+<!-- Mobile drawer -->
+<div class="mob-drawer" id="mob-drawer">
+  <a href="#estudio"  class="mob-drawer-a">El Estudio</a>
+  <a href="#trabajos" class="mob-drawer-a">Trabajos</a>
+  <a href="#artistas" class="mob-drawer-a">Artistas</a>
+  <a href="#faq"      class="mob-drawer-a">FAQ</a>
+  <a href="#reservas" class="mob-drawer-cta">Reservar consulta</a>
+</div>
+
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+
+  <!-- Background photo (slow zoom) -->
+  <div id="vbg">
+    <img src="https://images.unsplash.com/photo-1568515045052-f9a854d70bfd?w=1920&h=1200&fit=crop&q=85&auto=format" alt="" loading="eager">
+  </div>
+
+  <!-- Overlays -->
+  <div class="hero-ov-top"></div>
+  <div class="hero-ov-bot"></div>
+  <div class="hero-ov-vig"></div>
+
+  <!-- Hero content -->
+  <div class="hero-body">
+    <p class="hero-eyebrow hafu">Tattoo Studio · Lima, Perú</p>
+    <h1 class="hero-h1">
+      <span class="hafu hd1" style="display:block">Arte que dura</span>
+      <span class="hafu hd2" style="display:block"><em>para siempre.</em></span>
+    </h1>
+    <p class="hero-sub hafu hd3">
+      Diseños personalizados, tatuadores especializados y una sola regla: ningún tatuaje sale de aquí sin que tú lo ames.
+    </p>
+    <div class="hero-ctas hafu hd4">
+      <a href="#reservas" class="btn-gold">Agendar consulta</a>
+      <a href="#trabajos" class="btn-ghost">Ver trabajos</a>
+    </div>
+  </div>
+
+  <!-- Bottom-left CTA block -->
+  <div class="hero-bl hafu hd5">
+    <div class="hero-bl-label">
+      <span>✦</span> Est. 2019 · Miraflores
+    </div>
+    <p class="hero-bl-text">
+      Arte permanente, experiencia excepcional. Más de 800 tatuajes realizados en Lima y el extranjero.
+    </p>
+    <div class="hero-bl-btns">
+      <a href="#reservas" class="hero-bl-btn-prim">Consulta gratis</a>
+      <a href="#artistas"  class="hero-bl-btn-link">Conoce al equipo →</a>
+    </div>
+  </div>
+
+  <!-- Bottom-right video link -->
+  <div class="hero-br hafu hd5">
+    <button class="hero-br-play" aria-label="Ver video">
+      <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    </button>
+    <span class="hero-br-label">¿Cómo trabajamos?</span>
+    <span class="hero-br-dur">1:35</span>
+  </div>
+
+</section>
+
+
+<!-- ══ SERVICES STRIP ══ -->
+<div class="strip">
+  <div class="strip-grid">
+    <div class="strip-item up d1">
+      <span class="strip-icon">✦</span>
+      <div>
+        <div class="strip-title">Diseño personalizado</div>
+        <div class="strip-desc">Cada pieza es creada desde cero para ti. Sin plantillas.</div>
+      </div>
+    </div>
+    <div class="strip-item up d2">
+      <span class="strip-icon">◈</span>
+      <div>
+        <div class="strip-title">Cover-ups</div>
+        <div class="strip-desc">Transformamos tatuajes viejos en obras de arte nuevas.</div>
+      </div>
+    </div>
+    <div class="strip-item up d3">
+      <span class="strip-icon">◇</span>
+      <div>
+        <div class="strip-title">Retoques incluidos</div>
+        <div class="strip-desc">Primera sesión de retoque sin costo para todos nuestros clientes.</div>
+      </div>
+    </div>
+    <div class="strip-item up d4">
+      <span class="strip-icon">○</span>
+      <div>
+        <div class="strip-title">Consulta gratuita</div>
+        <div class="strip-desc">Conversamos tu idea antes de comprometerte con nada.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ EL ESTUDIO ══ -->
+<section id="estudio" class="sec">
+  <div class="wrap">
+    <div class="estudio-grid">
+      <div class="estudio-img up">
+        <span class="estudio-img-caption">Sacred Ink Studio · Miraflores</span>
+      </div>
+      <div class="up d2">
+        <div class="sec-label">El Estudio</div>
+        <h2 class="sec-h2">Un espacio hecho<br>para el <em>arte.</em></h2>
+        <div style="height:24px"></div>
+        <p class="estudio-body">
+          Sacred Ink nació en 2019 con una misión clara: crear un espacio donde el arte y la técnica se encuentran. Estamos ubicados en el corazón de Miraflores, Lima.
+        </p>
+        <p class="estudio-body">
+          Nuestro estudio combina un ambiente íntimo y profesional con los estándares de higiene más altos. Cada sesión comienza con una conversación: entendemos tu visión antes de poner una sola aguja.
+        </p>
+        <p class="estudio-body">
+          Trabajamos con todos los estilos: blackwork, realismo, geométrico, acuarela, tradicional japonés y más. Si lo puedes imaginar, lo podemos tatuar.
+        </p>
+        <div class="estudio-cta">
+          <a href="#reservas" class="btn-gold">Agendar consulta gratuita</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ GALERÍA ══ -->
+<section id="trabajos" class="sec">
+  <div class="wrap">
+    <div class="gal-header">
+      <div>
+        <div class="sec-label up">Trabajos</div>
+        <h2 class="sec-h2 up d1">Nuestra galería.</h2>
+      </div>
+      <a href="#reservas" class="gal-link up d2">Ver todos los trabajos →</a>
+    </div>
+    <div class="gallery">
+      <div class="gal-item up d1">
+        <div class="gal-item-inner gal-1" style="min-height:460px;">
+          <div class="gal-item-overlay"><span class="gal-item-tag">Blackwork</span></div>
+        </div>
+      </div>
+      <div class="gal-item up d2">
+        <div class="gal-item-inner gal-2" style="min-height:220px;">
+          <div class="gal-item-overlay"><span class="gal-item-tag">Realismo</span></div>
+        </div>
+      </div>
+      <div class="gal-item up d3">
+        <div class="gal-item-inner gal-3" style="min-height:220px;">
+          <div class="gal-item-overlay"><span class="gal-item-tag">Geométrico</span></div>
+        </div>
+      </div>
+      <div class="gal-item up d1">
+        <div class="gal-item-inner gal-4" style="min-height:460px;">
+          <div class="gal-item-overlay"><span class="gal-item-tag">Japonés</span></div>
+        </div>
+      </div>
+      <div class="gal-item up d2">
+        <div class="gal-item-inner gal-5" style="min-height:220px;">
+          <div class="gal-item-overlay"><span class="gal-item-tag">Fineline</span></div>
+        </div>
+      </div>
+      <div class="gal-item up d3">
+        <div class="gal-item-inner gal-6" style="min-height:220px;">
+          <div class="gal-item-overlay"><span class="gal-item-tag">Cover-up</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ ARTISTAS ══ -->
+<section id="artistas" class="sec">
+  <div class="wrap">
+    <div class="sec-label up">El equipo</div>
+    <h2 class="sec-h2 up d1">Los artistas<br>detrás del <em>arte.</em></h2>
+    <div class="artistas-carousel-wrap">
+    <div class="artistas-grid" id="artistas-grid">
+
+      <div class="artista-card up d1">
+        <div class="artista-photo">
+          <div class="artista-photo-bg ap-1"></div>
+          <div class="artista-initials">RM</div>
+          <div class="artista-info">
+            <div class="artista-name">Rodrigo Meza</div>
+            <div class="artista-role">Blackwork · Geométrico</div>
+          </div>
+        </div>
+        <div class="artista-body">
+          Especialista en blackwork y patrones geométricos. 7 años de experiencia y más de 400 piezas realizadas en Lima y el extranjero.
+        </div>
+        <div class="artista-social">
+          <a href="#">Instagram</a>
+          <a href="#">Portfolio</a>
+        </div>
+      </div>
+
+      <div class="artista-card up d2">
+        <div class="artista-photo">
+          <div class="artista-photo-bg ap-2"></div>
+          <div class="artista-initials">VT</div>
+          <div class="artista-info">
+            <div class="artista-name">Valeria Torres</div>
+            <div class="artista-role">Realismo · Fineline</div>
+          </div>
+        </div>
+        <div class="artista-body">
+          Maestra del realismo en blanco y negro. Sus retratos y fineline son reconocidos en la escena local como algunas de las mejores piezas de Lima.
+        </div>
+        <div class="artista-social">
+          <a href="#">Instagram</a>
+          <a href="#">Portfolio</a>
+        </div>
+      </div>
+
+      <div class="artista-card up d3">
+        <div class="artista-photo">
+          <div class="artista-photo-bg ap-3"></div>
+          <div class="artista-initials">AS</div>
+          <div class="artista-info">
+            <div class="artista-name">Alejandro Solís</div>
+            <div class="artista-role">Japonés · Neotradicional</div>
+          </div>
+        </div>
+        <div class="artista-body">
+          Formado en Japón y con influencias del tradicional americano. Alejandro domina el color y las composiciones de gran formato.
+        </div>
+        <div class="artista-social">
+          <a href="#">Instagram</a>
+          <a href="#">Portfolio</a>
+        </div>
+      </div>
+
+    </div><!-- /artistas-grid -->
+    </div><!-- /artistas-carousel-wrap -->
+
+    <!-- Carousel controls (visible on mobile only) -->
+    <div class="carousel-controls" id="carousel-controls">
+      <button class="carousel-btn" id="car-prev" aria-label="Anterior">
+        <svg width="20" height="20" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="carousel-dots">
+        <span class="carousel-dot on" data-i="0"></span>
+        <span class="carousel-dot" data-i="1"></span>
+        <span class="carousel-dot" data-i="2"></span>
+      </div>
+      <button class="carousel-btn" id="car-next" aria-label="Siguiente">
+        <svg width="20" height="20" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══ FAQ ══ -->
+<section id="faq" class="sec">
+  <div class="wrap">
+    <div class="faq-layout">
+      <div class="up">
+        <div class="sec-label">FAQ</div>
+        <h2 class="sec-h2">Resolvemos<br>tus <em>dudas.</em></h2>
+        <div style="height:20px"></div>
+        <p class="faq-left-body">¿Primera vez? Es normal tener preguntas. Aquí respondemos las más frecuentes. Si tienes algo más, escríbenos por WhatsApp.</p>
+        <a href="https://wa.me/51999999999" class="btn-ghost" style="display:inline-flex; margin-top:8px;">WhatsApp →</a>
+      </div>
+      <div class="faq-list up d2">
+
+        <details class="faq-item">
+          <summary class="faq-q">¿Cuánto cuesta un tatuaje? <span class="faq-icon">+</span></summary>
+          <p class="faq-a">El precio varía según el tamaño, complejidad y artista. El mínimo de sesión es S/150. Te damos un presupuesto exacto en la consulta gratuita, sin compromiso.</p>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">¿Cuánto tiempo dura la sesión? <span class="faq-icon">+</span></summary>
+          <p class="faq-a">Depende del diseño. Piezas pequeñas toman 1–2 horas; trabajos medianos 2–4 horas. Piezas grandes se dividen en múltiples sesiones para tu comodidad.</p>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">¿Cómo me preparo para la sesión? <span class="faq-icon">+</span></summary>
+          <p class="faq-a">Duerme bien, come antes de venir y mantén la zona a tatuar hidratada los días previos. No consumas alcohol 24 horas antes. Te enviamos una guía completa al confirmar tu cita.</p>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">¿Hacen cover-ups de tatuajes viejos? <span class="faq-icon">+</span></summary>
+          <p class="faq-a">Sí. Somos especialistas en cover-ups. Solo necesitamos ver una foto del tatuaje para evaluar las opciones. La mayoría de piezas viejas tienen solución.</p>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">¿El retoque tiene costo? <span class="faq-icon">+</span></summary>
+          <p class="faq-a">El primer retoque dentro de los 3 meses es completamente gratuito para todos nuestros clientes. Queremos que el resultado sea perfecto.</p>
+        </details>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ RESERVAS ══ -->
+<section id="reservas" class="sec">
+  <div class="wrap">
+    <div class="reservas-grid">
+      <div class="up">
+        <div class="sec-label">Reservas</div>
+        <h2 class="sec-h2">Agenda tu<br><em>consulta</em><br>gratuita.</h2>
+        <div style="height:20px"></div>
+        <p class="res-lead">Cuéntanos tu idea y coordinamos una consulta sin costo ni compromiso. Respondemos en menos de 24 horas.</p>
+        <div class="res-info">
+          <div class="res-info-item">
+            <span class="res-info-icon">📍</span>
+            <div class="res-info-text">
+              <strong>Ubicación</strong>
+              Av. Larco 1234, Miraflores, Lima
+            </div>
+          </div>
+          <div class="res-info-item">
+            <span class="res-info-icon">🕐</span>
+            <div class="res-info-text">
+              <strong>Horario</strong>
+              Lunes a Sábado · 10:00 am – 8:00 pm
+            </div>
+          </div>
+          <div class="res-info-item">
+            <span class="res-info-icon">📱</span>
+            <div class="res-info-text">
+              <strong>WhatsApp</strong>
+              +51 999 999 999
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="up d2">
+        <form class="res-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Nombre</label>
+              <input type="text" class="form-input" placeholder="Tu nombre">
+            </div>
+            <div class="form-group">
+              <label class="form-label">WhatsApp</label>
+              <input type="text" class="form-input" placeholder="+51 999 999 999">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Estilo de tatuaje</label>
+            <select class="form-select">
+              <option value="" disabled selected>Elige un estilo</option>
+              <option>Blackwork / Geométrico</option>
+              <option>Realismo</option>
+              <option>Fineline</option>
+              <option>Japonés / Neotradicional</option>
+              <option>Cover-up</option>
+              <option>Otro / No sé aún</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cuéntanos tu idea</label>
+            <textarea class="form-textarea" placeholder="Describe el diseño que tienes en mente, tamaño aproximado y zona del cuerpo..."></textarea>
+          </div>
+          <button type="submit" class="btn-form">Enviar solicitud →</button>
+          <p class="form-note">Te respondemos en menos de 24 horas · Sin compromiso</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="ft-logo-name">Sacred Ink</div>
+        <div class="ft-logo-sub">Studio</div>
+        <p class="ft-body">Arte permanente, experiencia excepcional. Tu tatuaje es nuestra firma.</p>
+        <div class="ft-social">
+          <a href="#">Instagram</a>
+          <a href="#">TikTok</a>
+          <a href="#">WhatsApp</a>
+        </div>
+      </div>
+      <div>
+        <div class="ft-col-title">Navegación</div>
+        <div class="ft-links">
+          <a href="#estudio"  class="ft-link">El Estudio</a>
+          <a href="#trabajos" class="ft-link">Trabajos</a>
+          <a href="#artistas" class="ft-link">Artistas</a>
+          <a href="#faq"      class="ft-link">Preguntas frecuentes</a>
+          <a href="#reservas" class="ft-link">Reservar consulta</a>
+        </div>
+      </div>
+      <div>
+        <div class="ft-col-title">Contacto</div>
+        <div class="ft-contact">
+          <div class="ft-contact-item"><span>Dirección</span>Av. Larco 1234, Miraflores, Lima</div>
+          <div class="ft-contact-item"><span>WhatsApp</span>+51 999 999 999</div>
+          <div class="ft-contact-item"><span>Email</span>hola@sacredinktattoo.pe</div>
+          <div class="ft-contact-item"><span>Horario</span>Lun – Sáb · 10:00 am – 8:00 pm</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="ft-copy">© 2026 Sacred Ink Studio · Lima, Perú</span>
+      <span class="ft-credit">Web por <a href="#">Scrappy Studio</a></span>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+/* ══ SCROLL-BASED ANIMATIONS ══ */
+const io = new IntersectionObserver(
+  e => e.forEach(el => { if (el.isIntersecting) el.target.classList.add('show'); }),
+  { threshold: 0.06, rootMargin: '0px 0px -20px 0px' }
+);
+document.querySelectorAll('.up').forEach(el => io.observe(el));
+
+/* ══ NAVBAR SCROLL STATE ══ */
+const navbar = document.getElementById('navbar');
+function updateNav() {
+  navbar.classList.toggle('scrolled', window.scrollY > 50);
+}
+window.addEventListener('scroll', updateNav, { passive: true });
+updateNav();
+
+/* ══ MOBILE MENU ══ */
+const hbtn     = document.getElementById('hbtn');
+const overlay  = document.getElementById('mob-overlay');
+const drawer   = document.getElementById('mob-drawer');
+let menuOpen   = false;
+
+function toggleMenu(state) {
+  menuOpen = state;
+  hbtn.classList.toggle('open', menuOpen);
+  overlay.classList.toggle('open', menuOpen);
+  drawer.classList.toggle('open', menuOpen);
+  document.body.style.overflow = menuOpen ? 'hidden' : '';
+}
+
+hbtn.addEventListener('click', () => toggleMenu(!menuOpen));
+overlay.addEventListener('click', () => toggleMenu(false));
+drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleMenu(false)));
+
+/* ══ ARTISTAS CAROUSEL ══ */
+(function() {
+  const grid  = document.getElementById('artistas-grid');
+  const prev  = document.getElementById('car-prev');
+  const next  = document.getElementById('car-next');
+  const dots  = document.querySelectorAll('.carousel-dot');
+  const TOTAL = 3;
+  let idx = 0;
+
+  function isMob() { return window.innerWidth <= 960; }
+
+  function go(n) {
+    idx = Math.max(0, Math.min(TOTAL - 1, n));
+    if (isMob()) {
+      grid.style.transform = 'translateX(-' + (idx * 100) + '%)';
+    }
+    dots.forEach(function(d, i) { d.classList.toggle('on', i === idx); });
+    prev.disabled = (idx === 0);
+    next.disabled = (idx === TOTAL - 1);
+  }
+
+  prev.addEventListener('click', function() { go(idx - 1); });
+  next.addEventListener('click', function() { go(idx + 1); });
+  dots.forEach(function(d) {
+    d.addEventListener('click', function() { go(+d.dataset.i); });
+  });
+
+  /* Touch swipe */
+  var touchStartX = 0;
+  grid.addEventListener('touchstart', function(e) { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
+  grid.addEventListener('touchend', function(e) {
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) go(dx < 0 ? idx + 1 : idx - 1);
+  }, { passive: true });
+
+  window.addEventListener('resize', function() {
+    if (!isMob()) { grid.style.transform = ''; }
+    else go(idx);
+  });
+
+  go(0);
+})();
+
+/* ══ PAUSE ZOOM WHEN TAB HIDDEN (performance) ══ */
+(function() {
+  const img = document.querySelector('#vbg img');
+  if (!img) return;
+  document.addEventListener('visibilitychange', () => {
+    img.style.animationPlayState = document.hidden ? 'paused' : 'running';
+  });
+})();
+</script>
+
+</body>
+</html>

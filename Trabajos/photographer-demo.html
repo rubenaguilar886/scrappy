@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DIEGO RÍOS — Fotografía</title>
+  <meta name="description" content="Diego Ríos — Fotografía documental &amp; editorial. Lima, Perú.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,900;1,300;1,400&family=Barlow:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--orange:#E04C1A;--black:#080808;--white:#EDEAE4;--dim:#444}
+    html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;font-weight:300}
+    img{display:block}
+    a{text-decoration:none}
+
+    /* ── ANIMATIONS ─────────────────────────────────── */
+    @keyframes fade-up{
+      from{opacity:0;transform:translateY(24px);filter:blur(6px)}
+      to  {opacity:1;transform:translateY(0);filter:blur(0)}
+    }
+    @keyframes fade-down{
+      from{opacity:0;transform:translateY(-16px)}
+      to  {opacity:1;transform:translateY(0)}
+    }
+    @keyframes hero-rise{
+      from{opacity:0;transform:translateY(64px) scale(.97)}
+      to  {opacity:1;transform:translateY(0) scale(1)}
+    }
+    .afd{animation:fade-down .7s cubic-bezier(.22,1,.36,1) both}
+    .afu{animation:fade-up   .9s cubic-bezier(.22,1,.36,1) both}
+    .ahr{animation:hero-rise 1.1s cubic-bezier(.22,1,.36,1) both}
+    .d1{animation-delay:100ms}.d2{animation-delay:200ms}
+    .d3{animation-delay:320ms}.d4{animation-delay:460ms}
+    .d5{animation-delay:620ms}
+    @media(prefers-reduced-motion:reduce){.afd,.afu,.ahr{animation:none}}
+
+    /* ── HERO ───────────────────────────────────────── */
+    .hero{
+      position:relative;
+      min-height:100svh;
+      display:flex;
+      flex-direction:column;
+    }
+    .hero-bg{
+      position:absolute;inset:0;z-index:0;overflow:hidden;
+    }
+    .hero-bg img{
+      position:absolute;inset:0;width:100%;height:100%;
+      object-fit:cover;object-position:center 28%;
+      filter:grayscale(100%) contrast(1.08) brightness(.58);
+    }
+    /* Top gradient — navbar legibility */
+    .hero-grad-top{
+      position:absolute;inset:0;z-index:1;pointer-events:none;
+      background:linear-gradient(to bottom,
+        rgba(8,8,8,.80) 0%,
+        rgba(8,8,8,.30) 35%,
+        transparent 60%);
+    }
+    /* Bottom gradient — transition into body */
+    .hero-grad-bot{
+      position:absolute;bottom:0;left:0;right:0;height:52%;
+      z-index:1;pointer-events:none;
+      background:linear-gradient(to top,#080808 0%,transparent 100%);
+    }
+    /* Vignette sides */
+    .hero-vignette{
+      position:absolute;inset:0;z-index:1;pointer-events:none;
+      background:radial-gradient(ellipse at center,transparent 50%,rgba(8,8,8,.55) 100%);
+    }
+
+    /* NAVBAR */
+    .navbar{
+      position:relative;z-index:20;
+      display:flex;justify-content:space-between;align-items:center;
+      padding:22px 40px;
+    }
+    .nav-logo{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:1.1rem;font-weight:900;letter-spacing:.18em;
+      text-transform:uppercase;color:var(--orange);
+    }
+    .nav-links{display:flex;gap:32px}
+    .nav-links a{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:.75rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+      color:rgba(237,234,228,.65);transition:color .2s;
+    }
+    .nav-links a:hover{color:var(--white)}
+    .nav-right{display:flex;align-items:center;gap:16px}
+    .nav-cta{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:.72rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+      color:var(--white);background:var(--orange);
+      padding:9px 22px;border:none;cursor:pointer;transition:opacity .2s;
+    }
+    .nav-cta:hover{opacity:.78}
+    .hamburger{
+      display:none;width:36px;height:36px;border:none;cursor:pointer;
+      background:rgba(237,234,228,.10);color:var(--white);border-radius:50%;
+      align-items:center;justify-content:center;transition:background .2s;
+      flex-shrink:0;
+    }
+    .hamburger:hover{background:rgba(237,234,228,.18)}
+    .hamburger svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round}
+
+    /* Mobile drawer */
+    .mob-drawer{
+      display:none;position:absolute;top:100%;left:16px;right:16px;z-index:100;
+      background:rgba(10,10,10,.93);backdrop-filter:blur(20px);
+      border:1px solid rgba(237,234,228,.07);border-radius:8px;
+      overflow:hidden;
+    }
+    .mob-drawer.open{display:block}
+    .mob-drawer a{
+      display:block;padding:14px 20px;
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:.9rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
+      color:rgba(237,234,228,.65);
+      border-bottom:1px solid rgba(237,234,228,.05);transition:color .2s;
+    }
+    .mob-drawer a:last-child{border-bottom:none}
+    .mob-drawer a:hover{color:var(--white)}
+
+    /* HERO BODY */
+    .hero-body{
+      position:relative;z-index:10;
+      flex:1;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;text-align:center;
+      padding:0 24px;
+    }
+    .hero-eyebrow{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:.72rem;font-weight:600;letter-spacing:.32em;text-transform:uppercase;
+      color:var(--orange);margin-bottom:18px;
+    }
+    .hero-h1{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:clamp(3.6rem,12vw,8.5rem);
+      font-weight:900;line-height:.92;
+      text-transform:uppercase;letter-spacing:.01em;
+      color:var(--white);margin-bottom:22px;
+    }
+    .hero-h1 span{display:block}
+    .hero-sub{
+      font-family:'Barlow',sans-serif;
+      font-size:clamp(.875rem,1.5vw,1.05rem);font-weight:300;
+      color:rgba(237,234,228,.55);line-height:1.65;
+      max-width:380px;margin-bottom:28px;
+    }
+    .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:48px}
+    .btn-prim{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:.75rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+      color:var(--white);background:var(--orange);
+      padding:12px 34px;border:none;cursor:pointer;transition:opacity .2s;
+    }
+    .btn-prim:hover{opacity:.78}
+    .btn-sec{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:.75rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+      color:rgba(237,234,228,.65);background:none;
+      border:1px solid rgba(237,234,228,.22);
+      padding:12px 34px;cursor:pointer;transition:border-color .2s,color .2s;
+    }
+    .btn-sec:hover{border-color:rgba(237,234,228,.5);color:var(--white)}
+
+    /* ── MOCKUP ─────────────────────────────────────── */
+    .mockup-outer{
+      position:relative;z-index:5;
+      width:88%;max-width:900px;
+      margin:0 auto -80px;
+      flex-shrink:0;
+    }
+    @media(min-width:640px){.mockup-outer{width:82%;margin-bottom:-120px}}
+    @media(min-width:1024px){.mockup-outer{width:72%;margin-bottom:-160px}}
+    /* JS sets height dynamically */
+    .mockup-scale-wrap{overflow:hidden}
+    .mockup-chrome{
+      /* fixed design width — JS scales to container */
+      width:880px;
+      border-radius:12px 12px 0 0;
+      overflow:hidden;
+      background:#1a1a1c;
+      box-shadow:0 -28px 80px rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.08);
+      border-bottom:none;
+      transform-origin:top left;
+    }
+    /* Title bar */
+    .mc-bar{
+      background:#242427;border-bottom:1px solid rgba(255,255,255,.05);
+      padding:10px 16px;display:flex;align-items:center;gap:10px;
+    }
+    .tl-wrap{display:flex;gap:6px;flex-shrink:0}
+    .tl{width:10px;height:10px;border-radius:50%}
+    .mc-icons{display:flex;gap:8px;flex-shrink:0}
+    .mc-icons svg{width:13px;height:13px;stroke:rgba(255,255,255,.35);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .mc-url{flex:1;display:flex;justify-content:center}
+    .mc-url-bar{
+      background:#141416;border-radius:5px;padding:4px 16px;
+      font-family:'Barlow',sans-serif;font-size:9.5px;color:rgba(255,255,255,.45);
+      display:flex;align-items:center;gap:5px;min-width:150px;justify-content:center;
+    }
+    .mc-url-bar svg{width:10px;height:10px;stroke:rgba(255,255,255,.3);stroke-width:1.5;fill:none;stroke-linecap:round}
+    .mc-r-icons{display:flex;gap:8px;flex-shrink:0}
+    .mc-r-icons svg{width:13px;height:13px;stroke:rgba(255,255,255,.3);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    /* Content area */
+    .mc-body{display:flex;height:330px}
+    /* Sidebar */
+    .mc-sidebar{
+      width:110px;flex-shrink:0;
+      background:#1e1e21;border-right:1px solid rgba(255,255,255,.05);
+      padding:14px 10px;display:flex;flex-direction:column;gap:2px;
+    }
+    .mc-s-logo{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;
+      color:rgba(224,76,26,.85);margin-bottom:12px;padding:0 4px;
+    }
+    .mc-s-item{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+      color:rgba(237,234,228,.38);padding:5px 8px;border-radius:3px;cursor:pointer;
+      display:flex;align-items:center;gap:5px;transition:background .15s;
+    }
+    .mc-s-item.on{background:rgba(237,234,228,.05);color:rgba(237,234,228,.78)}
+    .mc-s-item svg{width:9px;height:9px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+    .mc-s-div{height:1px;background:rgba(255,255,255,.04);margin:6px 0}
+    .mc-s-cat{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:7px;letter-spacing:.18em;text-transform:uppercase;
+      color:rgba(237,234,228,.18);padding:0 8px;margin-bottom:3px;margin-top:2px;
+    }
+    /* Main */
+    .mc-main{
+      flex:1;overflow:hidden;background:#141416;
+      padding:14px 16px;display:flex;flex-direction:column;gap:10px;
+    }
+    .mc-m-head{display:flex;align-items:flex-start;justify-content:space-between}
+    .mc-m-title{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:14px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;
+      color:rgba(237,234,228,.9);
+    }
+    .mc-m-sub{
+      font-family:'Barlow',sans-serif;font-size:8.5px;
+      color:rgba(237,234,228,.28);margin-top:2px;
+    }
+    .mc-m-btn{
+      font-family:'Barlow Condensed',sans-serif;font-size:7.5px;font-weight:700;
+      letter-spacing:.12em;text-transform:uppercase;color:var(--white);
+      background:var(--orange);border:none;padding:5px 11px;cursor:pointer;border-radius:2px;
+      flex-shrink:0;
+    }
+    /* Stats */
+    .mc-stats{
+      display:grid;grid-template-columns:repeat(4,1fr);
+      background:rgba(255,255,255,.02);border-radius:6px;
+      border:1px solid rgba(255,255,255,.05);overflow:hidden;flex-shrink:0;
+    }
+    .mc-stat{padding:8px 10px;border-right:1px solid rgba(255,255,255,.05)}
+    .mc-stat:last-child{border-right:none}
+    .mc-stat-n{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:18px;font-weight:900;color:var(--white);line-height:1;
+    }
+    .mc-stat-l{
+      font-family:'Barlow Condensed',sans-serif;font-size:7px;
+      letter-spacing:.15em;text-transform:uppercase;color:rgba(237,234,228,.28);margin-top:3px;
+    }
+    /* Photo grid */
+    .mc-grid{
+      display:grid;
+      grid-template-columns:2fr 1fr 1fr;
+      grid-template-rows:1fr 1fr;
+      gap:4px;flex:1;min-height:0;
+    }
+    .mc-photo{background:#222;overflow:hidden;border-radius:3px}
+    .mc-photo.feat{grid-row:1/3}
+    .mc-photo img{
+      width:100%;height:100%;object-fit:cover;
+      filter:grayscale(100%) brightness(.75) contrast(1.05);
+    }
+    /* Photo label */
+    .mc-photo-lbl{
+      position:relative;height:100%;
+    }
+    .mc-photo-lbl::after{
+      content:attr(data-lbl);
+      position:absolute;bottom:5px;left:7px;
+      font-family:'Barlow Condensed',sans-serif;font-size:6.5px;
+      letter-spacing:.1em;text-transform:uppercase;color:rgba(237,234,228,.4);
+    }
+
+    /* ── BIO ────────────────────────────────────────── */
+    .bio{
+      display:grid;grid-template-columns:260px 1fr;
+      gap:0;padding:72px 40px;border-top:1px solid #1C1C1C;
+    }
+    .bio-ident{padding-right:40px}
+    .bio-tag{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:.75rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;
+      color:var(--orange);line-height:1.4;
+    }
+    .credits-table{display:grid;grid-template-columns:200px 1fr;align-content:start}
+    .cr-label,.cr-val{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;
+      padding:7px 0;border-bottom:1px solid #151515;line-height:1.35;
+    }
+    .cr-label{color:var(--dim);padding-right:20px}
+    .cr-val{color:var(--white)}
+
+    /* ── GALLERY ────────────────────────────────────── */
+    .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+    .g-item{position:relative;overflow:hidden;aspect-ratio:4/3;cursor:pointer}
+    .g-item img{
+      width:100%;height:100%;object-fit:cover;
+      filter:grayscale(100%) contrast(1.06) brightness(.9);
+      transition:transform .5s cubic-bezier(.4,0,.2,1),filter .4s;
+    }
+    .g-item:hover img{transform:scale(1.04);filter:grayscale(75%) contrast(1.1) brightness(.95)}
+    .g-caption{
+      position:absolute;bottom:10px;left:12px;pointer-events:none;
+      font-family:'Barlow Condensed',sans-serif;font-size:.65rem;
+      letter-spacing:.12em;text-transform:uppercase;color:rgba(237,234,228,.45);
+    }
+
+    /* ── PROJECTS ───────────────────────────────────── */
+    .projects{padding:64px 40px 0;border-top:1px solid #1C1C1C}
+    .section-label{
+      font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:600;
+      letter-spacing:.22em;text-transform:uppercase;color:var(--orange);margin-bottom:28px;
+    }
+    .proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+    .proj-card{position:relative;overflow:hidden;aspect-ratio:4/3;cursor:pointer}
+    .proj-card img{
+      width:100%;height:100%;object-fit:cover;
+      filter:grayscale(100%) contrast(1.06) brightness(.85);
+      transition:transform .5s cubic-bezier(.4,0,.2,1),filter .4s;
+    }
+    .proj-card:hover img{transform:scale(1.04);filter:grayscale(50%) contrast(1.1) brightness(.95)}
+    .proj-name{
+      position:absolute;bottom:16px;left:16px;
+      font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:600;
+      letter-spacing:.2em;text-transform:uppercase;color:var(--white);
+    }
+
+    /* ── CONTACT ────────────────────────────────────── */
+    .contact{
+      padding:80px 40px;border-top:1px solid #1C1C1C;margin-top:3px;
+      display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:end;
+    }
+    .contact-h{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:clamp(2.8rem,5vw,4.5rem);font-weight:900;
+      line-height:.95;text-transform:uppercase;letter-spacing:.02em;
+      color:var(--white);margin:16px 0 20px;
+    }
+    .contact-sub{font-size:.85rem;color:var(--dim);line-height:1.75;max-width:320px}
+    .form{display:flex;flex-direction:column}
+    .form-field{border-bottom:1px solid #1E1E1E;transition:border-color .2s}
+    .form-field:focus-within{border-color:var(--orange)}
+    .form-field input,.form-field textarea{
+      width:100%;padding:16px 0;background:none;border:none;
+      color:var(--white);font-family:'Barlow',sans-serif;font-size:.875rem;font-weight:300;outline:none;
+    }
+    .form-field input::placeholder,.form-field textarea::placeholder{color:#2E2E2E}
+    .form-field textarea{resize:none;min-height:80px}
+    .form-submit{
+      margin-top:32px;align-self:flex-start;
+      padding:14px 40px;background:var(--orange);border:none;color:var(--white);
+      font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.78rem;
+      letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:opacity .2s;
+    }
+    .form-submit:hover{opacity:.75}
+
+    /* ── FOOTER ─────────────────────────────────────── */
+    footer{
+      padding:28px 40px;border-top:1px solid #1C1C1C;
+      display:flex;justify-content:space-between;align-items:center;
+    }
+    .f-logo{
+      font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:900;
+      letter-spacing:.18em;color:var(--orange);text-transform:uppercase;
+    }
+    .f-credit{
+      font-family:'Barlow Condensed',sans-serif;font-size:.68rem;
+      letter-spacing:.14em;text-transform:uppercase;color:#2A2A2A;
+    }
+    .f-credit a{color:#3A3A3A;transition:color .2s}
+    .f-credit a:hover{color:var(--white)}
+
+    /* ── RESPONSIVE ─────────────────────────────────── */
+    @media(max-width:767px){
+      .navbar{padding:16px 18px}
+      .nav-links,.nav-cta{display:none}
+      .hamburger{display:flex}
+      .bio{grid-template-columns:1fr;padding:48px 20px}
+      .bio-ident{padding-right:0;margin-bottom:28px}
+      .credits-table{grid-template-columns:130px 1fr}
+      .gallery{grid-template-columns:repeat(2,1fr)}
+      .proj-grid{grid-template-columns:repeat(2,1fr)}
+      .contact{grid-template-columns:1fr;gap:40px;padding:48px 20px}
+      footer{padding:22px 20px;flex-direction:column;gap:10px;text-align:center}
+      .projects{padding:48px 20px 0}
+      .hero-h1{font-size:clamp(3rem,16vw,5rem)}
+      .mockup-outer{width:92%;margin-bottom:-60px}
+    }
+    @media(max-width:480px){
+      .gallery{grid-template-columns:1fr 1fr}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════ -->
+<section class="hero">
+
+  <!-- Background photo (B&W filtered) -->
+  <div class="hero-bg">
+    <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1920&h=1200&fit=crop&q=85&auto=format"
+         alt="" aria-hidden="true">
+  </div>
+
+  <!-- Overlays -->
+  <div class="hero-grad-top"></div>
+  <div class="hero-grad-bot"></div>
+  <div class="hero-vignette"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar afd" style="position:relative">
+    <a href="#" class="nav-logo">Diego Ríos</a>
+
+    <div class="nav-links">
+      <a href="#portafolio">Portafolio</a>
+      <a href="#sobre-mi">Sobre mí</a>
+      <a href="#contacto">Contacto</a>
+    </div>
+
+    <div class="nav-right">
+      <a href="#contacto" class="nav-cta">Contactar</a>
+      <button class="hamburger" id="hbtn" aria-label="Menú">
+        <svg id="ic-ham" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        <svg id="ic-x" viewBox="0 0 24 24" style="display:none"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Mobile drawer -->
+    <div class="mob-drawer" id="mdrawer">
+      <a href="#portafolio" class="mclose">Portafolio</a>
+      <a href="#sobre-mi"   class="mclose">Sobre mí</a>
+      <a href="#contacto"   class="mclose">Contactar</a>
+    </div>
+  </nav>
+
+  <!-- HERO CONTENT -->
+  <div class="hero-body">
+    <p class="hero-eyebrow afu">Fotografía Documental · Lima, Perú</p>
+    <h1 class="hero-h1">
+      <span class="afu d1">El momento</span>
+      <span class="afu d2">que nadie más vio.</span>
+    </h1>
+    <p class="hero-sub afu d3">Ocho años capturando lo que otros pierden de vista. Bodas, retratos, editoriales y documentales en Lima y todo el Perú.</p>
+    <div class="hero-ctas afu d4">
+      <a href="#portafolio" class="btn-prim">Ver portafolio</a>
+      <a href="#contacto"   class="btn-sec">Contactar</a>
+    </div>
+  </div>
+
+  <!-- PORTFOLIO MOCKUP -->
+  <div class="mockup-outer ahr d5">
+    <div class="mockup-scale-wrap" id="mscale-wrap">
+      <div class="mockup-chrome" id="mchrome">
+
+        <!-- Browser title bar -->
+        <div class="mc-bar">
+          <div class="tl-wrap">
+            <span class="tl" style="background:#ff5f57"></span>
+            <span class="tl" style="background:#febc2e"></span>
+            <span class="tl" style="background:#28c840"></span>
+          </div>
+          <div class="mc-icons">
+            <!-- PanelLeft -->
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+            <!-- ChevronLeft -->
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            <!-- ChevronRight -->
+            <svg viewBox="0 0 24 24" style="stroke:rgba(255,255,255,.2)"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="mc-url">
+            <div class="mc-url-bar">
+              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              diegorios.pe
+            </div>
+          </div>
+          <div class="mc-r-icons">
+            <!-- RotateCw -->
+            <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            <!-- Share -->
+            <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            <!-- Plus -->
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="mc-body">
+
+          <!-- Sidebar -->
+          <div class="mc-sidebar">
+            <div class="mc-s-logo">Diego Ríos</div>
+            <div class="mc-s-item on">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+              Portafolio
+            </div>
+            <div class="mc-s-item">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+              Proyectos
+            </div>
+            <div class="mc-s-item">
+              <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Contacto
+            </div>
+            <div class="mc-s-div"></div>
+            <div class="mc-s-cat">Categorías</div>
+            <div class="mc-s-item">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              Bodas
+            </div>
+            <div class="mc-s-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/></svg>
+              Retratos
+            </div>
+            <div class="mc-s-item">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Eventos
+            </div>
+          </div>
+
+          <!-- Main -->
+          <div class="mc-main">
+            <div class="mc-m-head">
+              <div>
+                <div class="mc-m-title">Portafolio</div>
+                <div class="mc-m-sub">Lima, Perú · 9 trabajos publicados · actualizado hoy</div>
+              </div>
+              <button class="mc-m-btn">+ Nueva sesión</button>
+            </div>
+
+            <!-- Stats -->
+            <div class="mc-stats">
+              <div class="mc-stat">
+                <div class="mc-stat-n">9</div>
+                <div class="mc-stat-l">Fotos publicadas</div>
+              </div>
+              <div class="mc-stat">
+                <div class="mc-stat-n">3</div>
+                <div class="mc-stat-l">Proyectos</div>
+              </div>
+              <div class="mc-stat">
+                <div class="mc-stat-n">8</div>
+                <div class="mc-stat-l">Años de exp.</div>
+              </div>
+              <div class="mc-stat">
+                <div class="mc-stat-n">5</div>
+                <div class="mc-stat-l">Categorías</div>
+              </div>
+            </div>
+
+            <!-- Photo grid -->
+            <div class="mc-grid">
+              <div class="mc-photo feat" style="position:relative">
+                <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=360&h=440&fit=crop&q=55&auto=format" alt="" loading="lazy">
+                <span style="position:absolute;bottom:6px;left:8px;font-family:'Barlow Condensed',sans-serif;font-size:6.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(237,234,228,.45)">Retrato · Lima</span>
+              </div>
+              <div class="mc-photo" style="position:relative">
+                <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=200&h=140&fit=crop&q=55&auto=format" alt="" loading="lazy">
+                <span style="position:absolute;bottom:6px;left:8px;font-family:'Barlow Condensed',sans-serif;font-size:6.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(237,234,228,.45)">Boda · Cusco</span>
+              </div>
+              <div class="mc-photo" style="position:relative">
+                <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=200&h=140&fit=crop&q=55&auto=format" alt="" loading="lazy">
+                <span style="position:absolute;bottom:6px;left:8px;font-family:'Barlow Condensed',sans-serif;font-size:6.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(237,234,228,.45)">Concierto · Lima</span>
+              </div>
+              <div class="mc-photo" style="position:relative">
+                <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=200&h=140&fit=crop&q=55&auto=format" alt="" loading="lazy">
+                <span style="position:absolute;bottom:6px;left:8px;font-family:'Barlow Condensed',sans-serif;font-size:6.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(237,234,228,.45)">Editorial · Lima</span>
+              </div>
+              <div class="mc-photo" style="position:relative">
+                <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=200&h=140&fit=crop&q=55&auto=format" alt="" loading="lazy">
+                <span style="position:absolute;bottom:6px;left:8px;font-family:'Barlow Condensed',sans-serif;font-size:6.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(237,234,228,.45)">Documental · Lima</span>
+              </div>
+            </div>
+
+          </div><!-- /mc-main -->
+        </div><!-- /mc-body -->
+      </div><!-- /mc-chrome -->
+    </div><!-- /mockup-scale-wrap -->
+  </div><!-- /mockup-outer -->
+
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     BIO
+══════════════════════════════════════════════════ -->
+<section class="bio" id="sobre-mi">
+  <div class="bio-ident">
+    <p class="bio-tag">Este soy yo.<br>Soy único. — Diego</p>
+  </div>
+  <div class="credits-table">
+    <span class="cr-label">Especialidad</span>
+    <span class="cr-val">Fotografía documental &amp; editorial</span>
+    <span class="cr-label">Equipamiento</span>
+    <span class="cr-val">Sony A7 IV · Lentes 35mm · 85mm · 24–70mm</span>
+    <span class="cr-label">Con sede en</span>
+    <span class="cr-val">Lima, Perú</span>
+    <span class="cr-label">Disponible</span>
+    <span class="cr-val">Nacional e Internacional</span>
+    <span class="cr-label">Categorías</span>
+    <span class="cr-val">Bodas · Retratos · Conciertos · Moda · Documental</span>
+    <span class="cr-label">Años de experiencia</span>
+    <span class="cr-val">8 años</span>
+    <span class="cr-label">Contacto</span>
+    <span class="cr-val">hola@diegorios.pe · +51 987 654 321</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     GALLERY
+══════════════════════════════════════════════════ -->
+<section class="gallery" id="portafolio">
+  <div class="g-item">
+    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop&q=75&auto=format" alt="Retrato" loading="lazy">
+    <span class="g-caption">Retrato · Lima</span>
+  </div>
+  <div class="g-item">
+    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop&q=75&auto=format" alt="Boda" loading="lazy">
+    <span class="g-caption">Boda · Cusco</span>
+  </div>
+  <div class="g-item">
+    <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800&h=600&fit=crop&q=75&auto=format" alt="Concierto" loading="lazy">
+    <span class="g-caption">Concierto · Lima</span>
+  </div>
+  <div class="g-item">
+    <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&h=600&fit=crop&q=75&auto=format" alt="Editorial" loading="lazy">
+    <span class="g-caption">Editorial · Miraflores</span>
+  </div>
+  <div class="g-item">
+    <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop&q=75&auto=format" alt="Documental" loading="lazy">
+    <span class="g-caption">Documental · Lima</span>
+  </div>
+  <div class="g-item">
+    <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&q=75&auto=format" alt="Paisaje" loading="lazy">
+    <span class="g-caption">Paisaje · Cusco</span>
+  </div>
+  <div class="g-item">
+    <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=800&h=600&fit=crop&q=75&auto=format" alt="Retrato 2" loading="lazy">
+    <span class="g-caption">Retrato · San Isidro</span>
+  </div>
+  <div class="g-item">
+    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&h=600&fit=crop&q=75&auto=format" alt="Boda 2" loading="lazy">
+    <span class="g-caption">Boda · Lima</span>
+  </div>
+  <div class="g-item">
+    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&h=600&fit=crop&q=75&auto=format" alt="Ciudad" loading="lazy">
+    <span class="g-caption">Nocturna · Lima</span>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     PROJECTS
+══════════════════════════════════════════════════ -->
+<section class="projects">
+  <p class="section-label">Otros proyectos</p>
+  <div class="proj-grid">
+    <div class="proj-card">
+      <img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800&h=600&fit=crop&q=75&auto=format" alt="Bodas" loading="lazy">
+      <span class="proj-name">Bodas &amp; Ceremonias</span>
+    </div>
+    <div class="proj-card">
+      <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&q=75&auto=format" alt="Eventos" loading="lazy">
+      <span class="proj-name">Eventos &amp; Conciertos</span>
+    </div>
+    <div class="proj-card">
+      <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=800&h=600&fit=crop&q=75&auto=format" alt="Retratos" loading="lazy">
+      <span class="proj-name">Retratos &amp; Moda</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     CONTACT
+══════════════════════════════════════════════════ -->
+<section class="contact" id="contacto">
+  <div>
+    <p class="section-label">Trabajemos juntos</p>
+    <h2 class="contact-h">Cuéntame<br>tu historia.</h2>
+    <p class="contact-sub">Disponible para bodas, eventos corporativos, proyectos editoriales y sesiones de retrato en Lima y todo el Perú.</p>
+  </div>
+  <form class="form">
+    <div class="form-field"><input type="text" placeholder="Tu nombre"></div>
+    <div class="form-field"><input type="email" placeholder="Tu email"></div>
+    <div class="form-field"><input type="text" placeholder="Tipo de proyecto (boda, evento, retrato...)"></div>
+    <div class="form-field"><textarea placeholder="Cuéntame más sobre tu proyecto"></textarea></div>
+    <button type="submit" class="form-submit">Enviar mensaje</button>
+  </form>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════ -->
+<footer>
+  <span class="f-logo">Diego Ríos</span>
+  <span class="f-credit">Diseño por <a href="#">Scrappy Studio</a></span>
+</footer>
+
+
+<script>
+/* ══ MOBILE MENU ══ */
+const hbtn = document.getElementById('hbtn');
+const mdrawer = document.getElementById('mdrawer');
+const icHam = document.getElementById('ic-ham');
+const icX   = document.getElementById('ic-x');
+let mopen = false;
+
+hbtn.addEventListener('click', () => {
+  mopen = !mopen;
+  mdrawer.classList.toggle('open', mopen);
+  icHam.style.display = mopen ? 'none'  : 'block';
+  icX.style.display   = mopen ? 'block' : 'none';
+});
+
+document.querySelectorAll('.mclose').forEach(a => {
+  a.addEventListener('click', () => {
+    mopen = false;
+    mdrawer.classList.remove('open');
+    icHam.style.display = 'block';
+    icX.style.display   = 'none';
+  });
+});
+
+
+/* ══ MOCKUP SCALER ══ */
+(function() {
+  const wrap   = document.getElementById('mscale-wrap');
+  const chrome = document.getElementById('mchrome');
+  const DESIGN  = 880; /* fixed inner width px */
+
+  function scale() {
+    if (!wrap || !chrome) return;
+    const outerW = wrap.offsetWidth || wrap.parentElement.offsetWidth;
+    const s = Math.min(outerW / DESIGN, 1);
+    chrome.style.transform = 'scale(' + s + ')';
+    chrome.style.transformOrigin = 'top left';
+    wrap.style.height = (chrome.offsetHeight * s) + 'px';
+  }
+
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(scale).observe(wrap.parentElement);
+  }
+  window.addEventListener('resize', scale);
+  /* run after fonts load */
+  if (document.fonts) {
+    document.fonts.ready.then(scale);
+  }
+  scale();
+})();
+</script>
+
+</body>
+</html>

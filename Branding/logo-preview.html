@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brand Kit — Scrappy Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0B0B0B; color: #F5F5F5;
+      font-family: 'Inter', sans-serif;
+      padding: 60px 5%;
+    }
+
+    /* ── Page layout ── */
+    .page { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 60px; }
+
+    .section-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: #4B5563; margin-bottom: 24px;
+    }
+
+    .sep { width: 100%; height: 1px; background: #1A1A1A; }
+
+    /* ── HERO BRAND BANNER ── */
+    .brand-banner {
+      display: grid; grid-template-columns: auto 1fr;
+      gap: 40px; align-items: center;
+      background: #111; border-radius: 20px;
+      padding: 40px 48px;
+      border: 1px solid #1E1E1E;
+      position: relative; overflow: hidden;
+    }
+    .brand-banner::before {
+      content: '';
+      position: absolute; top: -60px; right: -60px;
+      width: 300px; height: 300px;
+      background: radial-gradient(ellipse, rgba(124,58,237,.18) 0%, transparent 65%);
+    }
+    .brand-banner::after {
+      content: '';
+      position: absolute; bottom: -40px; left: 40%;
+      width: 200px; height: 200px;
+      background: radial-gradient(ellipse, rgba(249,115,22,.1) 0%, transparent 65%);
+    }
+    .banner-logo { display: flex; align-items: center; gap: 16px; z-index: 1; }
+    .banner-icon {
+      width: 80px; height: 80px; background: #0B0B0B;
+      border-radius: 20px; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 30px rgba(124,58,237,.3);
+    }
+    .banner-wordmark { display: flex; flex-direction: column; }
+    .banner-name {
+      font-family: 'Sora', sans-serif;
+      font-size: 42px; font-weight: 800; color: #F5F5F5;
+      letter-spacing: -.5px; line-height: 1;
+    }
+    .banner-tag {
+      font-size: 11px; font-weight: 600; letter-spacing: 5px;
+      text-transform: uppercase; color: #4B5563; margin-top: 4px;
+    }
+    .banner-text { z-index: 1; }
+    .banner-title {
+      font-family: 'Sora', sans-serif; font-size: 15px;
+      font-weight: 700; color: #F5F5F5; margin-bottom: 8px;
+    }
+    .banner-desc { font-size: 13.5px; color: #6B7280; line-height: 1.65; }
+
+    /* ── LOGO VARIANTS ── */
+    .variants-grid { display: flex; gap: 24px; flex-wrap: wrap; }
+    .variant-card {
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
+      background: #111; border: 1px solid #1E1E1E; border-radius: 16px;
+      padding: 28px 32px; flex: 1; min-width: 200px;
+    }
+    .variant-label { font-size: 10px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: #4B5563; }
+    .v-icon {
+      width: 72px; height: 72px; background: #0B0B0B;
+      border-radius: 18px; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 24px rgba(124,58,237,.25);
+    }
+    .v-horizontal { display: flex; align-items: center; gap: 12px; }
+    .v-h-icon {
+      width: 48px; height: 48px; background: #0B0B0B;
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    }
+    .v-h-text { display: flex; flex-direction: column; }
+    .v-h-name { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; color: #F5F5F5; letter-spacing: -.2px; }
+    .v-h-tag  { font-size: 8px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: #4B5563; margin-top: 1px; }
+
+    /* On white */
+    .v-onwhite {
+      background: #F5F5F5; border-radius: 12px;
+      padding: 16px 24px; display: flex; align-items: center; gap: 12px;
+    }
+    .v-ow-icon {
+      width: 42px; height: 42px; background: #0B0B0B;
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    }
+    .v-ow-name { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; color: #111; letter-spacing: -.2px; }
+    .v-ow-tag  { font-size: 8px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: #9CA3AF; margin-top: 1px; }
+
+    /* ── COLORS ── */
+    .colors-grid { display: flex; gap: 14px; flex-wrap: wrap; }
+    .color-chip {
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+    }
+    .chip-swatch {
+      width: 80px; height: 80px; border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+    .chip-hex { font-size: 11px; font-weight: 600; color: #9CA3AF; letter-spacing: .5px; }
+    .chip-name { font-size: 10px; color: #4B5563; letter-spacing: .3px; }
+
+    /* ── TYPOGRAPHY ── */
+    .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .type-card {
+      background: #111; border: 1px solid #1E1E1E;
+      border-radius: 16px; padding: 28px 28px;
+    }
+    .type-role { font-size: 10px; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: #7C3AED; margin-bottom: 16px; }
+    .type-specimen-sora {
+      font-family: 'Sora', sans-serif; font-size: 52px; font-weight: 700;
+      color: #F5F5F5; letter-spacing: -.5px; line-height: 1; margin-bottom: 12px;
+    }
+    .type-specimen-inter {
+      font-family: 'Inter', sans-serif; font-size: 38px; font-weight: 400;
+      color: #F5F5F5; letter-spacing: -.2px; line-height: 1; margin-bottom: 12px;
+    }
+    .type-name { font-size: 18px; font-weight: 700; color: #F5F5F5; margin-bottom: 4px; }
+    .type-weight { font-size: 12px; color: #6B7280; margin-bottom: 16px; }
+    .type-alphabet {
+      font-size: 12px; color: #4B5563; line-height: 1.8; letter-spacing: .3px;
+    }
+    .type-card.sora  .type-alphabet { font-family: 'Sora', sans-serif; }
+    .type-card.inter .type-alphabet { font-family: 'Inter', sans-serif; }
+
+    /* ── GRADIENT SWATCHES ── */
+    .grad-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .grad-chip {
+      flex: 1; min-width: 180px; height: 56px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .grad-chip span {
+      font-size: 10px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: rgba(255,255,255,.8);
+    }
+
+    /* ── FOOTER ── */
+    .kit-footer {
+      text-align: center; font-size: 11px; color: #2A2A2A;
+      padding-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HERO BANNER ── -->
+  <div class="brand-banner">
+    <div class="banner-logo">
+      <div class="banner-icon">
+        <svg width="46" height="54" viewBox="-8 -8 76 96" fill="none">
+          <defs>
+            <linearGradient id="sg0" x1="68" y1="0" x2="0" y2="88" gradientUnits="userSpaceOnUse">
+              <stop offset="0%"  stop-color="#22D3EE"/>
+              <stop offset="48%" stop-color="#7C3AED"/>
+              <stop offset="100%" stop-color="#EC4899"/>
+            </linearGradient>
+          </defs>
+          <path d="M48,18 C52,7 48,3 36,4 C22,5 10,15 14,28 C17,38 30,42 38,44 C47,46 56,52 53,64 C50,74 38,77 27,75 C16,73 11,64 14,55"
+            stroke="url(#sg0)" stroke-width="13" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="banner-wordmark">
+        <span class="banner-name">Scrappy</span>
+        <span class="banner-tag">Studio</span>
+      </div>
+    </div>
+    <div class="banner-text">
+      <p class="banner-title">Scrappy Studio — Brand Identity 2026</p>
+      <p class="banner-desc">Desarrollo web inteligente.<br>Impulsado por datos. Diseñado para crecer.</p>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── LOGO VARIANTS ── -->
+  <div>
+    <p class="section-label">Variantes del logo</p>
+    <div class="variants-grid">
+
+      <!-- Ícono solo -->
+      <div class="variant-card">
+        <span class="variant-label">Ícono</span>
+        <div class="v-icon">
+          <svg width="42" height="49" viewBox="-8 -8 76 96" fill="none">
+            <defs><linearGradient id="sg1" x1="68" y1="0" x2="0" y2="88" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#22D3EE"/><stop offset="48%" stop-color="#7C3AED"/><stop offset="100%" stop-color="#EC4899"/>
+            </linearGradient></defs>
+            <path d="M48,18 C52,7 48,3 36,4 C22,5 10,15 14,28 C17,38 30,42 38,44 C47,46 56,52 53,64 C50,74 38,77 27,75 C16,73 11,64 14,55"
+              stroke="url(#sg1)" stroke-width="13" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Horizontal oscuro -->
+      <div class="variant-card">
+        <span class="variant-label">Horizontal</span>
+        <div class="v-horizontal">
+          <div class="v-h-icon">
+            <svg width="28" height="33" viewBox="-8 -8 76 96" fill="none">
+              <defs><linearGradient id="sg2" x1="68" y1="0" x2="0" y2="88" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#22D3EE"/><stop offset="48%" stop-color="#7C3AED"/><stop offset="100%" stop-color="#EC4899"/>
+              </linearGradient></defs>
+              <path d="M48,18 C52,7 48,3 36,4 C22,5 10,15 14,28 C17,38 30,42 38,44 C47,46 56,52 53,64 C50,74 38,77 27,75 C16,73 11,64 14,55"
+                stroke="url(#sg2)" stroke-width="13" stroke-linecap="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="v-h-text">
+            <span class="v-h-name">Scrappy</span>
+            <span class="v-h-tag">Studio</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sobre blanco -->
+      <div class="variant-card">
+        <span class="variant-label">Sobre claro</span>
+        <div class="v-onwhite">
+          <div class="v-ow-icon">
+            <svg width="24" height="28" viewBox="-8 -8 76 96" fill="none">
+              <defs><linearGradient id="sg3" x1="68" y1="0" x2="0" y2="88" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#22D3EE"/><stop offset="48%" stop-color="#7C3AED"/><stop offset="100%" stop-color="#EC4899"/>
+              </linearGradient></defs>
+              <path d="M48,18 C52,7 48,3 36,4 C22,5 10,15 14,28 C17,38 30,42 38,44 C47,46 56,52 53,64 C50,74 38,77 27,75 C16,73 11,64 14,55"
+                stroke="url(#sg3)" stroke-width="13" stroke-linecap="round" fill="none"/>
+            </svg>
+          </div>
+          <div>
+            <div class="v-ow-name">Scrappy</div>
+            <div class="v-ow-tag">Studio</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── PALETA DE COLORES ── -->
+  <div>
+    <p class="section-label">Paleta de colores</p>
+    <div class="colors-grid">
+      <div class="color-chip">
+        <div class="chip-swatch" style="background:#0B0B0B; border-color:#2A2A2A;"></div>
+        <span class="chip-hex">#0B0B0B</span>
+        <span class="chip-name">Background</span>
+      </div>
+      <div class="color-chip">
+        <div class="chip-swatch" style="background:#111111; border-color:#2A2A2A;"></div>
+        <span class="chip-hex">#111111</span>
+        <span class="chip-name">Surface</span>
+      </div>
+      <div class="color-chip">
+        <div class="chip-swatch" style="background:#7C3AED;"></div>
+        <span class="chip-hex">#7C3AED</span>
+        <span class="chip-name">Purple</span>
+      </div>
+      <div class="color-chip">
+        <div class="chip-swatch" style="background:#22D3EE;"></div>
+        <span class="chip-hex">#22D3EE</span>
+        <span class="chip-name">Cyan</span>
+      </div>
+      <div class="color-chip">
+        <div class="chip-swatch" style="background:#EC4899;"></div>
+        <span class="chip-hex">#EC4899</span>
+        <span class="chip-name">Pink</span>
+      </div>
+      <div class="color-chip">
+        <div class="chip-swatch" style="background:#F97316;"></div>
+        <span class="chip-hex">#F97316</span>
+        <span class="chip-name">Orange</span>
+      </div>
+      <div class="color-chip">
+        <div class="chip-swatch" style="background:#F5F5F5;"></div>
+        <span class="chip-hex">#F5F5F5</span>
+        <span class="chip-name">White</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── GRADIENTES ── -->
+  <div>
+    <p class="section-label">Gradientes</p>
+    <div class="grad-row">
+      <div class="grad-chip" style="background: linear-gradient(90deg,#7C3AED,#EC4899,#F97316);">
+        <span>Botón principal</span>
+      </div>
+      <div class="grad-chip" style="background: linear-gradient(90deg,#22D3EE,#7C3AED,#EC4899);">
+        <span>Texto hero</span>
+      </div>
+      <div class="grad-chip" style="background: linear-gradient(135deg,#22D3EE,#7C3AED,#EC4899);">
+        <span>Isotipo</span>
+      </div>
+      <div class="grad-chip" style="background: linear-gradient(90deg,#EC4899,#F97316);">
+        <span>Acento cálido</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── TIPOGRAFÍA ── -->
+  <div>
+    <p class="section-label">Tipografía</p>
+    <div class="type-grid">
+      <div class="type-card sora">
+        <p class="type-role">Títulos / Headings</p>
+        <div class="type-specimen-sora">Aa</div>
+        <p class="type-name">Sora</p>
+        <p class="type-weight">SemiBold · Bold · ExtraBold</p>
+        <p class="type-alphabet">Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz<br>1234567890</p>
+      </div>
+      <div class="type-card inter">
+        <p class="type-role">Cuerpo / Body</p>
+        <div class="type-specimen-inter">Aa</div>
+        <p class="type-name">Inter</p>
+        <p class="type-weight">Regular · Medium · SemiBold</p>
+        <p class="type-alphabet">Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz<br>1234567890</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <p class="kit-footer">© 2026 Scrappy Studio · Brand Identity</p>
+
+</div>
+</body>
+</html>

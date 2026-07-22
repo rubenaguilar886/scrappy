@@ -1,0 +1,133 @@
+/* ══════════════════════════════════════════
+   Sidebar colapsable + sistema de secciones SPA
+   Comparte tokens de :root en styles.css
+══════════════════════════════════════════ */
+
+.app-shell {
+  min-height: 100vh;
+}
+
+/* El riel colapsado SIEMPRE ocupa espacio de layout — por eso el
+   margin-left fijo en .app-main. Al expandirse, el sidebar se vuelve
+   position:fixed con más ancho y se superpone (overlay), sin tocar
+   este margin — el contenido no se mueve ni se redimensiona. */
+.app-main {
+  margin-left: 56px;
+}
+
+.app-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 56px;
+  background: var(--bg2, #111);
+  border-right: 1px solid var(--border, #252525);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow: hidden;
+  transition: width .16s ease, box-shadow .16s ease;
+}
+
+.app-sidebar.expanded {
+  width: 240px;
+  box-shadow: 8px 0 32px rgba(0, 0, 0, .45);
+}
+
+.sidebar-toggle {
+  height: 56px;
+  width: 100%;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border, #252525);
+  color: #9CA3AF;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding-left: 17px;
+}
+.sidebar-toggle:hover { color: #e2e8f0; background: var(--bg3, #1a1a1a); }
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  overflow-y: auto;
+  overflow-x: hidden; /* si no se fija, el spec de CSS computa este eje como
+                          "auto" solo porque overflow-y no es "visible" —
+                          eso disparaba una mini scrollbar horizontal. */
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 40px;
+  padding: 0 9px;
+  border-radius: 8px;
+  color: #9CA3AF;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background .15s, color .15s;
+  min-width: 0; /* sin esto, el ancho mínimo de un flex item se ancla al
+                    contenido (el texto del label, aunque esté en opacity:0
+                    mientras el sidebar está colapsado), y desborda el riel. */
+}
+.sidebar-item:hover { background: var(--bg3, #1a1a1a); color: #e2e8f0; }
+.sidebar-item.active { background: rgba(124, 58, 237, .15); color: #c4b5fd; }
+.sidebar-item--disabled { opacity: .35; cursor: not-allowed; pointer-events: none; }
+
+.sidebar-icon {
+  font-size: 17px;
+  width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.sidebar-label {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity .1s;
+}
+.app-sidebar.expanded .sidebar-label { opacity: 1; }
+
+.sidebar-soon-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #3f4551;
+  padding: 14px 9px 4px;
+  opacity: 0;
+  white-space: nowrap;
+  transition: opacity .1s;
+}
+.app-sidebar.expanded .sidebar-soon-label { opacity: 1; }
+
+/* ── Sistema de secciones de nivel superior (Buscador/Mensajes/CRM/...) ── */
+.app-section { display: none; }
+.app-section.active { display: block; }
+
+.section-placeholder {
+  max-width: 560px;
+  margin: 60px auto;
+  text-align: center;
+  color: #6b7280;
+}
+.section-placeholder h2 {
+  font-family: 'Sora', sans-serif;
+  color: #e2e8f0;
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 700px) {
+  .app-sidebar.expanded { width: 220px; }
+}

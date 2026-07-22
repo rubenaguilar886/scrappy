@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; -webkit-font-smoothing: antialiased; background: #EFEFEF; }
+}
+
+@layer utilities {
+  .ease-quart { transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1); }
+  .ease-expo  { transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1); }
+}

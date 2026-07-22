@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUXE STUDIO — Descubre tu belleza interior</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+
+/* ══ RESET & TOKENS ════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --black:   #1A1A1A;
+  --black2:  #111111;
+  --cream:   #F5EDE0;
+  --cream2:  #EDE0CE;
+  --cream3:  #D8CCBC;
+  --white:   #FFFFFF;
+  --muted:   rgba(245,237,224,.38);
+  --muted2:  rgba(245,237,224,.12);
+  --border:  rgba(245,237,224,.1);
+  --border-c:#D8CCBC;
+  --gray:    #888;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  background: var(--black);
+}
+
+img { display: block; }
+
+/* ══ ANIMATIONS — HORIZONTAL ════════════════════════════════════
+   Default: slide in from LEFT
+   .from-right: slide in from RIGHT
+   .anim-group handles staggered children
+═══════════════════════════════════════════════════════════════ */
+.anim {
+  opacity: 0;
+  transform: translateX(-48px);
+  transition: opacity .85s cubic-bezier(.16,1,.3,1),
+              transform .85s cubic-bezier(.16,1,.3,1);
+  will-change: opacity, transform;
+}
+.anim.from-right { transform: translateX(48px); }
+.anim.fade-only  { transform: none; }
+
+.anim.visible { opacity: 1; transform: translateX(0) !important; }
+
+/* Stagger inside .anim-group */
+.anim-group > .anim:nth-child(1) { transition-delay: 0s;    }
+.anim-group > .anim:nth-child(2) { transition-delay: .1s;   }
+.anim-group > .anim:nth-child(3) { transition-delay: .2s;   }
+.anim-group > .anim:nth-child(4) { transition-delay: .3s;   }
+.anim-group > .anim:nth-child(5) { transition-delay: .4s;   }
+.anim-group > .anim:nth-child(6) { transition-delay: .5s;   }
+
+/* ══ NAV ════════════════════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: 68px; padding: 0 6%;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background .4s, border-color .4s, backdrop-filter .4s;
+}
+nav.scrolled {
+  background: rgba(26,26,26,.97);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo { text-decoration: none; display: flex; align-items: center; gap: 12px; }
+.logo-circle {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  background: var(--cream); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1px;
+}
+.lc-luxe   { font-family: 'Cormorant Garamond', serif; font-size: .6rem; font-weight: 600; color: var(--black); letter-spacing: .16em; line-height: 1; }
+.lc-studio { font-family: 'Montserrat', sans-serif; font-size: .27rem; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; color: rgba(26,26,26,.5); line-height: 1; }
+.nav-logo-text { display: flex; flex-direction: column; gap: 1px; }
+.nlt-luxe  { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 500; letter-spacing: .26em; color: var(--cream); line-height: 1; }
+.nlt-sub   { font-size: .44rem; letter-spacing: .38em; text-transform: uppercase; color: var(--muted); }
+
+.nav-links { display: flex; gap: 30px; align-items: center; }
+.nav-a {
+  font-size: .6rem; font-weight: 400; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; transition: color .2s;
+}
+.nav-a:hover { color: var(--cream); }
+.nav-cta {
+  padding: 9px 24px; border: 1px solid rgba(245,237,224,.25); color: var(--cream);
+  font-size: .58rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase;
+  text-decoration: none; transition: background .25s, border-color .25s;
+}
+.nav-cta:hover { background: var(--cream); color: var(--black); border-color: var(--cream); }
+
+/* ══ ① HERO — DARK ══════════════════════════════════════════════ */
+/* Background: #1A1A1A */
+.hero {
+  background: var(--black);
+  min-height: 100vh;
+  display: grid; grid-template-columns: 1fr 1fr;
+  align-items: center;
+  position: relative; overflow: hidden;
+  padding-top: 68px;
+}
+
+/* Decorative SVG geometry (cream lines on dark) */
+.hero-geo {
+  position: absolute; pointer-events: none; color: var(--cream);
+}
+.hg-circle {
+  top: -15%; right: -12%;
+  width: 55vw; height: 55vw; max-width: 650px; max-height: 650px;
+  border-radius: 50%; border: 1px solid rgba(245,237,224,.07);
+}
+.hg-circle-2 {
+  bottom: -25%; left: -10%;
+  width: 40vw; height: 40vw; max-width: 480px; max-height: 480px;
+  border-radius: 50%; border: 1px solid rgba(245,237,224,.05);
+}
+.hg-leaf-tr { top: 6%; right: 5%; width: 96px; height: 96px; opacity: .18; }
+.hg-leaf-bl { bottom: 8%; left: 3%; width: 72px; height: 72px; opacity: .1; }
+.hg-line-r  {
+  top: 40%; right: 0;
+  width: 80px; height: 1px; background: rgba(245,237,224,.12);
+}
+.geo-star {
+  position: absolute; top: 38%; left: 3%;
+  font-family: serif; font-size: 1.2rem; color: rgba(245,237,224,.35);
+}
+
+/* Hero text */
+.hero-text {
+  padding: 80px 6% 80px 8%;
+  position: relative; z-index: 2;
+}
+.hero-eyebrow {
+  font-size: .55rem; font-weight: 400; letter-spacing: .36em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 28px; display: block;
+}
+.hero-h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.8rem, 5.5vw, 5.8rem); font-weight: 300;
+  color: var(--cream); line-height: 1.08; letter-spacing: .01em;
+  margin-bottom: 32px;
+}
+.hero-h1 em  { font-style: italic; color: rgba(245,237,224,.7); }
+.hero-h1 strong { font-weight: 500; }
+.hero-rule  { width: 40px; height: 1px; background: rgba(245,237,224,.2); margin-bottom: 22px; }
+.hero-desc  { font-size: .78rem; color: var(--muted); line-height: 1.9; max-width: 360px; margin-bottom: 36px; }
+.hero-btns  { display: flex; gap: 14px; flex-wrap: wrap; }
+.btn-cream  {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 28px; background: var(--cream); color: var(--black);
+  font-size: .6rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase;
+  text-decoration: none; transition: background .25s, transform .18s;
+}
+.btn-cream:hover { background: var(--cream2); transform: translateX(3px); }
+.btn-outline-c {
+  display: inline-flex; align-items: center;
+  padding: 13px 28px; border: 1px solid rgba(245,237,224,.22); color: var(--muted);
+  font-size: .6rem; font-weight: 400; letter-spacing: .22em; text-transform: uppercase;
+  text-decoration: none; transition: border-color .25s, color .25s;
+}
+.btn-outline-c:hover { border-color: rgba(245,237,224,.6); color: var(--cream); }
+
+/* Hero visual right */
+.hero-visual {
+  position: relative; z-index: 2;
+  height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  padding: 60px 8% 60px 4%;
+}
+.hero-img-wrap {
+  position: relative; width: 100%; max-width: 420px;
+}
+.hero-img {
+  width: 100%; height: 580px; object-fit: cover; object-position: center 15%;
+}
+/* Logo badge on image */
+.hero-logo-badge {
+  position: absolute; bottom: 24px; right: -20px;
+  background: var(--cream); padding: 18px 22px; text-align: center;
+}
+.hlb-luxe  { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 400; letter-spacing: .32em; color: var(--black); line-height: 1; }
+.hlb-studio{ font-size: .44rem; letter-spacing: .5em; text-transform: uppercase; color: rgba(26,26,26,.45); margin-top: 3px; }
+
+/* Trust strip bottom of hero */
+.hero-trust {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
+  border-top: 1px solid var(--border);
+  display: flex; padding: 0 8%;
+}
+.ht-item {
+  flex: 1; padding: 18px 0;
+  display: flex; flex-direction: column; gap: 3px;
+  border-right: 1px solid var(--border);
+}
+.ht-item:last-child { border-right: none; }
+.ht-val { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 400; color: var(--cream); line-height: 1; }
+.ht-lbl { font-size: .5rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+
+/* ══ ② SERVICES — CREAM ══════════════════════════════════════════ */
+/* Background: #F5EDE0 */
+#servicios {
+  background: var(--cream);
+  padding: 80px 8%;
+}
+.sec-label {
+  font-size: .52rem; font-weight: 500; letter-spacing: .38em; text-transform: uppercase;
+  color: var(--gray); display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
+}
+.sec-label::after { content: ''; flex: 0 0 36px; height: 1px; background: currentColor; opacity: .4; }
+.sec-h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 3.8vw, 3.6rem); font-weight: 400;
+  line-height: 1.1; letter-spacing: .01em;
+}
+.sec-h2 em { font-style: italic; font-weight: 300; opacity: .65; }
+
+.serv-layout {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  margin-top: 48px; border: 1px solid var(--border-c);
+}
+
+/* List of service names */
+.serv-list { border-right: 1px solid var(--border-c); }
+.serv-item {
+  padding: 22px 28px;
+  border-bottom: 1px solid var(--border-c);
+  display: flex; align-items: center; gap: 20px;
+  cursor: pointer; transition: background .3s;
+  position: relative; overflow: hidden;
+}
+.serv-item:last-child { border-bottom: none; }
+.serv-item::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+  background: var(--black); transition: width .35s cubic-bezier(.4,0,.2,1);
+}
+.serv-item.active::before,
+.serv-item:hover::before { width: 3px; }
+.si-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 300;
+  color: var(--cream3); line-height: 1;
+  flex-shrink: 0; transition: color .3s;
+}
+.si-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; font-weight: 400; color: var(--gray);
+  letter-spacing: .01em; transition: color .3s;
+}
+.si-arrow {
+  margin-left: auto; font-size: .75rem; color: var(--cream3);
+  opacity: 0; transform: translateX(-8px);
+  transition: opacity .3s, transform .3s, color .3s;
+  flex-shrink: 0;
+}
+.serv-item.active .si-num,
+.serv-item:hover .si-num  { color: var(--black); }
+.serv-item.active .si-name,
+.serv-item:hover .si-name { color: var(--black); font-weight: 500; }
+.serv-item.active .si-arrow,
+.serv-item:hover .si-arrow { opacity: 1; transform: translateX(0); color: var(--black); }
+
+/* Detail panel */
+.serv-detail {
+  padding: 40px 36px;
+  display: flex; flex-direction: column; justify-content: center;
+  background: var(--cream); min-height: 340px;
+  position: relative;
+}
+.sd-inner {
+  transition: opacity .3s, transform .3s;
+}
+.sd-inner.out { opacity: 0; transform: translateX(12px); }
+.sd-eyebrow { font-size: .5rem; letter-spacing: .34em; text-transform: uppercase; color: var(--gray); margin-bottom: 16px; }
+.sd-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 2.8vw, 2.6rem); font-weight: 400;
+  color: var(--black); margin-bottom: 20px; line-height: 1.1;
+}
+.sd-rule { width: 32px; height: 1px; background: var(--cream3); margin-bottom: 20px; }
+.sd-desc { font-size: .8rem; color: var(--gray); line-height: 1.85; max-width: 340px; }
+.sd-tag {
+  display: inline-block; margin-top: 22px;
+  font-size: .5rem; letter-spacing: .24em; text-transform: uppercase;
+  color: var(--black); border-bottom: 1px solid var(--black); padding-bottom: 2px;
+}
+
+/* ══ ③ QUOTE STRIP — DARK ════════════════════════════════════════ */
+/* Background: #1A1A1A — compact horizontal strip */
+.quote-strip {
+  background: var(--black);
+  border-top: 1px solid rgba(245,237,224,.06);
+  border-bottom: 1px solid rgba(245,237,224,.06);
+  padding: 48px 8%;
+  display: flex; align-items: center; gap: 40px;
+  overflow: hidden; position: relative;
+}
+.qs-star { font-size: 1.1rem; color: rgba(245,237,224,.2); flex-shrink: 0; }
+.qs-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.3rem, 2.5vw, 2rem); font-weight: 300;
+  color: var(--cream); line-height: 1.4; letter-spacing: .02em;
+}
+.qs-text em { font-style: italic; color: rgba(245,237,224,.55); }
+.qs-divider { flex-shrink: 0; width: 1px; height: 48px; background: rgba(245,237,224,.1); }
+.qs-meta { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+.qs-brand { font-family: 'Cormorant Garamond', serif; font-size: .95rem; letter-spacing: .2em; color: rgba(245,237,224,.35); }
+.qs-sub   { font-size: .46rem; letter-spacing: .3em; text-transform: uppercase; color: rgba(245,237,224,.18); }
+/* Decorative large circle behind */
+.qs-circle {
+  position: absolute; right: -8%; top: 50%; transform: translateY(-50%);
+  width: 200px; height: 200px; border-radius: 50%;
+  border: 1px solid rgba(245,237,224,.04); pointer-events: none;
+}
+
+/* ══ ④ GALLERY — CREAM ═══════════════════════════════════════════ */
+/* Background: #F5EDE0 */
+#galeria { background: var(--cream); padding: 80px 8% 80px; }
+.gal-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 36px;
+}
+.gal-note { font-size: .55rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gray); opacity: .6; }
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: 260px 260px;
+  gap: 5px;
+}
+.g-cell { overflow: hidden; position: relative; }
+.g-cell img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(.75) brightness(.9);
+  transition: transform .65s cubic-bezier(.4,0,.2,1), filter .4s;
+}
+.g-cell:hover img { transform: scale(1.05); filter: saturate(.9) brightness(.95); }
+.g-cell:nth-child(1) { grid-column: span 4; }
+.g-cell:nth-child(2) { grid-column: span 5; }
+.g-cell:nth-child(3) { grid-column: span 3; }
+.g-cell:nth-child(4) { grid-column: span 3; }
+.g-cell:nth-child(5) { grid-column: span 4; }
+.g-cell:nth-child(6) { grid-column: span 5; }
+
+/* ══ ⑤ REVIEWS — DARK ════════════════════════════════════════════ */
+/* Background: #1A1A1A */
+#resenas { background: var(--black); padding: 80px 8%; }
+.sec-label.light { color: rgba(245,237,224,.28); }
+.sec-label.light::after { opacity: .2; }
+.sec-h2.light { color: var(--cream); }
+.sec-h2.light em { color: rgba(245,237,224,.45); }
+
+.rating-row {
+  display: flex; align-items: center; gap: 32px;
+  margin-bottom: 48px; flex-wrap: wrap;
+}
+.rt-score {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 5rem; font-weight: 300; color: var(--cream); line-height: 1;
+}
+.rt-detail { display: flex; flex-direction: column; gap: 6px; }
+.rt-stars { display: flex; gap: 4px; }
+.rt-star  { color: var(--cream); font-size: 1.05rem; opacity: .8; }
+.rt-lbl   { font-size: .54rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+.g-badge  {
+  display: inline-flex; align-items: center; gap: 7px;
+  border: 1px solid var(--border); padding: 6px 14px; width: fit-content;
+}
+.g-badge svg { width: 13px; height: 13px; }
+.g-badge-lbl { font-size: .54rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+
+/* Carousel — 2 cards visible */
+.carousel-outer { overflow: hidden; }
+.rev-track {
+  display: flex; gap: 16px;
+  transition: transform .7s cubic-bezier(.16,1,.3,1);
+}
+.rev-card {
+  flex: 0 0 calc(50% - 8px);
+  border: 1px solid var(--border);
+  padding: 32px 28px;
+  display: flex; flex-direction: column; gap: 14px;
+  transition: border-color .25s;
+}
+.rev-card:hover { border-color: rgba(245,237,224,.22); }
+.rv-stars { display: flex; gap: 3px; }
+.rv-star  { color: var(--cream); font-size: .85rem; opacity: .7; }
+.rv-text  {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem; font-style: italic; font-weight: 300;
+  color: rgba(245,237,224,.7); line-height: 1.75;
+  flex: 1;
+}
+.rv-author { font-size: .58rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+.rv-date   { font-size: .54rem; letter-spacing: .1em; color: rgba(245,237,224,.2); }
+
+.c-dots { display: flex; gap: 8px; justify-content: flex-start; margin-top: 28px; }
+.cdot {
+  width: 22px; height: 1.5px; background: var(--border); cursor: pointer;
+  transition: background .3s, width .3s;
+}
+.cdot.active { background: rgba(245,237,224,.5); width: 40px; }
+
+/* ══ ⑥ CONTACT — CREAM ══════════════════════════════════════════ */
+/* Background: #F5EDE0 */
+#contacto { background: var(--cream); padding: 80px 8%; }
+.contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: start; }
+
+.contact-left { display: flex; flex-direction: column; gap: 36px; }
+.contact-info-list { display: flex; flex-direction: column; gap: 18px; }
+.ci-item { display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid var(--border-c); padding-bottom: 18px; }
+.ci-item:last-child { border-bottom: none; padding-bottom: 0; }
+.ci-tag { font-size: .5rem; letter-spacing: .28em; text-transform: uppercase; color: var(--gray); }
+.ci-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 300; color: var(--black);
+}
+.ci-val a { color: inherit; text-decoration: none; transition: opacity .2s; }
+.ci-val a:hover { opacity: .6; }
+
+.contact-form { display: flex; flex-direction: column; }
+.f-field { border-bottom: 1px solid var(--border-c); transition: border-color .25s; }
+.f-field:focus-within { border-color: var(--black); }
+.f-field input, .f-field textarea, .f-field select {
+  width: 100%; padding: 17px 0;
+  background: none; border: none; outline: none;
+  font-family: 'Montserrat', sans-serif; font-size: .75rem; font-weight: 300;
+  color: var(--black); letter-spacing: .03em;
+}
+.f-field input::placeholder, .f-field textarea::placeholder { color: var(--gray); }
+.f-field select { color: var(--gray); cursor: pointer; }
+.f-field select:focus, .f-field select:valid { color: var(--black); }
+.f-field select option { background: var(--cream); color: var(--black); }
+.f-field textarea { resize: none; min-height: 88px; }
+.f-row { display: grid; grid-template-columns: 1fr 1fr; }
+.btn-submit {
+  margin-top: 28px; padding: 15px 30px;
+  background: var(--black); color: var(--cream);
+  font-family: 'Montserrat', sans-serif; font-size: .6rem;
+  font-weight: 500; letter-spacing: .26em; text-transform: uppercase;
+  border: none; cursor: pointer; width: fit-content;
+  transition: background .25s, transform .18s;
+}
+.btn-submit:hover { background: #333; transform: translateX(4px); }
+
+/* ══ WA FLOAT ═══════════════════════════════════════════════════ */
+.wa-float {
+  position: fixed; bottom: 28px; right: 28px; z-index: 500;
+  width: 52px; height: 52px; background: #25D366; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 18px rgba(37,211,102,.35); text-decoration: none;
+  transition: transform .2s;
+}
+.wa-float:hover { transform: scale(1.08); }
+.wa-float svg { width: 25px; height: 25px; fill: #fff; }
+
+/* ══ FOOTER ══════════════════════════════════════════════════════ */
+footer {
+  background: var(--black2); border-top: 1px solid rgba(245,237,224,.05);
+  padding: 32px 8%;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.ft-luxe { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 400; letter-spacing: .3em; color: var(--cream); }
+.ft-studio { font-size: .4rem; letter-spacing: .44em; text-transform: uppercase; color: rgba(245,237,224,.2); }
+.ft-copy { font-size: .52rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(245,237,224,.15); }
+.ft-links { display: flex; gap: 22px; }
+.ft-a { font-size: .52rem; letter-spacing: .2em; text-transform: uppercase; color: rgba(245,237,224,.18); text-decoration: none; transition: color .2s; }
+.ft-a:hover { color: rgba(245,237,224,.6); }
+
+/* ══ RESPONSIVE ══════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-visual { display: none; }
+  .hero-text { padding: 60px 6%; }
+  .serv-layout { grid-template-columns: 1fr; }
+  .serv-list { border-right: none; border-bottom: 1px solid var(--border-c); }
+  .serv-detail { min-height: 200px; }
+  .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+}
+@media (max-width: 768px) {
+  .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .g-cell { grid-column: span 1 !important; height: 200px; }
+  .rev-card { flex: 0 0 calc(100% - 8px); }
+  .nav-links .nav-a { display: none; }
+  .hero-trust { position: static; border-top: 1px solid var(--border); flex-wrap: wrap; }
+  .ht-item { flex: 1 1 33%; }
+  .quote-strip { flex-direction: column; gap: 16px; text-align: center; }
+  .qs-divider { display: none; }
+  .f-row { grid-template-columns: 1fr; }
+}
+
+  </style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav id="mainNav">
+  <a href="#" class="nav-logo">
+    <div class="logo-circle">
+      <span class="lc-luxe">LUXE</span>
+      <span class="lc-studio">STUDIO</span>
+    </div>
+    <div class="nav-logo-text">
+      <span class="nlt-luxe">L U X E</span>
+      <span class="nlt-sub">Studio</span>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="#servicios" class="nav-a">Servicios</a>
+    <a href="#galeria"   class="nav-a">Galería</a>
+    <a href="#resenas"   class="nav-a">Reseñas</a>
+    <a href="#contacto"  class="nav-a">Contacto</a>
+    <a href="https://wa.me/51900000000?text=Hola%20LUXE%20STUDIO%2C%20quisiera%20reservar%20una%20cita" class="nav-cta" target="_blank">Reservar</a>
+  </div>
+</nav>
+
+
+<!-- ══ ① HERO — DARK ══ -->
+<section class="hero">
+  <!-- Decorative geometry -->
+  <div class="hero-geo hg-circle"></div>
+  <div class="hero-geo hg-circle-2"></div>
+  <div class="hero-geo hg-leaf-tr">
+    <svg viewBox="0 0 100 100" fill="none"><rect x="4" y="4" width="92" height="92" stroke="#F5EDE0" stroke-width="1.2"/><path d="M8 92 C8 92 50 8 92 8 C92 8 92 50 8 92Z" stroke="#F5EDE0" stroke-width="1.2"/></svg>
+  </div>
+  <div class="hero-geo hg-leaf-bl">
+    <svg viewBox="0 0 100 100" fill="none"><rect x="4" y="4" width="92" height="92" stroke="#F5EDE0" stroke-width="1.2"/><path d="M8 92 C8 92 50 8 92 8 C92 8 92 50 8 92Z" stroke="#F5EDE0" stroke-width="1.2"/></svg>
+  </div>
+  <div class="hero-geo hg-line-r"></div>
+  <div class="geo-star">✦</div>
+
+  <!-- Left: text -->
+  <div class="hero-text">
+    <span class="hero-eyebrow anim">Estudio de Belleza Premium · Lima, Perú</span>
+    <h1 class="hero-h1 anim">
+      <em>Descubre</em> tu<br>
+      <strong>belleza</strong> interior<br>
+      <em>y déjala brillar</em><br>
+      en cada detalle.
+    </h1>
+    <div class="hero-rule anim"></div>
+    <p class="hero-desc anim">Un espacio diseñado para realzar lo que ya eres. Cada servicio, un ritual de cuidado y distinción.</p>
+    <div class="hero-btns anim">
+      <a href="https://wa.me/51900000000?text=Hola%20LUXE%20STUDIO%2C%20quisiera%20reservar%20una%20cita" class="btn-cream" target="_blank">Reservar cita →</a>
+      <a href="#servicios" class="btn-outline-c">Ver servicios</a>
+    </div>
+  </div>
+
+  <!-- Right: image -->
+  <div class="hero-visual">
+    <div class="hero-img-wrap anim from-right">
+      <img class="hero-img"
+        src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=700&h=900&fit=crop&q=85&auto=format"
+        alt="LUXE Studio">
+      <div class="hero-logo-badge">
+        <div class="hlb-luxe">L U X E</div>
+        <div class="hlb-studio">Studio</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trust strip -->
+  <div class="hero-trust anim fade-only">
+    <div class="ht-item"><span class="ht-val">6</span><span class="ht-lbl">Servicios premium</span></div>
+    <div class="ht-item"><span class="ht-val">4.9</span><span class="ht-lbl">Calificación Google</span></div>
+    <div class="ht-item"><span class="ht-val">∞</span><span class="ht-lbl">Experiencias únicas</span></div>
+  </div>
+</section>
+
+
+<!-- ══ ② SERVICES — CREAM ══ -->
+<section id="servicios">
+  <div style="background:var(--cream);padding:80px 8%;">
+    <div class="anim">
+      <span class="sec-label">Especialidades</span>
+      <h2 class="sec-h2" style="color:var(--black);">Cada servicio,<br><em>un ritual.</em></h2>
+    </div>
+
+    <div class="serv-layout anim from-right" style="margin-top:48px;">
+      <!-- Service list -->
+      <div class="serv-list" id="servList">
+        <div class="serv-item active" data-idx="0"><span class="si-num">01</span><span class="si-name">Lifting de Pestañas</span><span class="si-arrow">→</span></div>
+        <div class="serv-item" data-idx="1"><span class="si-num">02</span><span class="si-name">Laminado de Cejas</span><span class="si-arrow">→</span></div>
+        <div class="serv-item" data-idx="2"><span class="si-num">03</span><span class="si-name">Extensiones de Cabello</span><span class="si-arrow">→</span></div>
+        <div class="serv-item" data-idx="3"><span class="si-num">04</span><span class="si-name">Nail Art Premium</span><span class="si-arrow">→</span></div>
+        <div class="serv-item" data-idx="4"><span class="si-num">05</span><span class="si-name">Maquillaje Artístico</span><span class="si-arrow">→</span></div>
+        <div class="serv-item" data-idx="5"><span class="si-num">06</span><span class="si-name">Tratamientos Capilares</span><span class="si-arrow">→</span></div>
+      </div>
+      <!-- Detail panel -->
+      <div class="serv-detail" id="servDetail">
+        <div class="sd-inner" id="sdInner">
+          <span class="sd-eyebrow">Servicio 01 de 06</span>
+          <div class="sd-name">Lifting de Pestañas</div>
+          <div class="sd-rule"></div>
+          <div class="sd-desc">Curva y eleva tus pestañas naturales con un efecto de mirada abierta y profunda. El resultado dura hasta 8 semanas y requiere cero mantenimiento diario. Perfecto para quienes buscan despertar con los ojos definidos sin ningún esfuerzo.</div>
+          <span class="sd-tag">Duración: 60 min</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ ③ QUOTE STRIP — DARK ══ -->
+<div class="quote-strip">
+  <div class="qs-circle"></div>
+  <span class="qs-star anim">✦</span>
+  <p class="qs-text anim">La verdadera belleza no se crea — <em>se revela.</em></p>
+  <div class="qs-divider anim fade-only"></div>
+  <div class="qs-meta anim from-right">
+    <span class="qs-brand">L U X E</span>
+    <span class="qs-sub">Studio · Filosofía</span>
+  </div>
+</div>
+
+
+<!-- ══ ④ GALLERY — CREAM ══ -->
+<section id="galeria" style="background:var(--cream);padding:80px 8%;">
+  <div class="gal-header anim">
+    <span class="sec-label">Galería</span>
+    <span class="gal-note">— Cada detalle importa</span>
+  </div>
+  <div class="gallery-grid anim-group">
+    <div class="g-cell anim"><img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&h=500&fit=crop&q=80&auto=format" alt="Maquillaje"></div>
+    <div class="g-cell anim"><img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=700&h=500&fit=crop&q=80&auto=format" alt="Tratamiento"></div>
+    <div class="g-cell anim from-right"><img src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=500&h=500&fit=crop&q=80&auto=format" alt="Belleza"></div>
+    <div class="g-cell anim"><img src="https://images.unsplash.com/photo-1457972729786-0411a3b2b626?w=500&h=500&fit=crop&q=80&auto=format" alt="Cabello"></div>
+    <div class="g-cell anim"><img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=700&h=500&fit=crop&q=80&auto=format" alt="Uñas"></div>
+    <div class="g-cell anim from-right"><img src="https://images.unsplash.com/photo-1559599101-f09722fb4948?w=600&h=500&fit=crop&q=80&auto=format" alt="Studio"></div>
+  </div>
+</section>
+
+
+<!-- ══ ⑤ REVIEWS — DARK ══ -->
+<section id="resenas" style="background:var(--black);padding:80px 8%;">
+  <div class="anim">
+    <span class="sec-label light">Testimonios</span>
+    <h2 class="sec-h2 light" style="margin-bottom:32px;">Lo que dicen<br><em>nuestras clientas.</em></h2>
+  </div>
+
+  <div class="rating-row anim">
+    <div class="rt-score">4.9</div>
+    <div class="rt-detail">
+      <div class="rt-stars"><span class="rt-star">★</span><span class="rt-star">★</span><span class="rt-star">★</span><span class="rt-star">★</span><span class="rt-star">★</span></div>
+      <span class="rt-lbl">Reseñas verificadas</span>
+      <div class="g-badge">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        <span class="g-badge-lbl">Google Reviews</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="carousel-outer anim from-right">
+    <div class="rev-track" id="revTrack">
+      <div class="rev-card"><div class="rv-stars"><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span></div><p class="rv-text">"El lifting de pestañas fue una transformación total. Mis ojos nunca se vieron tan abiertos y naturales. La atención es impecable y el resultado duró más de lo esperado."</p><span class="rv-author">Valentina R.</span><span class="rv-date">Hace 1 semana</span></div>
+      <div class="rev-card"><div class="rv-stars"><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span></div><p class="rv-text">"Vine por las uñas y salí enamorada del lugar. El ambiente es elegante y sofisticado. Me sentí como en un estudio de moda. Sin duda mi lugar favorito."</p><span class="rv-author">Camila S.</span><span class="rv-date">Hace 2 semanas</span></div>
+      <div class="rev-card"><div class="rv-stars"><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span></div><p class="rv-text">"El laminado de cejas cambió mi cara. Llevo años buscando alguien que entienda la forma natural de mis cejas y aquí lo encontré. Resultado preciso y elegante."</p><span class="rv-author">Isabella M.</span><span class="rv-date">Hace 3 semanas</span></div>
+      <div class="rev-card"><div class="rv-stars"><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span></div><p class="rv-text">"Las extensiones de cabello son de una calidad increíble. Nadie nota que son extensiones — se integran perfecto a mi cabello natural. Resultado impecable desde el primer día."</p><span class="rv-author">Sofía P.</span><span class="rv-date">Hace 1 mes</span></div>
+      <div class="rev-card"><div class="rv-stars"><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span></div><p class="rv-text">"El maquillaje que me hicieron para mi evento fue perfectamente pensado para durar toda la noche. Me sentí radiante y recibí decenas de comentarios. Altamente recomendada."</p><span class="rv-author">María F.</span><span class="rv-date">Hace 1 mes</span></div>
+      <div class="rev-card"><div class="rv-stars"><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span></div><p class="rv-text">"La keratina que me aplicaron dejó mi cabello completamente diferente. Sin frizz, suave, brillante y manejable. El ambiente del estudio es de otro nivel."</p><span class="rv-author">Andrea G.</span><span class="rv-date">Hace 2 meses</span></div>
+    </div>
+  </div>
+  <div class="c-dots" id="cDots"></div>
+</section>
+
+
+<!-- ══ ⑥ CONTACT — CREAM ══ -->
+<section id="contacto" style="background:var(--cream);padding:80px 8%;">
+  <div class="contact-grid">
+    <div class="contact-left">
+      <div class="anim">
+        <span class="sec-label">Reservas</span>
+        <h2 class="sec-h2">Agenda tu<br><em>próxima cita.</em></h2>
+      </div>
+      <div class="contact-info-list anim">
+        <div class="ci-item"><span class="ci-tag">WhatsApp</span><span class="ci-val"><a href="https://wa.me/51900000000">+51 900 000 000</a></span></div>
+        <div class="ci-item"><span class="ci-tag">Instagram</span><span class="ci-val"><a href="https://instagram.com/luxestudio" target="_blank">@luxestudio</a></span></div>
+        <div class="ci-item"><span class="ci-tag">Horario</span><span class="ci-val">Lunes – Sábado · 9 am – 7 pm</span></div>
+      </div>
+    </div>
+
+    <form class="contact-form anim from-right" onsubmit="handleForm(event)">
+      <div class="f-row">
+        <div class="f-field"><input type="text" placeholder="Nombre" required></div>
+        <div class="f-field"><input type="tel"  placeholder="WhatsApp" required></div>
+      </div>
+      <div class="f-field">
+        <select>
+          <option value="" disabled selected>Servicio de interés</option>
+          <option>Lifting de Pestañas</option>
+          <option>Laminado de Cejas</option>
+          <option>Extensiones de Cabello</option>
+          <option>Nail Art Premium</option>
+          <option>Maquillaje Artístico</option>
+          <option>Tratamientos Capilares</option>
+        </select>
+      </div>
+      <div class="f-field"><textarea placeholder="¿Algo que quieras contarnos?"></textarea></div>
+      <button type="submit" class="btn-submit">Enviar por WhatsApp →</button>
+    </form>
+  </div>
+</section>
+
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div style="display:flex;flex-direction:column;gap:3px;">
+    <span class="ft-luxe">L U X E</span>
+    <span class="ft-studio">Studio</span>
+  </div>
+  <div class="ft-links">
+    <a href="#servicios" class="ft-a">Servicios</a>
+    <a href="#galeria"   class="ft-a">Galería</a>
+    <a href="#resenas"   class="ft-a">Reseñas</a>
+    <a href="#contacto"  class="ft-a">Contacto</a>
+  </div>
+  <span class="ft-copy">© 2026 Luxe Studio</span>
+</footer>
+
+
+<!-- ══ WA FLOAT ══ -->
+<a href="https://wa.me/51900000000?text=Hola%20LUXE%20STUDIO%2C%20vengo%20de%20la%20p%C3%A1gina%20web%20y%20quiero%20reservar%20una%20cita."
+   class="wa-float" target="_blank">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zm-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884zm8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+
+<script>
+/* ── Services data ── */
+const SERVICES = [
+  { num:'01', name:'Lifting de Pestañas', desc:'Curva y eleva tus pestañas naturales con un efecto de mirada abierta y profunda. El resultado dura hasta 8 semanas y requiere cero mantenimiento diario. Perfecto para quienes buscan despertar con los ojos definidos sin ningún esfuerzo.', dur:'60 min' },
+  { num:'02', name:'Laminado de Cejas', desc:'Definición, volumen y forma perfecta para tus cejas. Reestructura cada cabello, creando un acabado peinado y natural que dura hasta 6 semanas. Ideal para cejas escasas, asimétricas o sin forma definida.', dur:'50 min' },
+  { num:'03', name:'Extensiones de Cabello', desc:'Largo y volumen naturales con extensiones de calidad premium. Cada aplicación es completamente personalizada según tu tipo de cabello, color y el resultado deseado. Sin daño, sin cortes, solo transformación.', dur:'3–4 hrs' },
+  { num:'04', name:'Nail Art Premium', desc:'Uñas de alta moda diseñadas con precisión artística. Desde acrílico y gel hasta diseños editoriales únicos. Cada par de manos es un lienzo — creamos contigo la versión más elegante de tu estilo.', dur:'90 min' },
+  { num:'05', name:'Maquillaje Artístico', desc:'Para sesiones de fotos, bodas, eventos y cada ocasión que merece brillar. Maquillaje de larga duración con técnica de alta precisión, pensado específicamente para tu piel y la luz del evento.', dur:'75 min' },
+  { num:'06', name:'Tratamientos Capilares', desc:'Keratina, botox capilar e hidratación profunda para recuperar la salud, el brillo y la manejabilidad de tu cabello. Formulaciones premium que transforman desde la primera aplicación.', dur:'2–3 hrs' },
+];
+
+const servItems  = document.querySelectorAll('.serv-item');
+const sdInner    = document.getElementById('sdInner');
+let activeIdx    = 0;
+let transitioning = false;
+
+function updateDetail(idx) {
+  if (idx === activeIdx || transitioning) return;
+  transitioning = true;
+  const s = SERVICES[idx];
+
+  sdInner.classList.add('out');
+  setTimeout(() => {
+    sdInner.innerHTML = `
+      <span class="sd-eyebrow">Servicio ${s.num} de 06</span>
+      <div class="sd-name">${s.name}</div>
+      <div class="sd-rule"></div>
+      <div class="sd-desc">${s.desc}</div>
+      <span class="sd-tag">Duración: ${s.dur}</span>
+    `;
+    sdInner.classList.remove('out');
+    transitioning = false;
+  }, 280);
+
+  servItems.forEach(it => it.classList.remove('active'));
+  servItems[idx].classList.add('active');
+  activeIdx = idx;
+}
+
+servItems.forEach(item => {
+  item.addEventListener('mouseenter', () => updateDetail(+item.dataset.idx));
+  item.addEventListener('click',      () => updateDetail(+item.dataset.idx));
+});
+
+/* ── Reviews carousel — 2 at a time, auto-scroll ── */
+const track  = document.getElementById('revTrack');
+const dotsEl = document.getElementById('cDots');
+const cards  = track.querySelectorAll('.rev-card');
+let cur = 0, timer;
+
+const isMob = () => window.innerWidth <= 768;
+const total  = () => isMob() ? cards.length : Math.ceil(cards.length / 2);
+
+function buildDots() {
+  dotsEl.innerHTML = '';
+  for (let i = 0; i < total(); i++) {
+    const d = document.createElement('div');
+    d.className = 'cdot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => go(i));
+    dotsEl.appendChild(d);
+  }
+}
+function go(idx) {
+  const n = total();
+  cur = ((idx % n) + n) % n;
+  const w = cards[0].getBoundingClientRect().width + 16;
+  const step = isMob() ? w : w * 2;
+  track.style.transform = `translateX(-${cur * step}px)`;
+  dotsEl.querySelectorAll('.cdot').forEach((d, i) => d.classList.toggle('active', i === cur));
+  clearInterval(timer);
+  timer = setInterval(() => go(cur + 1), 4500);
+}
+buildDots();
+timer = setInterval(() => go(cur + 1), 4500);
+window.addEventListener('resize', () => { buildDots(); go(0); });
+
+/* ── Nav scroll ── */
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
+
+/* ── Intersection Observer — horizontal animations ── */
+const animEls = document.querySelectorAll('.anim');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const parent = entry.target.parentElement;
+    if (parent?.classList.contains('anim-group')) {
+      const siblings = [...parent.querySelectorAll(':scope > .anim')];
+      const idx = siblings.indexOf(entry.target);
+      entry.target.style.transitionDelay = `${idx * 0.12}s`;
+    }
+    entry.target.classList.add('visible');
+    io.unobserve(entry.target);
+  });
+}, { threshold: 0.06, rootMargin: '0px 0px -28px 0px' });
+animEls.forEach(el => io.observe(el));
+
+/* Hero animates on load */
+window.addEventListener('load', () => {
+  document.querySelectorAll('.hero .anim').forEach((el, i) => {
+    setTimeout(() => el.classList.add('visible'), 200 + i * 150);
+  });
+});
+
+/* ── Form → WhatsApp ── */
+function handleForm(e) {
+  e.preventDefault();
+  const f = e.target.querySelectorAll('input, select, textarea');
+  let msg = `Hola LUXE STUDIO, vengo de la página web y quiero reservar una cita.`;
+  if (f[0].value) msg += `\n\n✦ Nombre: ${f[0].value.trim()}`;
+  if (f[1].value) msg += `\n✦ WhatsApp: ${f[1].value.trim()}`;
+  if (f[2].value) msg += `\n✦ Servicio: ${f[2].value}`;
+  if (f[3].value) msg += `\n✦ Detalle: ${f[3].value.trim()}`;
+  window.open(`https://wa.me/51900000000?text=${encodeURIComponent(msg)}`, '_blank');
+  e.target.reset();
+}
+</script>
+
+</body>
+</html>

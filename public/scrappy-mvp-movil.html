@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>Scrappy — Encuentra tus próximos clientes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;
+    --ink:#16273f;
+    --sub:#5c6f7d;
+    --accent:#f5a623;
+    --accent-deep:#c9820f;
+    --accent-soft:#fdecc9;
+    --line:#c9dfe2;
+    --card:#dbeaec;
+    --navy:#16273f;
+    --navy-deep:#0e1a2c;
+    --ok:#2f6b47;
+    --ok-soft:#e4efe6;
+  }
+  *{box-sizing:border-box;}
+  html{overflow-x:hidden;color-scheme:light;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif;line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;margin:0;letter-spacing:-0.01em;}
+  .wrap{max-width:480px;margin:0 auto;padding:22px 20px 48px;}
+
+  header{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .mark{
+    width:32px;height:32px;border-radius:8px;background:var(--ink);
+    display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+  }
+  .mark svg{width:16px;height:16px;color:var(--accent);}
+  header .name{font-weight:700;font-size:19px;}
+
+  .tagline{color:var(--sub);font-size:14px;margin:2px 0 26px;}
+
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--sub);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;}
+  .field input{
+    width:100%;border:1.5px solid var(--line);border-radius:10px;padding:13px 14px;
+    font-family:inherit;font-size:15px;background:var(--card);color:var(--ink);
+  }
+  .field input:focus{outline:none;border-color:var(--accent);}
+  .field input::placeholder{color:#b8b2a8;}
+
+  .toggle-row{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 14px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;
+    margin-bottom:22px;
+  }
+  .toggle-row span{font-size:13.5px;font-weight:500;}
+  .switch{position:relative;width:40px;height:23px;flex:0 0 auto;}
+  .switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;}
+  .switch .track{position:absolute;inset:0;background:var(--line);border-radius:999px;transition:background .2s ease;}
+  .switch .knob{position:absolute;top:2.5px;left:2.5px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.25);transition:transform .2s ease;}
+  .switch input:checked + .track{background:var(--accent);}
+  .switch input:checked ~ .knob{transform:translateX(17px);}
+
+  .btn-search{
+    width:100%;padding:15px;border-radius:10px;border:none;background:var(--ink);color:#fff;
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .btn-search:active{background:#000;}
+  .btn-search:disabled{opacity:.5;cursor:not-allowed;}
+
+  .loading{display:none;align-items:center;justify-content:center;gap:10px;padding:28px 0 8px;color:var(--sub);font-size:13.5px;}
+  .loading.show{display:flex;}
+  .spinner{width:15px;height:15px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex:0 0 auto;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .results{margin-top:8px;display:none;}
+  .results.show{display:block;}
+  .results-head{display:flex;align-items:baseline;justify-content:space-between;margin:20px 0 12px;}
+  .results-head h2{font-size:15px;}
+  .results-head span{font-size:12px;color:var(--sub);}
+
+  .card{
+    background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;
+    transition:opacity .2s ease;
+  }
+  .card.contacted{opacity:.55;}
+  .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px;}
+  .card-left{display:flex;align-items:flex-start;gap:10px;flex:1;min-width:0;}
+  .contact-check{
+    flex:0 0 auto;width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line);
+    background:var(--card);margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  }
+  .contact-check.checked{background:var(--ok);border-color:var(--ok);}
+  .contact-check svg{width:12px;height:12px;color:#fff;opacity:0;}
+  .contact-check.checked svg{opacity:1;}
+  .card-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;}
+  .card.contacted .card-name{text-decoration:line-through;text-decoration-color:var(--sub);}
+  .no-web-tag{
+    flex:0 0 auto;font-size:10.5px;font-weight:600;background:var(--accent-soft);color:var(--accent-deep);
+    padding:3px 8px;border-radius:999px;white-space:nowrap;
+  }
+  .card-meta{display:flex;gap:12px;font-size:12.5px;color:var(--sub);margin-bottom:12px;flex-wrap:wrap;}
+  .card-meta b{color:var(--ink);}
+  .msg-toggle{
+    width:100%;text-align:left;background:none;border:none;padding:0;
+    font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:600;color:var(--accent-deep);cursor:pointer;
+    display:flex;align-items:center;gap:5px;
+  }
+  .msg-toggle svg{width:11px;height:11px;transition:transform .2s ease;}
+  .msg-toggle.open svg{transform:rotate(90deg);}
+  .msg-body{max-height:0;overflow:hidden;transition:max-height .25s ease;}
+  .msg-body.open{max-height:320px;}
+  .msg-text{
+    margin-top:10px;padding:12px;background:#eef2f6;border-radius:8px;
+    font-size:13px;color:var(--navy);line-height:1.5;white-space:pre-wrap;
+  }
+  .msg-text.loading{color:var(--sub);font-style:italic;}
+  .copy-btn{
+    display:flex;align-items:center;gap:6px;margin-top:8px;padding:8px 12px;
+    background:none;border:1.5px solid var(--line);border-radius:8px;
+    font-family:inherit;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;
+  }
+  .copy-btn svg{width:13px;height:13px;flex:0 0 auto;}
+  .copy-btn.copied{color:var(--ok);border-color:var(--ok);}
+
+  .empty-hint{text-align:center;color:var(--sub);font-size:12.5px;margin-top:22px;line-height:1.6;}
+
+  .error-banner{
+    display:none;margin-top:16px;padding:12px 14px;background:#fef2f2;
+    border:1.5px solid #fca5a5;border-radius:10px;font-size:13px;color:#b91c1c;
+  }
+  .error-banner.show{display:block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M4 12h16M4 6h10M4 18h13"/></svg>
+    </div>
+    <span class="name">Scrappy</span>
+  </header>
+  <p class="tagline">Encuentra negocios sin web, listos para contactar.</p>
+
+  <div class="field">
+    <label for="rubro">Rubro</label>
+    <input id="rubro" type="text" placeholder="Ej. Tatuajes, veterinarias, spas">
+  </div>
+
+  <div class="field">
+    <label for="ciudad">Ciudad / distrito</label>
+    <input id="ciudad" type="text" placeholder="Ej. Miraflores, Lima">
+  </div>
+
+  <div class="field">
+    <label for="servicio">Servicio que ofreces</label>
+    <input id="servicio" type="text" placeholder="Ej. Diseño de landing pages">
+  </div>
+
+  <div class="toggle-row">
+    <span>Solo negocios sin sitio web</span>
+    <label class="switch">
+      <input type="checkbox" id="onlyNoWeb" checked>
+      <span class="track"></span>
+      <span class="knob"></span>
+    </label>
+  </div>
+
+  <button class="btn-search" id="btnSearch" onclick="runSearch()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    Buscar prospectos
+  </button>
+
+  <div class="error-banner" id="errorBanner"></div>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <span id="loadingMsg">Buscando en Google Maps...</span>
+  </div>
+
+  <div class="results" id="results">
+    <div class="results-head">
+      <h2 id="resultsTitle">0 negocios encontrados</h2>
+      <span id="progressCount"></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var currentResults = [];
+  var currentServicio = '';
+  var pollTimer = null;
+
+  /* ── Helpers ─────────────────────────────────────── */
+  function esc(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function slugify(str) {
+    return String(str).toLowerCase()
+      .replace(/[^a-z0-9]/g, '-')
+      .replace(/-+/g, '-')
+      .slice(0, 40);
+  }
+
+  function setLoadingMsg(msg) {
+    document.getElementById('loadingMsg').textContent = msg;
+  }
+
+  function showError(msg) {
+    var el = document.getElementById('errorBanner');
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+
+  function clearError() {
+    document.getElementById('errorBanner').classList.remove('show');
+  }
+
+  function setSearching(busy) {
+    var btn = document.getElementById('btnSearch');
+    btn.disabled = busy;
+    if (busy) {
+      btn.innerHTML =
+        '<div class="spinner" style="border-top-color:#fff;border-color:rgba(255,255,255,.3)"></div>' +
+        'Buscando...';
+    } else {
+      btn.innerHTML =
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">' +
+        '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>' +
+        'Buscar prospectos';
+    }
+  }
+
+  /* ── Search flow ─────────────────────────────────── */
+  window.runSearch = async function () {
+    var rubro    = document.getElementById('rubro').value.trim();
+    var ciudad   = document.getElementById('ciudad').value.trim();
+    var servicio = document.getElementById('servicio').value.trim();
+    var onlyNoWeb = document.getElementById('onlyNoWeb').checked;
+
+    clearError();
+    if (!rubro)  { showError('Escribe un rubro para buscar.'); return; }
+    if (!ciudad) { showError('Escribe una ciudad o distrito.'); return; }
+
+    currentServicio = servicio;
+
+    setSearching(true);
+    document.getElementById('loading').classList.add('show');
+    document.getElementById('results').classList.remove('show');
+    setLoadingMsg('Iniciando búsqueda…');
+
+    /* 1 · Lanzar scrape */
+    try {
+      var res = await fetch('/api/scrape', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: rubro, location: ciudad, maxResults: 100, deepScan: false }),
+      });
+      var data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al iniciar búsqueda.');
+    } catch (e) {
+      document.getElementById('loading').classList.remove('show');
+      setSearching(false);
+      showError(e.message);
+      return;
+    }
+
+    /* 2 · Polling de estado */
+    if (pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(async function () {
+      try {
+        var r      = await fetch('/api/status');
+        var status = await r.json();
+        if (status.progress && status.progress.message) {
+          setLoadingMsg(status.progress.message);
+        }
+        if (!status.running) {
+          clearInterval(pollTimer);
+          document.getElementById('loading').classList.remove('show');
+          setSearching(false);
+
+          if (status.error) { showError(status.error); return; }
+
+          var results = status.results || [];
+          if (onlyNoWeb) results = results.filter(function (b) { return !b.website; });
+
+          currentResults = results;
+          renderResults(results, onlyNoWeb);
+        }
+      } catch (_) {}
+    }, 1500);
+  };
+
+  /* ── Render ──────────────────────────────────────── */
+  function renderResults(results, onlyNoWeb) {
+    var container = document.getElementById('results');
+
+    /* Limpiar cartas anteriores */
+    var old = container.querySelectorAll('.card, .empty-hint');
+    old.forEach(function (el) { el.remove(); });
+
+    document.getElementById('resultsTitle').textContent =
+      results.length + (results.length === 1 ? ' negocio encontrado' : ' negocios encontrados');
+
+    if (!results.length) {
+      var hint = document.createElement('p');
+      hint.className = 'empty-hint';
+      hint.textContent = onlyNoWeb
+        ? 'No se encontraron negocios sin sitio web. Prueba desactivando el filtro o cambiando el rubro.'
+        : 'No se encontraron resultados. Intenta con otro rubro o ciudad.';
+      container.appendChild(hint);
+    } else {
+      results.forEach(function (biz, i) {
+        container.appendChild(buildCard(biz, i));
+      });
+    }
+
+    container.classList.add('show');
+    restoreContactState();
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function buildCard(biz, i) {
+    var leadId   = slugify(biz.name) + '-' + i;
+    var noWeb    = !biz.website;
+    var distrito = (biz.searchLocation || (biz.address || '').split(',')[0] || '').trim();
+
+    var card = document.createElement('div');
+    card.className    = 'card';
+    card.dataset.leadId  = leadId;
+    card.dataset.bizIdx  = i;
+
+    var metaHtml = '';
+    if (biz.rating != null)      metaHtml += '<span><b>' + biz.rating + '★</b></span>';
+    if (biz.reviewsCount != null) metaHtml += '<span>' + biz.reviewsCount + ' reseñas</span>';
+    if (distrito)                 metaHtml += '<span>' + esc(distrito) + '</span>';
+
+    card.innerHTML =
+      '<div class="card-top">' +
+        '<div class="card-left">' +
+          '<div class="contact-check" onclick="toggleContact(this)">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10"/></svg>' +
+          '</div>' +
+          '<div class="card-name">' + esc(biz.name) + '</div>' +
+        '</div>' +
+        (noWeb ? '<div class="no-web-tag">Sin web</div>' : '') +
+      '</div>' +
+      '<div class="card-meta">' + metaHtml + '</div>' +
+      '<button class="msg-toggle" onclick="toggleMsg(this)">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 18l6-6-6-6"/></svg>' +
+        'Ver mensaje generado' +
+      '</button>' +
+      '<div class="msg-body">' +
+        '<div class="msg-text" data-state="idle"></div>' +
+        '<button class="copy-btn" style="display:none" onclick="copyMsgFromCard(this)">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">' +
+            '<rect x="9" y="9" width="12" height="12" rx="2"/>' +
+            '<path d="M5 15V5a2 2 0 0 1 2-2h10"/>' +
+          '</svg>' +
+          'Copiar mensaje' +
+        '</button>' +
+      '</div>';
+
+    return card;
+  }
+
+  /* ── Mensaje outreach (lazy) ─────────────────────── */
+  window.toggleMsg = async function (btn) {
+    btn.classList.toggle('open');
+    var body = btn.nextElementSibling;
+    body.classList.toggle('open');
+    if (!body.classList.contains('open')) return;
+
+    var msgText = body.querySelector('.msg-text');
+    if (msgText.dataset.state !== 'idle') return; /* ya está cargando o cargado */
+
+    msgText.dataset.state = 'loading';
+    msgText.classList.add('loading');
+    msgText.textContent = 'Generando mensaje personalizado…';
+
+    var card   = btn.closest('.card');
+    var bizIdx = parseInt(card.dataset.bizIdx, 10);
+    var biz    = currentResults[bizIdx];
+    if (!biz) {
+      msgText.textContent   = 'Error: negocio no encontrado.';
+      msgText.dataset.state = 'error';
+      return;
+    }
+
+    var bd = currentServicio ? { oferta: currentServicio } : null;
+
+    try {
+      var res  = await fetch('/api/outreach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ business: biz, bd: bd }),
+      });
+      var data = await res.json();
+
+      if (data.message) {
+        msgText.textContent   = data.message;
+        msgText.dataset.state = 'done';
+        msgText.classList.remove('loading');
+        body.querySelector('.copy-btn').style.display = 'flex';
+      } else {
+        msgText.textContent   = 'Error al generar: ' + (data.error || 'respuesta vacía');
+        msgText.dataset.state = 'error';
+        msgText.classList.remove('loading');
+      }
+    } catch (e) {
+      msgText.textContent   = 'Error de conexión. ¿Está corriendo el servidor?';
+      msgText.dataset.state = 'error';
+      msgText.classList.remove('loading');
+    }
+  };
+
+  /* ── Copiar mensaje ──────────────────────────────── */
+  window.copyMsgFromCard = function (btn) {
+    var text = btn.previousElementSibling.textContent;
+    navigator.clipboard.writeText(text).then(function () {
+      var original = btn.innerHTML;
+      btn.classList.add('copied');
+      btn.innerHTML =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
+        '<path d="M5 12l5 5 9-9"/></svg> Copiado';
+      setTimeout(function () {
+        btn.classList.remove('copied');
+        btn.innerHTML = original;
+      }, 1800);
+    }).catch(function () {});
+  };
+
+  /* ── Estado contactado ───────────────────────────── */
+  window.toggleContact = function (el) {
+    var card    = el.closest('.card');
+    var leadId  = card.dataset.leadId;
+    var checked = !el.classList.contains('checked');
+    el.classList.toggle('checked', checked);
+    card.classList.toggle('contacted', checked);
+    try { localStorage.setItem('scrappy-mv-' + leadId, checked ? '1' : '0'); } catch (_) {}
+    updateProgress();
+  };
+
+  function updateProgress() {
+    var total = document.querySelectorAll('.card').length;
+    var done  = document.querySelectorAll('.card.contacted').length;
+    document.getElementById('progressCount').textContent =
+      done + ' de ' + total + ' contactados';
+  }
+
+  function restoreContactState() {
+    document.querySelectorAll('.card').forEach(function (card) {
+      var saved;
+      try { saved = localStorage.getItem('scrappy-mv-' + card.dataset.leadId); } catch (_) { saved = null; }
+      if (saved === '1') {
+        card.classList.add('contacted');
+        card.querySelector('.contact-check').classList.add('checked');
+      }
+    });
+    updateProgress();
+  }
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magdalena Beauty — Cosmiatría y Medicina Estética Integral</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&family=Playfair+Display:ital,wght@0,400;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+
+/* ══ RESET & TOKENS ════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --dark:    #1C1410;
+  --dark2:   #120E0B;
+  --cream:   #F7EDE8;
+  --cream2:  #EFE0D8;
+  --cream3:  #D8C4BC;
+  --rose:    #C4876A;
+  --rose2:   #B87B5E;
+  --rose3:   #D4A090;
+  --white:   #FFFFFF;
+  --muted-d: rgba(247,237,232,.36);
+  --muted-d2:rgba(247,237,232,.16);
+  --border-d:rgba(247,237,232,.09);
+  --border-c:#DEC8C0;
+  --gray:    #8A7E7A;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  background: var(--dark);
+}
+img { display: block; }
+
+/* ══ ANIMATIONS — HORIZONTAL ═══════════════════════════════════ */
+.anim {
+  opacity: 0;
+  transform: translateX(-48px);
+  transition: opacity .85s cubic-bezier(.16,1,.3,1),
+              transform .85s cubic-bezier(.16,1,.3,1);
+  will-change: opacity, transform;
+}
+.anim.from-right { transform: translateX(48px); }
+.anim.fade-only  { transform: none; }
+.anim.visible    { opacity: 1; transform: translateX(0) !important; }
+
+.anim-group > .anim:nth-child(1) { transition-delay: 0s;   }
+.anim-group > .anim:nth-child(2) { transition-delay: .1s;  }
+.anim-group > .anim:nth-child(3) { transition-delay: .2s;  }
+.anim-group > .anim:nth-child(4) { transition-delay: .3s;  }
+.anim-group > .anim:nth-child(5) { transition-delay: .4s;  }
+.anim-group > .anim:nth-child(6) { transition-delay: .5s;  }
+
+/* ══ NAV ════════════════════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+  height: 70px; padding: 0 6%;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background .4s, border-color .4s;
+}
+nav.scrolled {
+  background: rgba(28,20,16,.97);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border-d);
+}
+.nav-logo { text-decoration: none; display: flex; align-items: center; gap: 14px; }
+
+/* SVG logo recreation in nav */
+.nav-logo-circle {
+  width: 42px; height: 42px; border-radius: 50%; background: var(--cream);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  overflow: hidden;
+}
+.nav-logo-text { display: flex; flex-direction: column; gap: 2px; }
+.nlt-name { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 400; color: var(--cream); letter-spacing: .06em; line-height: 1; }
+.nlt-sub  { font-size: .38rem; letter-spacing: .32em; text-transform: uppercase; color: var(--muted-d); line-height: 1; }
+
+.nav-links { display: flex; gap: 28px; align-items: center; }
+.nav-a { font-size: .58rem; font-weight: 400; letter-spacing: .2em; text-transform: uppercase; color: var(--muted-d); text-decoration: none; transition: color .2s; }
+.nav-a:hover { color: var(--cream); }
+.nav-cta {
+  padding: 9px 22px; border: 1px solid rgba(196,135,106,.4); color: var(--rose3);
+  font-size: .58rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase;
+  text-decoration: none; transition: background .25s, color .25s, border-color .25s;
+}
+.nav-cta:hover { background: var(--rose); color: var(--white); border-color: var(--rose); }
+
+/* ══ INLINE SVG LOGO MARK ═══════════════════════════════════════ */
+/* Used in nav circle + hero badge */
+.logo-mark-svg { width: 100%; height: 100%; }
+
+/* ══ ① HERO — DARK ══════════════════════════════════════════════ */
+.hero {
+  background: var(--dark);
+  min-height: 100vh;
+  display: grid; grid-template-columns: 1fr 1fr;
+  align-items: center; position: relative; overflow: hidden;
+  padding-top: 70px;
+}
+
+/* Rose-gold geometric accents */
+.hero-petal-tr {
+  position: absolute; top: 5%; right: 4%; width: 180px; height: 180px;
+  border-radius: 50%; border: 1px solid rgba(196,135,106,.12);
+  pointer-events: none;
+}
+.hero-petal-tr::after {
+  content: ''; position: absolute; inset: 20px;
+  border-radius: 50%; border: 1px solid rgba(196,135,106,.07);
+}
+.hero-petal-bl {
+  position: absolute; bottom: 12%; left: 2%; width: 120px; height: 120px;
+  border-radius: 50%; border: 1px solid rgba(196,135,106,.08);
+  pointer-events: none;
+}
+.hero-line-accent {
+  position: absolute; left: 0; top: 35%; right: 0;
+  height: 1px; background: linear-gradient(90deg,transparent,rgba(196,135,106,.06),transparent);
+  pointer-events: none;
+}
+.hero-sparkle { position: absolute; top: 32%; left: 4.5%; font-size: .9rem; color: rgba(196,135,106,.3); }
+.hero-sparkle2{ position: absolute; bottom: 22%; right: 5%; font-size: .7rem; color: rgba(196,135,106,.2); }
+
+/* Hero text */
+.hero-text {
+  padding: 80px 6% 80px 8%;
+  position: relative; z-index: 2;
+}
+.hero-eyebrow {
+  font-size: .52rem; font-weight: 400; letter-spacing: .38em; text-transform: uppercase;
+  color: var(--rose3); opacity: .75; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
+}
+.hero-eyebrow::before { content: ''; display: inline-block; width: 20px; height: 1px; background: var(--rose3); opacity: .5; }
+.hero-h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.6rem, 5vw, 5.2rem); font-weight: 400;
+  color: var(--cream); line-height: 1.1; letter-spacing: .01em;
+  margin-bottom: 28px;
+}
+.hero-h1 em { font-style: italic; color: var(--rose3); }
+.hero-rule  { width: 44px; height: 1px; background: rgba(196,135,106,.3); margin-bottom: 22px; }
+.hero-desc  { font-size: .77rem; color: var(--muted-d); line-height: 1.9; max-width: 360px; margin-bottom: 36px; }
+.hero-btns  { display: flex; gap: 14px; flex-wrap: wrap; }
+.btn-rose {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 28px; background: var(--rose); color: var(--white);
+  font-size: .6rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase;
+  text-decoration: none; transition: background .25s, transform .18s;
+}
+.btn-rose:hover { background: var(--rose2); transform: translateX(3px); }
+.btn-outline-r {
+  display: inline-flex; align-items: center;
+  padding: 13px 28px; border: 1px solid rgba(196,135,106,.28); color: var(--rose3);
+  font-size: .6rem; font-weight: 400; letter-spacing: .22em; text-transform: uppercase;
+  text-decoration: none; transition: border-color .25s, color .25s;
+}
+.btn-outline-r:hover { border-color: var(--rose); color: var(--rose3); }
+
+/* Hero visual */
+.hero-visual {
+  position: relative; z-index: 2; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  padding: 60px 8% 60px 4%;
+}
+.hero-img-wrap { position: relative; width: 100%; max-width: 400px; }
+.hero-img {
+  width: 100%; height: 560px; object-fit: cover; object-position: center 15%;
+}
+/* Rose-gold frame */
+.hero-img-frame {
+  position: absolute; top: -12px; right: -12px; bottom: 12px; left: 12px;
+  border: 1px solid rgba(196,135,106,.2); pointer-events: none; z-index: -1;
+}
+/* Badge */
+.hero-badge {
+  position: absolute; bottom: -1px; left: -20px;
+  background: var(--cream); padding: 20px 24px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+}
+.hb-name   { font-family: 'Playfair Display', serif; font-size: 1.45rem; font-weight: 400; color: var(--dark); letter-spacing: .04em; line-height: 1; }
+.hb-beauty { font-size: .42rem; font-weight: 500; letter-spacing: .45em; text-transform: uppercase; color: var(--rose2); }
+.hb-sub    { font-size: .35rem; letter-spacing: .28em; text-transform: uppercase; color: rgba(28,20,16,.35); margin-top: 1px; }
+
+/* Trust strip */
+.hero-trust {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
+  border-top: 1px solid var(--border-d);
+  display: flex; padding: 0 8%;
+}
+.ht-item {
+  flex: 1; padding: 17px 0;
+  display: flex; flex-direction: column; gap: 3px;
+  border-right: 1px solid var(--border-d);
+}
+.ht-item:last-child { border-right: none; }
+.ht-val { font-family: 'Playfair Display', serif; font-size: 1.45rem; font-weight: 400; color: var(--cream); line-height: 1; }
+.ht-lbl { font-size: .48rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted-d); }
+
+/* ══ ② SERVICES — CREAM ══════════════════════════════════════════ */
+#servicios { background: var(--cream); padding: 80px 8%; }
+
+.sec-label {
+  font-size: .5rem; font-weight: 500; letter-spacing: .38em; text-transform: uppercase;
+  color: var(--gray); display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
+}
+.sec-label::after { content: ''; flex: 0 0 32px; height: 1px; background: currentColor; opacity: .35; }
+.sec-h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.9rem, 3.5vw, 3.4rem); font-weight: 400;
+  color: var(--dark); line-height: 1.12;
+}
+.sec-h2 em { font-style: italic; color: var(--rose2); }
+
+.serv-layout {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  margin-top: 48px; border: 1px solid var(--border-c);
+}
+.serv-list { border-right: 1px solid var(--border-c); }
+.serv-item {
+  padding: 20px 26px; border-bottom: 1px solid var(--border-c);
+  display: flex; align-items: center; gap: 18px;
+  cursor: pointer; transition: background .3s; position: relative; overflow: hidden;
+}
+.serv-item:last-child { border-bottom: none; }
+.serv-item::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+  background: var(--rose); transition: width .32s cubic-bezier(.4,0,.2,1);
+}
+.serv-item.active::before,
+.serv-item:hover::before  { width: 3px; }
+.si-num  { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 400; color: var(--cream3); flex-shrink: 0; transition: color .3s; }
+.si-name { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 400; color: var(--gray); letter-spacing: .01em; transition: color .3s; }
+.si-arrow { margin-left: auto; font-size: .75rem; color: var(--cream3); opacity: 0; transform: translateX(-8px); transition: opacity .3s, transform .3s, color .3s; flex-shrink: 0; }
+.serv-item.active .si-num,
+.serv-item:hover .si-num   { color: var(--rose); }
+.serv-item.active .si-name,
+.serv-item:hover .si-name  { color: var(--dark); font-weight: 500; }
+.serv-item.active .si-arrow,
+.serv-item:hover .si-arrow { opacity: 1; transform: translateX(0); color: var(--rose); }
+
+.serv-detail {
+  padding: 40px 34px; display: flex; flex-direction: column; justify-content: center;
+  background: var(--cream); min-height: 330px;
+}
+.sd-inner { transition: opacity .28s, transform .28s; }
+.sd-inner.out { opacity: 0; transform: translateX(12px); }
+.sd-eyebrow { font-size: .48rem; letter-spacing: .34em; text-transform: uppercase; color: var(--rose); opacity: .75; margin-bottom: 14px; display: block; }
+.sd-name {
+  font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+  font-weight: 400; color: var(--dark); margin-bottom: 18px; line-height: 1.15;
+}
+.sd-rule  { width: 32px; height: 1px; background: var(--rose3); margin-bottom: 18px; }
+.sd-desc  { font-size: .78rem; color: var(--gray); line-height: 1.85; max-width: 320px; }
+.sd-tag   { display: inline-block; margin-top: 20px; font-size: .48rem; letter-spacing: .24em; text-transform: uppercase; color: var(--rose2); border-bottom: 1px solid var(--rose3); padding-bottom: 2px; }
+
+/* ══ ③ QUOTE STRIP — DARK ═══════════════════════════════════════ */
+.quote-strip {
+  background: var(--dark2); border-top: 1px solid rgba(196,135,106,.07); border-bottom: 1px solid rgba(196,135,106,.07);
+  padding: 50px 8%; display: flex; align-items: center; gap: 36px;
+  overflow: hidden; position: relative;
+}
+.qs-ornament {
+  flex-shrink: 0; width: 28px; height: 28px; opacity: .35;
+}
+.qs-text {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: clamp(1.2rem, 2.4vw, 1.85rem); font-weight: 400;
+  color: var(--cream); line-height: 1.45; letter-spacing: .01em;
+}
+.qs-text em { font-style: normal; color: var(--rose3); }
+.qs-divider { flex-shrink: 0; width: 1px; height: 44px; background: rgba(196,135,106,.14); }
+.qs-meta { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+.qs-brand { font-family: 'Playfair Display', serif; font-size: .9rem; color: rgba(247,237,232,.25); letter-spacing: .1em; }
+.qs-sub   { font-size: .42rem; letter-spacing: .28em; text-transform: uppercase; color: rgba(196,135,106,.2); }
+.qs-bg-circle {
+  position: absolute; right: -6%; top: 50%; transform: translateY(-50%);
+  width: 180px; height: 180px; border-radius: 50%;
+  border: 1px solid rgba(196,135,106,.05); pointer-events: none;
+}
+
+/* ══ ④ GALLERY — CREAM ══════════════════════════════════════════ */
+#galeria { background: var(--cream); padding: 80px 8%; }
+.gal-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 34px; }
+.gal-note { font-size: .54rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gray); opacity: .55; }
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: 250px 250px;
+  gap: 5px;
+}
+.g-cell { overflow: hidden; }
+.g-cell img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(.7) brightness(.88);
+  transition: transform .65s cubic-bezier(.4,0,.2,1), filter .4s;
+}
+.g-cell:hover img { transform: scale(1.05); filter: saturate(.9) brightness(.95); }
+.g-cell:nth-child(1) { grid-column: span 5; }
+.g-cell:nth-child(2) { grid-column: span 4; }
+.g-cell:nth-child(3) { grid-column: span 3; }
+.g-cell:nth-child(4) { grid-column: span 3; }
+.g-cell:nth-child(5) { grid-column: span 5; }
+.g-cell:nth-child(6) { grid-column: span 4; }
+
+/* ══ ⑤ REVIEWS — DARK ═══════════════════════════════════════════ */
+#resenas { background: var(--dark); padding: 80px 8%; }
+.sec-label.light { color: rgba(247,237,232,.25); }
+.sec-label.light::after { opacity: .15; }
+.sec-h2.light { color: var(--cream); }
+.sec-h2.light em { color: var(--rose3); opacity: .8; }
+
+.rating-row { display: flex; align-items: center; gap: 28px; margin-bottom: 44px; flex-wrap: wrap; }
+.rt-score { font-family: 'Playfair Display', serif; font-size: 4.6rem; font-weight: 400; color: var(--cream); line-height: 1; }
+.rt-detail { display: flex; flex-direction: column; gap: 6px; }
+.rt-stars { display: flex; gap: 4px; }
+.rt-star  { color: var(--rose3); font-size: .95rem; }
+.rt-lbl   { font-size: .52rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted-d); }
+.g-badge  { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--border-d); padding: 6px 13px; width: fit-content; }
+.g-badge svg { width: 13px; height: 13px; }
+.g-badge-lbl { font-size: .52rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted-d); }
+
+.carousel-outer { overflow: hidden; }
+.rev-track { display: flex; gap: 16px; transition: transform .7s cubic-bezier(.16,1,.3,1); }
+.rev-card {
+  flex: 0 0 calc(50% - 8px);
+  border: 1px solid var(--border-d); padding: 30px 26px;
+  display: flex; flex-direction: column; gap: 13px; transition: border-color .25s;
+}
+.rev-card:hover { border-color: rgba(196,135,106,.22); }
+.rv-stars { display: flex; gap: 3px; }
+.rv-star  { color: var(--rose3); font-size: .85rem; }
+.rv-text  { font-family: 'Playfair Display', serif; font-size: .97rem; font-style: italic; font-weight: 400; color: rgba(247,237,232,.65); line-height: 1.75; flex: 1; }
+.rv-author{ font-size: .57rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted-d); }
+.rv-date  { font-size: .52rem; letter-spacing: .1em; color: rgba(247,237,232,.18); }
+
+.c-dots { display: flex; gap: 8px; justify-content: flex-start; margin-top: 26px; }
+.cdot { width: 20px; height: 1.5px; background: var(--border-d); cursor: pointer; transition: background .3s, width .3s; }
+.cdot.active { background: rgba(196,135,106,.5); width: 38px; }
+
+/* ══ ⑥ CONTACT — CREAM ══════════════════════════════════════════ */
+#contacto { background: var(--cream); padding: 80px 8%; }
+.contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: start; }
+.contact-left { display: flex; flex-direction: column; gap: 34px; }
+.contact-info-list { display: flex; flex-direction: column; gap: 17px; }
+.ci-item { display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid var(--border-c); padding-bottom: 17px; }
+.ci-item:last-child { border-bottom: none; padding-bottom: 0; }
+.ci-tag { font-size: .48rem; letter-spacing: .28em; text-transform: uppercase; color: var(--gray); }
+.ci-val { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 400; color: var(--dark); }
+.ci-val a { color: inherit; text-decoration: none; transition: opacity .2s; }
+.ci-val a:hover { opacity: .6; }
+
+.contact-form { display: flex; flex-direction: column; }
+.f-field { border-bottom: 1px solid var(--border-c); transition: border-color .25s; }
+.f-field:focus-within { border-color: var(--rose); }
+.f-field input, .f-field textarea, .f-field select {
+  width: 100%; padding: 17px 0;
+  background: none; border: none; outline: none;
+  font-family: 'Montserrat', sans-serif; font-size: .75rem; font-weight: 300;
+  color: var(--dark); letter-spacing: .03em;
+}
+.f-field input::placeholder, .f-field textarea::placeholder { color: var(--gray); }
+.f-field select { color: var(--gray); cursor: pointer; }
+.f-field select:focus, .f-field select:valid { color: var(--dark); }
+.f-field select option { background: var(--cream); color: var(--dark); }
+.f-field textarea { resize: none; min-height: 88px; }
+.f-row { display: grid; grid-template-columns: 1fr 1fr; }
+.btn-submit {
+  margin-top: 28px; padding: 14px 30px;
+  background: var(--rose); color: var(--white);
+  font-family: 'Montserrat', sans-serif; font-size: .58rem;
+  font-weight: 500; letter-spacing: .26em; text-transform: uppercase;
+  border: none; cursor: pointer; width: fit-content;
+  transition: background .25s, transform .18s;
+}
+.btn-submit:hover { background: var(--rose2); transform: translateX(4px); }
+
+/* ══ WA FLOAT ═══════════════════════════════════════════════════ */
+.wa-float {
+  position: fixed; bottom: 28px; right: 28px; z-index: 500;
+  width: 52px; height: 52px; background: #25D366; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 18px rgba(37,211,102,.35); text-decoration: none;
+  transition: transform .2s;
+}
+.wa-float:hover { transform: scale(1.08); }
+.wa-float svg { width: 25px; height: 25px; fill: #fff; }
+
+/* ══ FOOTER ══════════════════════════════════════════════════════ */
+footer {
+  background: var(--dark2); border-top: 1px solid rgba(196,135,106,.07);
+  padding: 30px 8%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.ft-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 400; color: var(--cream); }
+.ft-sub  { font-size: .36rem; letter-spacing: .4em; text-transform: uppercase; color: rgba(247,237,232,.2); margin-top: 2px; }
+.ft-copy { font-size: .5rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(247,237,232,.14); }
+.ft-links { display: flex; gap: 20px; }
+.ft-a { font-size: .5rem; letter-spacing: .2em; text-transform: uppercase; color: rgba(247,237,232,.18); text-decoration: none; transition: color .2s; }
+.ft-a:hover { color: rgba(196,135,106,.7); }
+
+/* ══ RESPONSIVE ══════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-visual { display: none; }
+  .hero-text { padding: 60px 6%; }
+  .serv-layout { grid-template-columns: 1fr; }
+  .serv-list { border-right: none; border-bottom: 1px solid var(--border-c); }
+  .serv-detail { min-height: 200px; }
+  .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+}
+@media (max-width: 768px) {
+  .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .g-cell { grid-column: span 1 !important; height: 190px; }
+  .rev-card { flex: 0 0 calc(100% - 8px); }
+  .nav-links .nav-a { display: none; }
+  .hero-trust { position: static; border-top: 1px solid var(--border-d); flex-wrap: wrap; }
+  .ht-item { flex: 1 1 33%; }
+  .quote-strip { flex-direction: column; gap: 14px; text-align: center; }
+  .qs-divider, .qs-ornament { display: none; }
+  .f-row { grid-template-columns: 1fr; }
+}
+  </style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav id="mainNav">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-circle">
+      <!-- Simplified logo mark SVG -->
+      <svg viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-mark-svg">
+        <circle cx="21" cy="21" r="21" fill="#F7EDE8"/>
+        <!-- Face profile simplified -->
+        <path d="M23 10 C23 10 26 12 26 16 C26 20 24 21 23 21.5 C24 22 25 23 25 25 C25 27 24 28.5 22 29" stroke="#C4876A" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        <!-- Flower petals -->
+        <path d="M20 10 C18 7 14 8 14 11 C14 14 17 14 19 13" fill="#D4A090" opacity=".7"/>
+        <path d="M18 12 C15 10 12 13 13 16 C14 18 17 17 18 15" fill="#C4876A" opacity=".6"/>
+        <path d="M22 9 C22 6 18 5 17 8 C16 10 18 12 20 11" fill="#D4A090" opacity=".5"/>
+      </svg>
+    </div>
+    <div class="nav-logo-text">
+      <span class="nlt-name">Magdalena</span>
+      <span class="nlt-sub">Beauty · Cosmiatría</span>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="#servicios" class="nav-a">Servicios</a>
+    <a href="#galeria"   class="nav-a">Galería</a>
+    <a href="#resenas"   class="nav-a">Reseñas</a>
+    <a href="#contacto"  class="nav-a">Contacto</a>
+    <a href="https://wa.me/51900000000?text=Hola%20Magdalena%20Beauty%2C%20quisiera%20reservar%20una%20cita" class="nav-cta" target="_blank">Reservar</a>
+  </div>
+</nav>
+
+
+<!-- ══ ① HERO — DARK ══ -->
+<section class="hero">
+  <!-- Decorative elements -->
+  <div class="hero-petal-tr"></div>
+  <div class="hero-petal-bl"></div>
+  <div class="hero-line-accent"></div>
+  <div class="hero-sparkle">✦</div>
+  <div class="hero-sparkle2">✦</div>
+
+  <!-- Text -->
+  <div class="hero-text">
+    <span class="hero-eyebrow anim">Cosmiatría &amp; Medicina Estética Integral</span>
+    <h1 class="hero-h1 anim">
+      Tu piel merece<br>
+      el mejor <em>cuidado,</em><br>
+      el mejor <em>resultado.</em>
+    </h1>
+    <div class="hero-rule anim"></div>
+    <p class="hero-desc anim">En Magdalena Beauty combinamos cosmiatría de alta precisión con medicina estética integral para revelar la mejor versión de tu piel. Cada tratamiento, personalizado. Cada resultado, excepcional.</p>
+    <div class="hero-btns anim">
+      <a href="https://wa.me/51900000000?text=Hola%20Magdalena%20Beauty%2C%20quisiera%20reservar%20una%20cita" class="btn-rose" target="_blank">Reservar cita →</a>
+      <a href="#servicios" class="btn-outline-r">Ver servicios</a>
+    </div>
+  </div>
+
+  <!-- Visual -->
+  <div class="hero-visual">
+    <div class="hero-img-wrap anim from-right">
+      <img class="hero-img"
+        src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=700&h=900&fit=crop&q=85&auto=format"
+        alt="Magdalena Beauty">
+      <div class="hero-img-frame"></div>
+      <div class="hero-badge">
+        <span class="hb-name">Magdalena</span>
+        <span class="hb-beauty">Beauty</span>
+        <span class="hb-sub">Cosmiatría Integral</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trust strip -->
+  <div class="hero-trust anim fade-only">
+    <div class="ht-item"><span class="ht-val">+8</span><span class="ht-lbl">Tratamientos especializados</span></div>
+    <div class="ht-item"><span class="ht-val">4.9</span><span class="ht-lbl">Calificación Google</span></div>
+    <div class="ht-item"><span class="ht-val">100%</span><span class="ht-lbl">Atención personalizada</span></div>
+  </div>
+</section>
+
+
+<!-- ══ ② SERVICES — CREAM ══ -->
+<section id="servicios">
+  <div style="background:var(--cream);padding:80px 8%;">
+    <div class="anim">
+      <span class="sec-label">Especialidades</span>
+      <h2 class="sec-h2">Tratamientos diseñados<br>para <em>tu piel.</em></h2>
+    </div>
+
+    <div class="serv-layout anim from-right" style="margin-top:48px;">
+      <div class="serv-list" id="servList">
+        <div class="serv-item active" data-idx="0"><span class="si-num">01</span><span class="si-name">Limpieza Facial Profunda</span><span class="si-arrow">→</span></div>
+        <div class="serv-item" data-idx="1"><span class="si-num">02</span><span class="si-name">Hidratación Intensiva</span><span class="si-arrow">→</span></div>
+        <div class="serv-item" data-idx="2"><span class="si-num">03</span><span class="si-name">Tratamiento Antiedad</span><span class="si-arrow">→</span></div>
+        <div class="serv-item" data-idx="3"><span class="si-num">04</span><span class="si-name">Peeling Químico</span><span class="si-arrow">→</span></div>
+        <div class="serv-item" data-idx="4"><span class="si-num">05</span><span class="si-name">Mesoterapia Facial</span><span class="si-arrow">→</span></div>
+        <div class="serv-item" data-idx="5"><span class="si-num">06</span><span class="si-name">Radiofrecuencia</span><span class="si-arrow">→</span></div>
+        <div class="serv-item" data-idx="6"><span class="si-num">07</span><span class="si-name">Depilación Láser</span><span class="si-arrow">→</span></div>
+        <div class="serv-item" data-idx="7"><span class="si-num">08</span><span class="si-name">Tratamiento Corporal</span><span class="si-arrow">→</span></div>
+      </div>
+      <div class="serv-detail">
+        <div class="sd-inner" id="sdInner">
+          <span class="sd-eyebrow">Servicio 01 de 08</span>
+          <div class="sd-name">Limpieza Facial Profunda</div>
+          <div class="sd-rule"></div>
+          <div class="sd-desc">Eliminación profunda de impurezas, puntos negros y células muertas mediante técnicas de cosmiatría avanzada. Protocolo personalizado según tu tipo de piel. Resultado: piel visiblemente más limpia, luminosa y oxigenada desde la primera sesión.</div>
+          <span class="sd-tag">Duración: 75 min</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ ③ QUOTE STRIP — DARK ══ -->
+<div class="quote-strip">
+  <div class="qs-bg-circle"></div>
+  <!-- Rose ornament SVG -->
+  <svg class="qs-ornament anim" viewBox="0 0 28 28" fill="none">
+    <circle cx="14" cy="14" r="13" stroke="#C4876A" stroke-width="1"/>
+    <path d="M14 4 C14 4 10 9 14 14 C18 9 14 4 14 4Z" fill="#C4876A" opacity=".4"/>
+    <path d="M4 14 C4 14 9 18 14 14 C9 10 4 14 4 14Z" fill="#C4876A" opacity=".3"/>
+    <path d="M14 24 C14 24 18 19 14 14 C10 19 14 24 14 24Z" fill="#C4876A" opacity=".4"/>
+    <path d="M24 14 C24 14 19 10 14 14 C19 18 24 14 24 14Z" fill="#C4876A" opacity=".3"/>
+  </svg>
+  <p class="qs-text anim">"La belleza nace del cuidado — <em>y el cuidado nace del amor propio."</em></p>
+  <div class="qs-divider anim fade-only"></div>
+  <div class="qs-meta anim from-right">
+    <span class="qs-brand">Magdalena Beauty</span>
+    <span class="qs-sub">Filosofía · Cosmiatría</span>
+  </div>
+</div>
+
+
+<!-- ══ ④ GALLERY — CREAM ══ -->
+<section id="galeria" style="background:var(--cream);padding:80px 8%;">
+  <div class="gal-header anim">
+    <span class="sec-label">Galería</span>
+    <span class="gal-note">— Resultados reales</span>
+  </div>
+  <div class="gallery-grid anim-group">
+    <div class="g-cell anim"><img src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=600&h=500&fit=crop&q=80&auto=format" alt="Tratamiento facial"></div>
+    <div class="g-cell anim"><img src="https://images.unsplash.com/photo-1552693673-1bf958298935?w=700&h=500&fit=crop&q=80&auto=format" alt="Cuidado de piel"></div>
+    <div class="g-cell anim from-right"><img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&h=500&fit=crop&q=80&auto=format" alt="Cosmetología"></div>
+    <div class="g-cell anim"><img src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=500&h=500&fit=crop&q=80&auto=format" alt="Estudio"></div>
+    <div class="g-cell anim"><img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=700&h=500&fit=crop&q=80&auto=format" alt="Procedimiento"></div>
+    <div class="g-cell anim from-right"><img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&h=500&fit=crop&q=80&auto=format" alt="Resultado"></div>
+  </div>
+</section>
+
+
+<!-- ══ ⑤ REVIEWS — DARK ══ -->
+<section id="resenas" style="background:var(--dark);padding:80px 8%;">
+  <div class="anim">
+    <span class="sec-label light">Testimonios</span>
+    <h2 class="sec-h2 light" style="margin-bottom:30px;">Lo que dicen<br><em>nuestras pacientes.</em></h2>
+  </div>
+
+  <div class="rating-row anim">
+    <div class="rt-score">4.9</div>
+    <div class="rt-detail">
+      <div class="rt-stars"><span class="rt-star">★</span><span class="rt-star">★</span><span class="rt-star">★</span><span class="rt-star">★</span><span class="rt-star">★</span></div>
+      <span class="rt-lbl">Reseñas verificadas</span>
+      <div class="g-badge">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        <span class="g-badge-lbl">Google Reviews</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="carousel-outer anim from-right">
+    <div class="rev-track" id="revTrack">
+      <div class="rev-card"><div class="rv-stars"><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span></div><p class="rv-text">"La limpieza facial fue increíble. Mi piel quedó completamente renovada. La cosmiatra explicó cada paso del procedimiento y se notó su experiencia desde el primer momento. Totalmente recomendada."</p><span class="rv-author">Claudia M.</span><span class="rv-date">Hace 1 semana</span></div>
+      <div class="rev-card"><div class="rv-stars"><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span></div><p class="rv-text">"Llevo 3 sesiones de mesoterapia y los cambios en mi piel son notorios. Menos líneas de expresión, más firmeza y un brillo natural que no había visto en años. Magdalena es una experta."</p><span class="rv-author">Patricia L.</span><span class="rv-date">Hace 2 semanas</span></div>
+      <div class="rev-card"><div class="rv-stars"><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span></div><p class="rv-text">"El peeling transformó completamente mi piel. Tenía manchas que llevaban años sin mejorar con ningún tratamiento. Aquí encontré la solución. El ambiente del consultorio es muy tranquilo y profesional."</p><span class="rv-author">Rosa V.</span><span class="rv-date">Hace 3 semanas</span></div>
+      <div class="rev-card"><div class="rv-stars"><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span></div><p class="rv-text">"La radiofrecuencia funcionó mejor de lo que esperaba. Mi piel se siente más tensa y firme. La atención es muy personalizada — sientes que realmente analizan tu caso antes de recomendar algo."</p><span class="rv-author">Sonia R.</span><span class="rv-date">Hace 1 mes</span></div>
+      <div class="rev-card"><div class="rv-stars"><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span></div><p class="rv-text">"Vine por la depilación láser y volví por la limpieza facial. El nivel de profesionalismo es altísimo y los resultados hablan por sí solos. Ya agendé para el próximo mes."</p><span class="rv-author">Karen F.</span><span class="rv-date">Hace 1 mes</span></div>
+      <div class="rev-card"><div class="rv-stars"><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span><span class="rv-star">★</span></div><p class="rv-text">"El tratamiento antiedad es simplemente maravilloso. A mis 48 años mi piel se ve mejor que hace 10. La combinación de técnicas que usa Magdalena es exactamente lo que necesitaba. Gracias."</p><span class="rv-author">Gloria N.</span><span class="rv-date">Hace 2 meses</span></div>
+    </div>
+  </div>
+  <div class="c-dots" id="cDots"></div>
+</section>
+
+
+<!-- ══ ⑥ CONTACT — CREAM ══ -->
+<section id="contacto" style="background:var(--cream);padding:80px 8%;">
+  <div class="contact-grid">
+    <div class="contact-left">
+      <div class="anim">
+        <span class="sec-label">Reservas</span>
+        <h2 class="sec-h2">Agenda tu<br><em>consulta hoy.</em></h2>
+      </div>
+      <div class="contact-info-list anim">
+        <div class="ci-item"><span class="ci-tag">WhatsApp</span><span class="ci-val"><a href="https://wa.me/51900000000">+51 900 000 000</a></span></div>
+        <div class="ci-item"><span class="ci-tag">Instagram</span><span class="ci-val"><a href="https://instagram.com/magdalenabeauty" target="_blank">@magdalenabeauty</a></span></div>
+        <div class="ci-item"><span class="ci-tag">Horario</span><span class="ci-val">Lunes – Sábado · 9 am – 7 pm</span></div>
+      </div>
+    </div>
+
+    <form class="contact-form anim from-right" onsubmit="handleForm(event)">
+      <div class="f-row">
+        <div class="f-field"><input type="text" placeholder="Nombre completo" required></div>
+        <div class="f-field"><input type="tel"  placeholder="WhatsApp" required></div>
+      </div>
+      <div class="f-field">
+        <select>
+          <option value="" disabled selected>Tratamiento de interés</option>
+          <option>Limpieza Facial Profunda</option>
+          <option>Hidratación Intensiva</option>
+          <option>Tratamiento Antiedad</option>
+          <option>Peeling Químico</option>
+          <option>Mesoterapia Facial</option>
+          <option>Radiofrecuencia</option>
+          <option>Depilación Láser</option>
+          <option>Tratamiento Corporal</option>
+        </select>
+      </div>
+      <div class="f-field"><textarea placeholder="¿Cuál es tu principal preocupación de piel?"></textarea></div>
+      <button type="submit" class="btn-submit">Enviar por WhatsApp →</button>
+    </form>
+  </div>
+</section>
+
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div style="display:flex;flex-direction:column;gap:3px;">
+    <span class="ft-name">Magdalena Beauty</span>
+    <span class="ft-sub">Cosmiatría &amp; Medicina Estética</span>
+  </div>
+  <div class="ft-links">
+    <a href="#servicios" class="ft-a">Servicios</a>
+    <a href="#galeria"   class="ft-a">Galería</a>
+    <a href="#resenas"   class="ft-a">Reseñas</a>
+    <a href="#contacto"  class="ft-a">Contacto</a>
+  </div>
+  <span class="ft-copy">© 2026 Magdalena Beauty</span>
+</footer>
+
+
+<!-- ══ WA FLOAT ══ -->
+<a href="https://wa.me/51900000000?text=Hola%20Magdalena%20Beauty%2C%20vengo%20de%20la%20p%C3%A1gina%20web%20y%20quisiera%20reservar%20una%20consulta."
+   class="wa-float" target="_blank">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zm-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884zm8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+
+<script>
+/* ── Services data ── */
+const SERVICES = [
+  { num:'01', name:'Limpieza Facial Profunda', desc:'Eliminación profunda de impurezas, puntos negros y células muertas mediante técnicas de cosmiatría avanzada. Protocolo personalizado según tu tipo de piel. Resultado: piel visiblemente más limpia, luminosa y oxigenada desde la primera sesión.', dur:'75 min' },
+  { num:'02', name:'Hidratación Intensiva', desc:'Tratamiento de recarga hídrica para pieles deshidratadas, opacas o con sensación de tirante. Penetración profunda de activos hidratantes que restauran el manto lipídico y devuelven suavidad y luminosidad en una sola sesión.', dur:'60 min' },
+  { num:'03', name:'Tratamiento Antiedad', desc:'Protocolo integral que combina activos reafirmantes, antioxidantes y estimulantes de colágeno para reducir arrugas, líneas de expresión y flacidez. Resultados progresivos y naturales que mejoran la calidad general de la piel.', dur:'80 min' },
+  { num:'04', name:'Peeling Químico', desc:'Exfoliación química controlada para tratar manchas, cicatrices, poros dilatados y textura irregular. Formulaciones de ácidos seleccionados según tu tipo de piel y la profundidad requerida para un resultado óptimo y seguro.', dur:'45 min' },
+  { num:'05', name:'Mesoterapia Facial', desc:'Microinyecciones de vitaminas, ácido hialurónico y aminoácidos directamente en la dermis para nutrir, hidratar y reactivar la producción de colágeno. Ideal para pieles apagadas, flácidas o con signos visibles de envejecimiento.', dur:'50 min' },
+  { num:'06', name:'Radiofrecuencia', desc:'Tecnología de última generación que genera calor controlado en las capas profundas de la piel para estimular la síntesis de colágeno y elastina. Efecto reafirmante y tensor visible desde las primeras sesiones, sin dolor ni recuperación.', dur:'60 min' },
+  { num:'07', name:'Depilación Láser', desc:'Eliminación definitiva del vello no deseado con tecnología láser de última generación. Aplicable en rostro, axilas, piernas, bikini y zonas corporales. Procedimiento rápido, preciso y con mínimas molestias.', dur:'30–90 min' },
+  { num:'08', name:'Tratamiento Corporal', desc:'Protocolos integrales de remodelación, reducción de medidas y mejora de la piel del cuerpo. Combinación de técnicas manuales y tecnología avanzada para tratar celulitis, flacidez y contorno corporal de forma efectiva y personalizada.', dur:'90 min' },
+];
+
+const servItems = document.querySelectorAll('.serv-item');
+const sdInner   = document.getElementById('sdInner');
+let activeIdx = 0, transitioning = false;
+
+function updateDetail(idx) {
+  if (idx === activeIdx || transitioning) return;
+  transitioning = true;
+  const s = SERVICES[idx];
+  sdInner.classList.add('out');
+  setTimeout(() => {
+    sdInner.innerHTML = `
+      <span class="sd-eyebrow">Servicio ${s.num} de 08</span>
+      <div class="sd-name">${s.name}</div>
+      <div class="sd-rule"></div>
+      <div class="sd-desc">${s.desc}</div>
+      <span class="sd-tag">Duración: ${s.dur}</span>
+    `;
+    sdInner.classList.remove('out');
+    transitioning = false;
+  }, 270);
+  servItems.forEach(it => it.classList.remove('active'));
+  servItems[idx].classList.add('active');
+  activeIdx = idx;
+}
+
+servItems.forEach(item => {
+  item.addEventListener('mouseenter', () => updateDetail(+item.dataset.idx));
+  item.addEventListener('click',      () => updateDetail(+item.dataset.idx));
+});
+
+/* ── Reviews carousel — 2 at a time ── */
+const track  = document.getElementById('revTrack');
+const dotsEl = document.getElementById('cDots');
+const cards  = track.querySelectorAll('.rev-card');
+let cur = 0, timer;
+
+const isMob = () => window.innerWidth <= 768;
+const total  = () => isMob() ? cards.length : Math.ceil(cards.length / 2);
+
+function buildDots() {
+  dotsEl.innerHTML = '';
+  for (let i = 0; i < total(); i++) {
+    const d = document.createElement('div');
+    d.className = 'cdot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => go(i));
+    dotsEl.appendChild(d);
+  }
+}
+function go(idx) {
+  const n = total();
+  cur = ((idx % n) + n) % n;
+  const w = cards[0].getBoundingClientRect().width + 16;
+  const step = isMob() ? w : w * 2;
+  track.style.transform = `translateX(-${cur * step}px)`;
+  dotsEl.querySelectorAll('.cdot').forEach((d, i) => d.classList.toggle('active', i === cur));
+  clearInterval(timer);
+  timer = setInterval(() => go(cur + 1), 4500);
+}
+buildDots();
+timer = setInterval(() => go(cur + 1), 4500);
+window.addEventListener('resize', () => { buildDots(); go(0); });
+
+/* ── Nav scroll ── */
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
+
+/* ── Intersection Observer ── */
+const animEls = document.querySelectorAll('.anim');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const parent = entry.target.parentElement;
+    if (parent?.classList.contains('anim-group')) {
+      const siblings = [...parent.querySelectorAll(':scope > .anim')];
+      entry.target.style.transitionDelay = `${siblings.indexOf(entry.target) * 0.12}s`;
+    }
+    entry.target.classList.add('visible');
+    io.unobserve(entry.target);
+  });
+}, { threshold: 0.06, rootMargin: '0px 0px -28px 0px' });
+animEls.forEach(el => io.observe(el));
+
+window.addEventListener('load', () => {
+  document.querySelectorAll('.hero .anim').forEach((el, i) => {
+    setTimeout(() => el.classList.add('visible'), 200 + i * 150);
+  });
+});
+
+/* ── Form → WhatsApp ── */
+function handleForm(e) {
+  e.preventDefault();
+  const f = e.target.querySelectorAll('input, select, textarea');
+  let msg = 'Hola Magdalena Beauty, vengo de la página web y quisiera reservar una consulta.';
+  if (f[0].value) msg += `\n\n✦ Nombre: ${f[0].value.trim()}`;
+  if (f[1].value) msg += `\n✦ WhatsApp: ${f[1].value.trim()}`;
+  if (f[2].value) msg += `\n✦ Tratamiento: ${f[2].value}`;
+  if (f[3].value) msg += `\n✦ Consulta: ${f[3].value.trim()}`;
+  window.open(`https://wa.me/51900000000?text=${encodeURIComponent(msg)}`, '_blank');
+  e.target.reset();
+}
+</script>
+
+</body>
+</html>

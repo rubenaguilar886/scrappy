@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scrappy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css?v=2">
+  <link rel="stylesheet" href="/settings.css">
+  <link rel="stylesheet" href="/settings-crm.css">
+  <link rel="stylesheet" href="/sidebar.css">
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- ══ SIDEBAR (colapsable, overlay al expandir) ══ -->
+    <aside id="app-sidebar" class="app-sidebar">
+      <button id="sidebar-toggle" class="sidebar-toggle" title="Abrir/cerrar menú" aria-label="Abrir/cerrar menú">☰</button>
+      <nav class="sidebar-nav">
+        <a href="/" class="sidebar-item active" data-view="buscador" data-path="/">
+          <span class="sidebar-icon">🔍</span><span class="sidebar-label">Buscador</span>
+        </a>
+        <a href="/settings" class="sidebar-item" data-view="mensajes" data-path="/settings">
+          <span class="sidebar-icon">✏️</span><span class="sidebar-label">Tono &amp; Mensajes</span>
+        </a>
+        <a href="/settings/crm" class="sidebar-item" data-view="crm" data-path="/settings/crm">
+          <span class="sidebar-icon">👥</span><span class="sidebar-label">CRM</span>
+        </a>
+        <span class="sidebar-soon-label">Próximamente</span>
+        <span class="sidebar-item sidebar-item--disabled">
+          <span class="sidebar-icon">📋</span><span class="sidebar-label">Plantillas</span>
+        </span>
+        <span class="sidebar-item sidebar-item--disabled">
+          <span class="sidebar-icon">🔗</span><span class="sidebar-label">Integraciones</span>
+        </span>
+      </nav>
+    </aside>
+
+    <!-- ══ CONTENIDO ══ -->
+    <div class="app-main">
+      <div class="app">
+
+        <!-- ══ HEADER (siempre visible) ══ -->
+        <header class="header">
+          <div class="logo">
+            <svg class="logo-svg" viewBox="-8 -8 76 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="sg" x1="0" y1="0" x2="60" y2="80" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%"   stop-color="#22D3EE"/>
+                  <stop offset="48%"  stop-color="#7C3AED"/>
+                  <stop offset="100%" stop-color="#EC4899"/>
+                </linearGradient>
+              </defs>
+              <path d="M48,18 C52,7 48,3 36,4 C22,5 10,15 14,28 C17,38 30,42 38,44 C47,46 56,52 53,64 C50,74 38,77 27,75 C16,73 11,64 14,55"
+                stroke="url(#sg)" stroke-width="13" stroke-linecap="round" fill="none"/>
+            </svg>
+            <div class="logo-text">
+              <h1>Scrappy</h1>
+              <p>Lead discovery &amp; market intelligence</p>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button id="btn-mi-negocio" class="btn-mi-negocio" style="display:none">✏️ Mi negocio</button>
+          </div>
+        </header>
+
+        <!-- ══ SECCIÓN: BUSCADOR ══ -->
+        <div id="section-buscador" class="app-section active">
+
+          <!-- ── VISTA 1: BUSINESS DISCOVERY ── -->
+          <div id="view-bd" class="view" style="display:none">
+            <div class="bd-wrap">
+
+              <!-- Progress -->
+              <div class="bd-progress">
+                <div class="bd-prog-step active" data-step="1">
+                  <div class="bd-prog-dot"></div>
+                  <span>Tu servicio</span>
+                </div>
+                <div class="bd-prog-line"></div>
+                <div class="bd-prog-step" data-step="2">
+                  <div class="bd-prog-dot"></div>
+                  <span>Tu cliente</span>
+                </div>
+                <div class="bd-prog-line"></div>
+                <div class="bd-prog-step" data-step="3">
+                  <div class="bd-prog-dot"></div>
+                  <span>Tu ventaja</span>
+                </div>
+              </div>
+
+              <!-- Card -->
+              <div class="bd-card">
+
+                <!-- Paso 1 -->
+                <div class="bd-step active" id="bd-step-1">
+                  <span class="bd-kicker">Paso 1 de 3</span>
+                  <h2 class="bd-title">Tu servicio</h2>
+                  <p class="bd-subtitle">Cuéntame qué ofreces y qué transformación concreta entrega a quien te compra.</p>
+                  <div class="bd-fields">
+                    <div class="bd-field" id="bd-field-q1">
+                      <label for="bd-q1">¿Qué ofreces?</label>
+                      <textarea id="bd-q1" rows="3"
+                        placeholder="Ej: Diseño y desarrollo de landing pages para negocios locales en Lima. Entrega en 10 días, precio fijo, sin costos ocultos."></textarea>
+                    </div>
+                    <div class="bd-field" id="bd-field-q2">
+                      <label for="bd-q2">¿Qué resultado concreto obtiene el cliente?</label>
+                      <textarea id="bd-q2" rows="3"
+                        placeholder="Ej: El negocio pasa de no tener presencia digital a tener una web profesional que genera consultas por WhatsApp desde el primer mes."></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Paso 2 -->
+                <div class="bd-step" id="bd-step-2" style="display:none">
+                  <span class="bd-kicker">Paso 2 de 3</span>
+                  <h2 class="bd-title">Tu cliente</h2>
+                  <p class="bd-subtitle">Quién te ha comprado (o intentado comprarte) y a quién definitivamente quieres evitar.</p>
+                  <div class="bd-fields">
+                    <div class="bd-field" id="bd-field-q3">
+                      <label for="bd-q3">¿A quién le has vendido o intentado vender hasta ahora?</label>
+                      <textarea id="bd-q3" rows="3"
+                        placeholder="Ej: Estudios de tatuajes, fotógrafos freelance, fisioterapeutas y escuelas de música en Lima. Negocios de 1-10 personas que no tienen web o tienen una muy desactualizada."></textarea>
+                    </div>
+                    <div class="bd-field" id="bd-field-q4">
+                      <label for="bd-q4">¿A quién definitivamente NO quieres venderle?</label>
+                      <textarea id="bd-q4" rows="3"
+                        placeholder="Ej: Grandes empresas o corporativos, negocios que ya tienen equipo de marketing interno, clientes que piden cambios constantes sin presupuesto adicional."></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Paso 3 -->
+                <div class="bd-step" id="bd-step-3" style="display:none">
+                  <span class="bd-kicker">Paso 3 de 3</span>
+                  <h2 class="bd-title">Tu ventaja</h2>
+                  <p class="bd-subtitle">Por qué elegiría alguien trabajar contigo y qué resultados reales ya has logrado.</p>
+                  <div class="bd-fields">
+                    <div class="bd-field" id="bd-field-q5">
+                      <label for="bd-q5">¿Por qué elegiría alguien trabajar contigo y no con otro?</label>
+                      <textarea id="bd-q5" rows="3"
+                        placeholder="Ej: Precio fijo desde el inicio, entrega garantizada en 10 días, diseño con branding real (no templates genéricos), y soporte post-entrega incluido."></textarea>
+                    </div>
+                    <div class="bd-field" id="bd-field-q6">
+                      <label for="bd-q6">¿Tienes algún resultado o caso de éxito concreto? <span class="bd-optional">(opcional)</span></label>
+                      <textarea id="bd-q6" rows="3"
+                        placeholder="Ej: Sacred Ink Studio — landing page con galería de trabajos y formulario de reservas. Primera consulta llegó por WhatsApp a los 3 días del lanzamiento."></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Navegación -->
+                <div class="bd-nav">
+                  <button class="bd-btn-back" id="bd-back">← Atrás</button>
+                  <button class="bd-btn-next" id="bd-next">Siguiente →</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ── VISTA 2: MARKET FIT ── -->
+          <div id="view-mf" class="view" style="display:none">
+            <div class="mf-wrap" id="mf-content"></div>
+          </div>
+
+          <!-- ── VISTA 3: BUSCADOR (código original intacto) ── -->
+          <main id="view-search" class="view" style="display:none">
+            <section class="search-card">
+              <h2>Nueva búsqueda</h2>
+
+              <!-- Source selector -->
+              <div class="source-selector">
+                <label for="source-select" class="source-label">Fuente de datos</label>
+                <div class="source-select-wrap">
+                  <select id="source-select">
+                    <option value="googlemaps">🗺️ Google Maps</option>
+                    <option value="produce">🏭 Directorio PRODUCE</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- ── Formulario Google Maps ── -->
+              <form id="search-form">
+                <div class="field">
+                  <label for="query">¿Qué buscas?</label>
+                  <textarea
+                    id="query"
+                    rows="4"
+                    placeholder="Una búsqueda por línea, por ejemplo:&#10;grooming&#10;peluquería canina&#10;baño de mascotas"
+                    required
+                  ></textarea>
+                  <p class="field-hint">Varias líneas = varias búsquedas en una sola corrida. Se eliminan duplicados automáticamente.</p>
+                </div>
+
+                <div class="field-row">
+                  <div class="field">
+                    <label for="location">Ubicación</label>
+                    <textarea
+                      id="location"
+                      rows="3"
+                      placeholder="Una ubicación por línea:&#10;Miraflores, Lima&#10;San Isidro, Lima&#10;Surco, Lima"
+                    >Lima, Perú</textarea>
+                    <p class="field-hint">Varias líneas = busca en cada distrito por separado.</p>
+                  </div>
+
+                  <div class="field field-small">
+                    <label for="max-results">Por búsqueda</label>
+                    <select id="max-results">
+                      <option value="10">10</option>
+                      <option value="20" selected>20</option>
+                      <option value="30">30</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                    <p class="field-hint" id="combo-hint">Máx. 20 resultados</p>
+                  </div>
+                </div>
+
+                <label class="checkbox-field">
+                  <input type="checkbox" id="deep-scan" checked>
+                  <span>
+                    <strong>Modo profundo</strong> — visita sitios web para buscar Instagram, email y más contactos.
+                    Más lento, pero mucho más completo.
+                  </span>
+                </label>
+
+                <button type="submit" id="search-btn" class="btn-primary">
+                  Buscar negocios
+                </button>
+              </form>
+
+              <!-- ── Formulario PRODUCE ── -->
+              <form id="produce-form" style="display:none">
+                <div class="field-row">
+                  <div class="field">
+                    <label for="produce-ciiu">Código(s) CIIU</label>
+                    <input type="text" id="produce-ciiu" placeholder="Ej: 7310, 7320 (separados por coma)" />
+                    <p class="field-hint">Vacío = todas las actividades</p>
+                  </div>
+                  <div class="field field-small">
+                    <label for="produce-max">Cantidad</label>
+                    <select id="produce-max">
+                      <option value="50">50</option>
+                      <option value="100" selected>100</option>
+                      <option value="200">200</option>
+                      <option value="500">500</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="field-row">
+                  <div class="field">
+                    <label for="produce-dep">Departamento</label>
+                    <input type="text" id="produce-dep" value="LIMA" placeholder="LIMA" />
+                  </div>
+                  <div class="field">
+                    <label for="produce-sector">Sector (opcional)</label>
+                    <select id="produce-sector">
+                      <option value="">Todos los sectores</option>
+                      <option value="SERVICIO">Servicio</option>
+                      <option value="INDUSTRIA">Industria</option>
+                      <option value="COMERCIO">Comercio</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="field-row">
+                  <div class="field">
+                    <label for="produce-ruc-type">Tipo de RUC (opcional)</label>
+                    <select id="produce-ruc-type">
+                      <option value="">Todos</option>
+                      <option value="20">RUC 20 — Persona jurídica</option>
+                      <option value="10">RUC 10 — Persona natural</option>
+                    </select>
+                  </div>
+                </div>
+
+                <label class="checkbox-field">
+                  <input type="checkbox" id="produce-enrich" checked>
+                  <span>
+                    <strong>Buscar contacto en Google</strong> — consulta datosperu.org por cada empresa (gerente, estado SUNAT, fecha de constitución), busca LinkedIn del gerente, y extrae teléfono/WhatsApp vía Google.
+                    Más lento pero más completo.
+                  </span>
+                </label>
+
+                <button type="submit" id="produce-btn" class="btn-primary">
+                  Buscar en directorio PRODUCE
+                </button>
+              </form>
+
+              <div id="progress" class="progress hidden">
+                <div class="spinner"></div>
+                <div class="progress-content">
+                  <p id="progress-text">Buscando...</p>
+                  <div class="progress-bar-wrap">
+                    <div id="progress-bar" class="progress-bar-fill"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="error-box" class="error-box hidden">
+                <span class="error-icon">⚠️</span>
+                <div>
+                  <strong>Error en la búsqueda</strong>
+                  <p id="error-text"></p>
+                </div>
+                <button id="error-close" class="error-close">✕</button>
+              </div>
+            </section>
+
+            <section id="results-section" class="results-card hidden">
+              <div class="results-header">
+                <h2 id="results-title">Resultados</h2>
+                <div class="export-buttons">
+                  <button id="export-csv" class="btn-secondary">Descargar CSV</button>
+                  <button id="export-json" class="btn-secondary">Descargar JSON</button>
+                </div>
+              </div>
+
+              <p class="results-tip">
+                Para Google Sheets: descarga el CSV y ve a Archivo → Importar → Subir.
+                <span id="contact-summary"></span>
+              </p>
+
+              <!-- Filter Bar -->
+              <div id="filter-bar" class="filter-bar">
+                <div class="filter-item">
+                  <label class="filter-label" for="filter-audience">Audience</label>
+                  <select id="filter-audience" class="filter-select">
+                    <option value="all">Todas</option>
+                    <option value="Web Opportunity">🌐 Web Opportunity</option>
+                    <option value="Google Business Opportunity">📍 Google Business Opp.</option>
+                    <option value="Web + Google Business Opportunity">⭐ Web + Google Biz</option>
+                    <option value="none">— Sin clasificar</option>
+                  </select>
+                </div>
+                <div class="filter-item">
+                  <label class="filter-label" for="filter-tier">Opp. Tier</label>
+                  <select id="filter-tier" class="filter-select">
+                    <option value="all">Todos</option>
+                    <option value="A">🏆 A (80-100)</option>
+                    <option value="B">⭐ B (60-79)</option>
+                    <option value="C">📊 C (40-59)</option>
+                    <option value="D">📉 D (0-39)</option>
+                  </select>
+                </div>
+                <div class="filter-item">
+                  <label class="filter-label" for="filter-review-power">Review Power</label>
+                  <select id="filter-review-power" class="filter-select">
+                    <option value="all">Todos</option>
+                    <option value="Very High">🔥 Very High (&gt;300)</option>
+                    <option value="High">📈 High (101-300)</option>
+                    <option value="Medium">📊 Medium (21-100)</option>
+                    <option value="Low">📉 Low (0-20)</option>
+                    <option value="No Data">— No Data</option>
+                  </select>
+                </div>
+                <div class="filter-item">
+                  <label class="filter-label" for="filter-reputation">Reputación</label>
+                  <select id="filter-reputation" class="filter-select">
+                    <option value="all">Todos</option>
+                    <option value="Excelente">🌟 Excelente (≥4.5, &gt;100 rev)</option>
+                    <option value="Buena">👍 Buena (≥4.0, &gt;20 rev)</option>
+                    <option value="Regular">🔸 Regular</option>
+                    <option value="Sin datos">— Sin datos</option>
+                  </select>
+                </div>
+                <div class="filter-item filter-checks">
+                  <label class="filter-toggle-label">
+                    <input type="checkbox" id="filter-chains-only"> Solo cadenas
+                  </label>
+                  <label class="filter-toggle-label">
+                    <input type="checkbox" id="filter-unique-only"> Solo únicas
+                  </label>
+                </div>
+              </div>
+
+              <div class="scroll-mirror-wrap" id="scroll-mirror-wrap">
+                <div id="scroll-mirror-inner"></div>
+              </div>
+
+              <div class="table-wrap" id="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th class="th-intel" title="Lead Intelligence"></th>
+                      <th class="sortable" data-col="name">Nombre <span class="sort-icon"></span></th>
+                      <th class="sortable" data-col="category">Categoría <span class="sort-icon"></span></th>
+                      <th>Teléfono</th>
+                      <th>WhatsApp</th>
+                      <th>Email</th>
+                      <th>Instagram</th>
+                      <th>Web</th>
+                      <th class="sortable" data-col="rating">Rating <span class="sort-icon"></span></th>
+                      <th class="sortable" data-col="reviewsCount">Reseñas <span class="sort-icon"></span></th>
+                      <th class="sortable" data-col="businessQualityScore">Calidad <span class="sort-icon"></span></th>
+                      <th class="sortable" data-col="contactabilityScore">Contactabilidad <span class="sort-icon"></span></th>
+                      <th class="sortable" data-col="primaryContactChannel">Canal principal <span class="sort-icon"></span></th>
+                      <th class="sortable" data-col="reviewPower">Review Power <span class="sort-icon"></span></th>
+                      <th class="sortable" data-col="reputationScore">Reputación <span class="sort-icon"></span></th>
+                      <th class="sortable" data-col="opportunityScore">Opp. Score <span class="sort-icon"></span></th>
+                      <th class="sortable" data-col="opportunityTier">Opp. Tier <span class="sort-icon"></span></th>
+                      <th class="sortable" data-col="audience">Audience <span class="sort-icon"></span></th>
+                      <th class="sortable" data-col="businessGroup">Grupo <span class="sort-icon"></span></th>
+                      <th class="sortable" data-col="locationsCount">Sucursales <span class="sort-icon"></span></th>
+                      <th>Dirección</th>
+                      <th>Ubicación</th>
+                      <th>Búsqueda</th>
+                    </tr>
+                  </thead>
+                  <tbody id="results-body"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section id="empty-state" class="empty-state">
+              <div class="empty-icon">🗺️</div>
+              <h3>Empieza con una búsqueda</h3>
+              <p>Escribe por ejemplo <strong>veterinarias</strong> o <strong>pet grooming</strong> en Lima. Puedes poner varias búsquedas, una por línea.</p>
+            </section>
+          </main>
+
+        </div><!-- /#section-buscador -->
+
+        <!-- ══ SECCIÓN: TONO & MENSAJES ══ -->
+        <div id="section-mensajes" class="app-section">
+          <div class="st-content-inner">
+
+            <div class="st-page-header">
+              <h1 class="st-page-title">Tono &amp; Mensajes</h1>
+              <p class="st-page-sub">
+                Controla cómo Claude escribe los mensajes de outreach. Los cambios se aplican
+                en el siguiente mensaje que generes, sin reiniciar el servidor.
+              </p>
+            </div>
+
+            <form id="tone-form" class="st-form" autocomplete="off">
+
+              <div class="st-field">
+                <div class="st-field-header">
+                  <label class="st-label" for="f-system-prompt">System prompt base</label>
+                  <button type="button" class="st-btn-reset" id="btn-reset-prompt" title="Restaurar prompt por defecto">
+                    ↺ Restaurar
+                  </button>
+                </div>
+                <p class="st-hint">
+                  El marco completo que define el rol y el formato del mensaje.
+                  Cuidado al editar — cualquier cambio afecta todos los mensajes futuros.
+                </p>
+                <textarea id="f-system-prompt" class="st-textarea st-textarea--tall"
+                  rows="14" placeholder="Cargando..."></textarea>
+              </div>
+
+              <div class="st-field">
+                <label class="st-label" for="f-extra">Instrucciones adicionales de tono</label>
+                <p class="st-hint">
+                  Reglas extra que se añaden al final del prompt. Úsalas para ajustes rápidos
+                  sin tocar el prompt base. Ejemplos: <em>"Siempre tutea al prospecto."</em>
+                  o <em>"No menciones precios nunca."</em>
+                </p>
+                <textarea id="f-extra" class="st-textarea"
+                  rows="5" placeholder="(Vacío — no se añaden instrucciones extra)"></textarea>
+              </div>
+
+              <div class="st-actions">
+                <button type="submit" class="st-btn-save" id="btn-save">
+                  Guardar cambios
+                </button>
+                <span class="st-save-status" id="save-status"></span>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+
+        <!-- ══ SECCIÓN: CRM ══ -->
+        <div id="section-crm" class="app-section">
+          <div class="crm-content-inner">
+
+            <div class="st-page-header">
+              <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+                <div>
+                  <h1 class="st-page-title">CRM Leads</h1>
+                  <p class="st-page-sub">
+                    Fuente de verdad local, espejada a la hoja de Google Sheets "CRM Leads".
+                    ¿Respondió?, Próxima acción y Notas se editan solo en Sheets — esta tabla
+                    no los toca.
+                  </p>
+                </div>
+                <button type="button" id="crm-delete-all-btn" class="crm-delete-all-btn" title="Borra todos los leads de la DB local — Sheets no se toca">
+                  🗑️ Borrar todo
+                </button>
+              </div>
+            </div>
+
+            <div id="crm-status" class="crm-toast" hidden></div>
+
+            <div class="crm-table-wrap" id="crm-table-wrap">
+              <table class="crm-table">
+                <thead>
+                  <tr>
+                    <th>Negocio</th>
+                    <th>Rubro</th>
+                    <th>Teléfono</th>
+                    <th>Etapa</th>
+                    <th>Número usado</th>
+                    <th>1er contacto</th>
+                    <th>Último contacto</th>
+                    <th>N° contactos</th>
+                    <th>Mensaje</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="crm-body">
+                  <tr><td colspan="10" class="crm-empty">Cargando…</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ══ SECCIÓN: PLANTILLAS (próximamente) ══ -->
+        <div id="section-plantillas" class="app-section">
+          <div class="section-placeholder">
+            <h2>Plantillas</h2>
+            <p>Próximamente.</p>
+          </div>
+        </div>
+
+        <!-- ══ SECCIÓN: INTEGRACIONES (próximamente) ══ -->
+        <div id="section-integraciones" class="app-section">
+          <div class="section-placeholder">
+            <h2>Integraciones</h2>
+            <p>Próximamente.</p>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /.app-main -->
+
+  </div><!-- /.app-shell -->
+
+  <!-- ─── Lead Intelligence Modal (siempre en DOM) ─── -->
+  <div id="li-modal" class="li-modal" hidden>
+    <div class="li-backdrop" id="li-backdrop"></div>
+    <div class="li-panel" role="dialog" aria-modal="true" aria-labelledby="li-biz-name">
+
+      <div class="li-panel-header">
+        <div class="li-panel-title">
+          <span class="li-label-badge">Lead Intelligence</span>
+          <h2 id="li-biz-name"></h2>
+          <span id="li-biz-meta" class="li-biz-meta"></span>
+        </div>
+        <button class="li-close-btn" id="li-close-btn" title="Cerrar">✕</button>
+      </div>
+
+      <div class="li-panel-body">
+
+        <section class="li-section">
+          <div class="li-section-header">
+            <span class="li-section-icon">📋</span>
+            <span class="li-section-title">Lead Intelligence</span>
+          </div>
+          <div id="li-overview" class="li-overview-grid"></div>
+        </section>
+
+        <section class="li-section">
+          <div class="li-section-header">
+            <span class="li-section-icon">⚡</span>
+            <span class="li-section-title">Señales detectadas</span>
+          </div>
+          <div id="li-signals" class="li-signals-wrap"></div>
+        </section>
+
+        <section class="li-section">
+          <div class="li-quick-facts">
+            <div class="li-quick-card li-qc-asset">
+              <span class="li-qc-label">💎 Core Asset</span>
+              <p id="li-core-asset" class="li-qc-text"></p>
+            </div>
+            <div class="li-quick-card li-qc-bottleneck">
+              <span class="li-qc-label">🚧 Bottleneck</span>
+              <p id="li-bottleneck-line" class="li-qc-text"></p>
+            </div>
+          </div>
+        </section>
+
+        <section class="li-section li-section-main">
+          <div class="li-section-header">
+            <span class="li-section-icon">✉️</span>
+            <span class="li-section-title">Mensaje sugerido</span>
+            <button class="li-regen-btn" id="li-regen-btn" title="Genera un mensaje nuevo, ignorando el guardado">🔄 Regenerar</button>
+            <button class="li-copy-btn" id="li-copy-btn">📋 Copiar</button>
+          </div>
+          <pre id="li-outreach" class="li-outreach-text"></pre>
+          <div id="li-sync-status" class="li-sync-status" hidden></div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+  <script src="/settings.js"></script>
+  <script src="/settings-crm.js"></script>
+  <script src="/router.js"></script>
+</body>
+</html>

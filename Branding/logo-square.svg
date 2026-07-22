@@ -1,0 +1,47 @@
+<svg width="640" height="640" viewBox="0 0 640 640" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#FF2828"/>
+      <stop offset="22%"  stop-color="#FF8C00"/>
+      <stop offset="45%"  stop-color="#FFD200"/>
+      <stop offset="62%"  stop-color="#FFFFFF"/>
+      <stop offset="82%"  stop-color="#00AAFF"/>
+      <stop offset="100%" stop-color="#0044FF"/>
+    </linearGradient>
+    <radialGradient id="orb" cx="68%" cy="30%" r="58%">
+      <stop offset="0%"   stop-color="#FF7000" stop-opacity="0.52"/>
+      <stop offset="42%"  stop-color="#CC3000" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="640" height="640" fill="#080808"/>
+
+  <!-- Warm orb — upper right, like the brand kit cover -->
+  <ellipse cx="430" cy="190" rx="380" ry="320" fill="url(#orb)"/>
+
+  <!-- SCRAPPY — line 1, left-aligned -->
+  <text
+    x="62"
+    y="278"
+    font-family="'Bebas Neue', Impact, 'Arial Narrow', sans-serif"
+    font-size="118"
+    fill="#F2F2F2"
+    letter-spacing="2"
+  >SCRAPPY</text>
+
+  <!-- STUDIO. — line 2, same size, left-aligned -->
+  <text
+    x="62"
+    y="388"
+    font-family="'Bebas Neue', Impact, 'Arial Narrow', sans-serif"
+    font-size="118"
+    fill="#F2F2F2"
+    letter-spacing="2"
+  >STUDIO.</text>
+
+  <!-- Gradient accent: dot + bar, left-aligned -->
+  <circle cx="62" cy="422" r="5.5" fill="#FF2828"/>
+  <rect x="75" y="417" width="248" height="6" rx="3" fill="url(#g)"/>
+</svg>

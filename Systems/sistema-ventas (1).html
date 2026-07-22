@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de ventas — Scrappy Studio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap');
+
+  :root{
+    --bg: #F7F5F1;
+    --panel: #FFFFFF;
+    --ink: #262420;
+    --ink-soft: #6B6760;
+    --line: #E4E0D8;
+    --done: #4A7A63;
+    --done-bg: #E7F0EA;
+    --accent: #A34B2F;
+    --accent-bg: #F7E9E1;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.6;}
+  .wrap{max-width:1180px;margin:0 auto;padding:44px 24px 80px;}
+  header{margin-bottom:28px;border-bottom:1px solid var(--line);padding-bottom:24px;}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(26px,3.6vw,38px);margin:0 0 8px;letter-spacing:-0.01em;}
+  .sub{color:var(--ink-soft);font-size:15px;max-width:680px;}
+
+  .tree-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:32px 20px 12px;
+    margin-bottom:24px;
+    overflow-x:auto;
+  }
+  .tree-wrap{position:relative;min-width:900px;}
+  svg.edges{position:absolute;top:0;left:0;pointer-events:none;}
+  .grid{
+    position:relative;
+    z-index:2;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    column-gap:14px;
+    row-gap:60px;
+  }
+  .node-btn{
+    grid-row: var(--r);
+    grid-column: var(--c);
+    background:var(--bg);
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    padding:12px 10px;
+    cursor:pointer;
+    font-family:inherit;
+    text-align:center;
+    transition:border-color .15s ease, background .15s ease, transform .1s ease;
+  }
+  .node-btn:hover{border-color:var(--accent);transform:translateY(-1px);}
+  .node-btn.active{background:var(--accent-bg);border-color:var(--accent);}
+  .node-num{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:20px;height:20px;border-radius:50%;
+    background:var(--done);color:#fff;
+    font-family:var(--mono);font-size:11px;font-weight:600;
+    margin-bottom:6px;
+  }
+  .node-title{font-size:12.5px;font-weight:500;line-height:1.3;}
+
+  .edge-label{
+    position:absolute;z-index:2;
+    background:var(--panel);
+    border:1px solid var(--line);
+    color:var(--ink-soft);
+    font-size:10.5px;
+    padding:2px 7px;
+    border-radius:999px;
+    transform:translate(-50%,-50%);
+    white-space:nowrap;
+  }
+
+  .ref-note{
+    display:flex;align-items:center;gap:10px;
+    font-size:12.5px;color:var(--ink-soft);
+    padding:10px 4px 0;
+  }
+  .ref-btn{
+    font-family:var(--mono);font-size:11px;
+    background:var(--accent-bg);color:var(--accent);
+    border:1px solid var(--accent);border-radius:999px;
+    padding:5px 12px;cursor:pointer;
+  }
+  .ref-btn:hover{opacity:.85;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:36px;min-height:300px;}
+  .panel-eyebrow{font-family:var(--mono);font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+  .panel-title{font-family:'Fraunces',serif;font-weight:600;font-size:26px;margin:0 0 6px;}
+  .status-pill{display:inline-block;font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:22px;background:var(--done-bg);color:var(--done);}
+  .section-label{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);margin:26px 0 10px;font-weight:600;}
+  .section-label:first-of-type{margin-top:0;}
+  .note{font-size:14.5px;}
+  ul.tips{margin:0;padding-left:18px;}
+  ul.tips li{margin-bottom:8px;font-size:14.5px;}
+  .msg{background:var(--bg);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:16px 18px;margin-bottom:12px;font-size:14.5px;white-space:pre-wrap;position:relative;}
+  .msg-tag{font-family:var(--mono);font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;display:block;}
+  .copy-btn{position:absolute;top:12px;right:12px;background:var(--panel);border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:11px;padding:4px 8px;cursor:pointer;color:var(--ink-soft);}
+  .copy-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .copy-btn.copied{color:var(--done);border-color:var(--done);}
+  .timing-row{display:flex;align-items:center;gap:12px;font-size:13.5px;padding:8px 0;border-bottom:1px solid var(--line);}
+  .timing-row:last-child{border-bottom:none;}
+  .timing-t{font-family:var(--mono);color:var(--accent);flex:none;width:100px;}
+  footer{margin-top:40px;font-size:12.5px;color:var(--ink-soft);text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Scrappy Studio · Guía de referencia</div>
+    <h1>Sistema de ventas — outreach a cierre</h1>
+    <div class="sub">El árbol muestra las ramificaciones reales de la conversación — responde, no responde, interés positivo o negativo. Haz clic en cualquier nodo para ver el guion y los mensajes de esa etapa.</div>
+  </header>
+
+  <div class="tree-card">
+    <div class="tree-wrap" id="tree-wrap">
+      <svg class="edges" id="edges"></svg>
+      <div class="grid" id="grid"></div>
+    </div>
+    <div class="ref-note">
+      Disponible en cualquier momento post-demo:
+      <button class="ref-btn" data-node="9">banco de objeciones →</button>
+    </div>
+  </div>
+
+  <div class="panel" id="panel"></div>
+
+  <footer>Construido a partir de la validación de 80 leads · Lima, 2026</footer>
+</div>
+
+<script>
+const stages = {
+  1:{ title:"Outreach inicial", summary:"Hook + hallazgo específico + insight sin solución (loop abierto) + un solo CTA de calificación.",
+    tips:["Un solo párrafo de personalización real (rating, reseñas, algo verificable).","El insight nombra el dolor pero NO da la solución todavía — genera intriga para que respondan.","Un solo CTA: la pregunta de calificación. Nunca dos asks en el mismo mensaje.","'No es que X, sino que Y' desactiva la defensiva del lead sin sonar a crítica directa."],
+    messages:[{tag:"Mensaje 1 — outreach", text:"Hola, estuve viendo salones de manicura y pedicura en Miraflores y llegué a Glam Studio. Vi que tienen 4.8★ con 57 reseñas — claramente ya construyeron una buena reputación.\n\nMuchos salones generan ese interés con redes o boca a boca. Pero cuando alguien ya está decidiendo y compara opciones antes de sacar cita, a veces se pierde ahí — no porque el servicio sea peor, sino porque el otro negocio se ve más claro en ese momento.\n\n¿Tus clientas nuevas te llegan más por Instagram, WhatsApp o recomendación?"}]},
+  2:{ title:"Follow-up sin respuesta", summary:"Tres toques con ángulos distintos si no responde el mensaje 1. Ninguno repite el anterior.",
+    tips:["Toque 1 (día 2-3): nuevo hallazgo, no un recordatorio.","Toque 2 (día 6-7): prueba social, baja la presión explícitamente.","Toque 3 (día 12-14): cierre de ciclo sin presión.","Después del toque 3 sin respuesta: se archiva el lead."],
+    messages:[
+      {tag:"Toque 1 · día 2-3", text:"Hola de nuevo — vi que subieron fotos nuevas esta semana, se ve que tienen movimiento en redes. Justo por eso te preguntaba lo de Instagram/WhatsApp — ¿cómo te llegan hoy tus clientas nuevas?"},
+      {tag:"Toque 2 · día 6-7", text:"Hola, sé que andas ocupada. Te cuento rapidísimo — armé algo similar para un salón en Miraflores hace poco y les ayudó bastante a que las clientas los encuentren directo sin tener que pedir referencias. Si en algún momento te interesa ver cómo se vería para Glam Studio, me dices."},
+      {tag:"Toque 3 · día 12-14", text:"Última vez que te escribo por esto — si más adelante te interesa retomarlo, aquí ando. Éxitos con el salón."}
+    ]},
+  3:{ title:"Respuesta negativa o neutra", summary:"Dos sub-casos: un 'no' directo se cierra con elegancia; una respuesta ambigua se reabre con una pregunta concreta.",
+    tips:["Ante un 'no' directo: no insistas, agradece la respuesta.","Ante respuesta neutra/ambigua: reabre con una versión comprimida del pitch directo."],
+    messages:[
+      {tag:"Caso: no, gracias", text:"Sin problema, gracias por responder. Si en algún momento te interesa, aquí ando."},
+      {tag:"Caso: respuesta ambigua", text:"Te cuento rapidísimo — armo webs para negocios como el tuyo, para que cuando alguien te compare con otro salón, gane el tuyo. ¿Te interesa ver cómo se vería para Glam Studio?"}
+    ]},
+  4:{ title:"Responde positivo", summary:"Plantilla flexible con un inserto variable según el tipo de respuesta a la pregunta de calificación.",
+    tips:["Estructura fija: reconocimiento + inserto variable + oferta de demo con pregunta + CTA único.","Confusión de rol (community manager): aclara con una sola frase.","El demo siempre se ofrece como pregunta, nunca impuesto."],
+    messages:[
+      {tag:"Aclaración de rol (si aplica)", text:"Aclarando — no hago manejo de redes, armo la web que las respalda."},
+      {tag:"Tipo A — responde 'Instagram'", text:"Ah, buenísimo, entonces ya tienes movimiento por ahí. Lo que suelo ver es que ese interés se genera bien en redes, pero se enfría un poco cuando la clienta sale de Instagram a buscar más info y no encuentra nada — ahí es donde entra la web, como un punto de aterrizaje que refuerza lo que ya ve en tu perfil.\n\n¿Te late si te armo un mockup rápido de cómo se vería para Glam Studio?"},
+      {tag:"Tipo B — 'todo por WhatsApp'", text:"Entendido — eso significa que ahora mismo dependes 100% de que alguien ya te conozca para llegar a ti. Una web no compite con eso, más bien te da una puerta de entrada extra para gente que todavía no te conoce por recomendación.\n\n¿Te late si te armo un mockup rápido de cómo se vería para Glam Studio?"},
+      {tag:"Tipo C — pide propuesta directo", text:"Directo al grano entonces: armo webs a medida — con galería de trabajos, tus servicios y contacto directo, para que cuando alguien te compare con otro salón, la balanza se incline a tu favor. ¿Te mando un mockup rápido de cómo se vería para Glam Studio?"}
+    ]},
+  5:{ title:"Envío del demo", summary:"Cuatro piezas: mensaje puente → marco antes del video → el video → micro-tarea y checkpoint después.",
+    tips:["El tiempo de espera se convierte en argumento de valor ('a medida, no plantillas').","Da un tiempo concreto de entrega.","Un solo foco de atención antes del video (la galería).","El hero con motion se menciona después de ver el video, como revelación."],
+    messages:[
+      {tag:"Mensaje 2.5 — puente", text:"Dale, me pongo a armarlo. Como lo hago a medida para cada negocio (no uso plantillas genéricas), me toma un poco de tiempo — te lo tengo listo mañana a esta hora. Mientras tanto, cuéntame: ¿hay algo puntual que quieras que resalte?"},
+      {tag:"Ack corto", text:"Perfecto, tomo nota. Mañana [hora] te lo tengo."},
+      {tag:"Mensaje 3a — antes del video", text:"Hola, buenos días — aquí te lo tengo como quedamos. Es cortito, como 1 minuto, enfócate sobre todo en la galería con tus trabajos, esa es la parte que más marca la diferencia cuando alguien te compara con otro salón."},
+      {tag:"Mensaje 3b — después del video", text:"¿Qué tal, te cuadra el estilo? Por cierto, ¿viste el movimiento en la parte de arriba (el hero)? Eso normalmente no lo hacen los demás que arman webs rápidas.\n\nSi quieres afinamos 2-3 detalles a tu gusto — tengo 10 min hoy o mañana, y de una te cuento cómo sería avanzar."}
+    ],
+    timing:[
+      {t:"0:00–0:08", label:"Intro con cara — saludo directo a cámara"},
+      {t:"0:08–0:22", label:"Galería, solo pantalla — sin narración"},
+      {t:"0:22–0:38", label:"Hero con motion — única sección narrada"},
+      {t:"0:38–0:50", label:"Sección extra (opcional) — sin narración"},
+      {t:"0:50–0:60", label:"Cierre con cara — frase corta"}
+    ]},
+  6:{ title:"Follow-up post-demo", summary:"La etapa más crítica — donde se perdieron los primeros 8 demos. Tres toques, luego llamada opcional con contexto real.",
+    tips:["Nunca repitas la pregunta de reacción al demo.","El 30/70 se introduce por primera vez como reductor de riesgo.","Después del toque 3, un solo intento de llamada (ya con contexto)."],
+    messages:[
+      {tag:"Toque 1 · 24h (dato nuevo)", text:"Hola de nuevo — se me olvidó comentarte, la web carga rapidísimo en celular también, que es de donde te va a llegar la mayoría de tus clientas nuevas buscándote. Cualquier cosa me dices."},
+      {tag:"Toque 2 · día 3-4 (reduce riesgo)", text:"Hola, sé que quizás estás evaluando otras cosas también. Te cuento algo que suelo hacer — para no comprometerte de una, empiezo con un adelanto chico y el resto lo pagas cuando ya veas la web lista y aprobada. Si quieres lo conversamos 5 min."},
+      {tag:"Toque 3 · día 7-8 (prueba social)", text:"Última vez que te escribo por esto — armé algo parecido para otro salón en Miraflores hace poco y les funcionó bien para que las clientas los encuentren directo. Si más adelante te interesa retomarlo, aquí ando."},
+      {tag:"Llamada opcional (único intento)", text:"Hola [nombre], habla Rubén, te escribí hace unos días sobre la web para Glam Studio. Sé que capaz no es el momento, solo quería confirmar si te llegaron mis mensajes."}
+    ]},
+  7:{ title:"Checkpoint / llamada 10 min", summary:"El punto sincrónico que faltaba: validar interés → ajustes → precio → pedir el compromiso.",
+    tips:["Que el lead verbalice qué le gustó — comprometerse en voz alta pesa más.","La frase puente conecta el precio con el entusiasmo ya expresado.","El precio se dice plano, sin titubeos.","El cierre pide un compromiso concreto de timing."],
+    messages:[
+      {tag:"Apertura", text:"Hola [nombre], qué tal, gracias por darte el tiempo. Rapidito nomás — ¿qué fue lo que más te gustó del diseño que viste?"},
+      {tag:"Ajustes", text:"Perfecto. ¿Hay algo que cambiarías o agregarías? Colores, alguna sección, lo que sea."},
+      {tag:"Transición al precio", text:"Buenísimo. Entonces, ya viendo que [repites lo que dijo] y con esos ajustes, así quedaría la propuesta:"},
+      {tag:"Cierre — pide compromiso", text:"¿Te parece si arrancamos esta semana con el 30%?"},
+      {tag:"Si pide pensarlo", text:"Sin problema. ¿Te parece si te escribo el [día concreto] para ver cómo vas?"}
+    ]},
+  8:{ title:"Precio y 30/70", summary:"Se presenta dentro de la llamada, nunca async ni antes de una reacción positiva confirmada.",
+    tips:["Sin 'bueno, sería...' ni tono de pedir permiso.","El monto se dice con la misma seguridad que cualquier otro hecho del proyecto."],
+    messages:[{tag:"Presentación del precio", text:"Son S/ [monto] en total — 30% para reservar tu lugar y empezar, y el 70% cuando la web esté lista y la hayas revisado. Entrega en 10 días."}]},
+  9:{ title:"Banco de objeciones", summary:"Cinco objeciones más probables del rubro, con respuesta lista para usar — sin improvisar.",
+    tips:["El 30/70 responde naturalmente la objeción de presupuesto.","Nunca compitas con lo que ya tienen — posiciónate como complemento.","Ante 'déjame pensarlo', cierra siempre con fecha concreta."],
+    messages:[
+      {tag:"'No tengo plata / no es buen momento'", text:"Entiendo. Justo por eso lo armo con 30% de adelanto y el resto cuando esté lista — así no es un golpe fuerte de una sola vez. ¿Te sirve verlo con calma la próxima semana?"},
+      {tag:"'Ya tengo quien me hace redes'", text:"Buenísimo que ya tengas eso — esto no reemplaza tus redes, las complementa. La web es donde cae la clienta que ya te encontró en Instagram pero quiere ver más antes de escribirte."},
+      {tag:"'Déjame pensarlo'", text:"Sin problema. ¿Te escribo el [día concreto] para ver cómo vas? Así no se te pasa."},
+      {tag:"'¿Y si no me gusta el resultado?'", text:"Por eso ajustamos detalles contigo antes de empezar, y el 70% final lo pagas solo cuando ya la revisaste y te gustó. El riesgo queda de mi lado, no del tuyo."},
+      {tag:"'¿Cuánto se demora?'", text:"10 días desde que confirmamos. Si necesitas algo más rápido dime y vemos."}
+    ]},
+  10:{ title:"Cierre", summary:"Pedir el compromiso de forma concreta — nunca dejarlo abierto a que el lead decida solo, en silencio.",
+    tips:["El patrón que llevó a 0/8 cierres fue terminar en mensajes async abiertos.","Toda conversación de cierre termina en un sí/no sobre timing, o una fecha concreta."],
+    messages:[]}
+};
+
+const nodePositions = {
+  1: {r:1, c:"3 / span 1"},
+  2: {r:2, c:"1 / span 1"},
+  3: {r:2, c:"2 / span 1"},
+  4: {r:2, c:"4 / span 1"},
+  5: {r:3, c:"4 / span 1"},
+  6: {r:4, c:"3 / span 1"},
+  7: {r:4, c:"5 / span 1"},
+  8: {r:5, c:"5 / span 1"},
+  10:{r:6, c:"5 / span 1"}
+};
+
+const edges = [
+  {from:1, to:2, label:"no responde"},
+  {from:1, to:3, label:"responde: negativo/neutro"},
+  {from:1, to:4, label:"responde: interés"},
+  {from:4, to:5, label:""},
+  {from:5, to:6, label:"no responde"},
+  {from:5, to:7, label:"responde positivo"},
+  {from:7, to:8, label:""},
+  {from:8, to:10, label:""}
+];
+
+const grid = document.getElementById('grid');
+const wrap = document.getElementById('tree-wrap');
+const svg = document.getElementById('edges');
+const panel = document.getElementById('panel');
+
+Object.keys(nodePositions).forEach(id=>{
+  const pos = nodePositions[id];
+  const s = stages[id];
+  const btn = document.createElement('button');
+  btn.className = 'node-btn';
+  btn.dataset.node = id;
+  btn.style.setProperty('--r', pos.r);
+  btn.style.setProperty('--c', pos.c);
+  btn.innerHTML = `<div class="node-num">${id}</div><div class="node-title">${s.title}</div>`;
+  btn.addEventListener('click', ()=> selectNode(id));
+  grid.appendChild(btn);
+});
+
+document.querySelectorAll('.ref-btn').forEach(el=>{
+  el.addEventListener('click', ()=> selectNode(9));
+});
+
+function drawEdges(){
+  const wrapRect = wrap.getBoundingClientRect();
+  svg.setAttribute('width', wrapRect.width);
+  svg.setAttribute('height', wrapRect.height);
+  svg.innerHTML = '';
+  document.querySelectorAll('.edge-label').forEach(l=>l.remove());
+
+  edges.forEach(e=>{
+    const fromEl = grid.querySelector(`[data-node="${e.from}"]`);
+    const toEl = grid.querySelector(`[data-node="${e.to}"]`);
+    if(!fromEl || !toEl) return;
+    const fr = fromEl.getBoundingClientRect();
+    const tr = toEl.getBoundingClientRect();
+    const x1 = fr.left + fr.width/2 - wrapRect.left;
+    const y1 = fr.bottom - wrapRect.top;
+    const x2 = tr.left + tr.width/2 - wrapRect.left;
+    const y2 = tr.top - wrapRect.top;
+    const midY = (y1 + y2) / 2;
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`);
+    path.setAttribute('fill','none');
+    path.setAttribute('stroke','#C9C4B8');
+    path.setAttribute('stroke-width','1.5');
+    svg.appendChild(path);
+
+    if(e.label){
+      const lbl = document.createElement('div');
+      lbl.className = 'edge-label';
+      lbl.textContent = e.label;
+      lbl.style.left = (x1 + (x2-x1)*0.5) + 'px';
+      lbl.style.top = midY + 'px';
+      wrap.appendChild(lbl);
+    }
+  });
+}
+
+function selectNode(id){
+  document.querySelectorAll('.node-btn').forEach(b=>b.classList.toggle('active', b.dataset.node === String(id)));
+  const s = stages[id];
+  let html = `
+    <div class="panel-eyebrow">Etapa ${id}</div>
+    <h2 class="panel-title">${s.title}</h2>
+    <span class="status-pill">Completado</span>
+    <p class="note">${s.summary}</p>
+  `;
+  if(s.tips && s.tips.length){
+    html += `<div class="section-label">Por qué funciona</div><ul class="tips">${s.tips.map(t=>`<li>${t}</li>`).join('')}</ul>`;
+  }
+  if(s.timing && s.timing.length){
+    html += `<div class="section-label">Timing del video (45–60s)</div><div>${s.timing.map(r=>`<div class="timing-row"><span class="timing-t">${r.t}</span><span>${r.label}</span></div>`).join('')}</div>`;
+  }
+  if(s.messages && s.messages.length){
+    html += `<div class="section-label">Mensajes</div>`;
+    html += s.messages.map(m=>`
+      <div class="msg">
+        <span class="msg-tag">${m.tag}</span>
+        <button class="copy-btn" data-text="${encodeURIComponent(m.text)}">copiar</button>
+        ${m.text.replace(/</g,'&lt;')}
+      </div>
+    `).join('');
+  }
+  panel.innerHTML = html;
+  panel.querySelectorAll('.copy-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const text = decodeURIComponent(btn.dataset.text);
+      navigator.clipboard.writeText(text).then(()=>{
+        btn.textContent = 'copiado';
+        btn.classList.add('copied');
+        setTimeout(()=>{ btn.textContent='copiar'; btn.classList.remove('copied'); }, 1500);
+      });
+    });
+  });
+}
+
+window.addEventListener('load', ()=>{ drawEdges(); selectNode(1); });
+window.addEventListener('resize', ()=>{ clearTimeout(window._rt); window._rt = setTimeout(drawEdges, 150); });
+</script>
+</body>
+</html>
