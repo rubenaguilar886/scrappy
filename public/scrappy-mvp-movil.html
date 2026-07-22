@@ -173,6 +173,18 @@
     padding:3px 8px;border-radius:999px;white-space:nowrap;
   }
   .hidden{display:none !important;}
+
+  .packs-box{margin-bottom:18px;}
+  .packs-label{font-size:12px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
+  .pack-chip{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    width:100%;text-align:left;padding:12px 14px;margin-bottom:8px;
+    background:var(--card);border:1.5px solid var(--line);border-radius:10px;
+    font-family:inherit;font-size:13.5px;color:var(--ink);cursor:pointer;
+  }
+  .pack-chip:hover{border-color:var(--accent);}
+  .pack-chip b{font-weight:600;}
+  .pack-chip span{font-size:12px;color:var(--sub);white-space:nowrap;}
 </style>
 </head>
 <body>
@@ -190,6 +202,12 @@
   <div class="account-bar hidden" id="accountBar">
     <span>Sesión activa: <b id="accountEmail"></b></span>
     <button onclick="logout()">Cerrar sesión</button>
+  </div>
+
+  <!-- Paquetes activos — clic para autocompletar y evitar mismatches de texto -->
+  <div class="packs-box hidden" id="packsBox">
+    <p class="packs-label">Tus paquetes activos</p>
+    <div id="packsList"></div>
   </div>
 
   <!-- Login (magic link) -->
@@ -330,12 +348,46 @@
         document.getElementById('searchForm').classList.remove('hidden');
         document.getElementById('accountBar').classList.remove('hidden');
         document.getElementById('accountEmail').textContent = data.email;
+        renderPacks(data.cityPacks || [], data.subscription || null);
       } else {
         document.getElementById('loginBox').classList.remove('hidden');
         document.getElementById('searchForm').classList.add('hidden');
         document.getElementById('accountBar').classList.add('hidden');
+        document.getElementById('packsBox').classList.add('hidden');
       }
     } catch (_) {}
+  }
+
+  function renderPacks(packs, subscription) {
+    var box  = document.getElementById('packsBox');
+    var list = document.getElementById('packsList');
+    list.innerHTML = '';
+
+    if (subscription) {
+      var subChip = document.createElement('div');
+      subChip.className = 'pack-chip';
+      subChip.style.cursor = 'default';
+      subChip.innerHTML = '<span><b>Plan Pro</b> — cualquier rubro/ciudad</span><span>' + subscription.daily_limit + '/día</span>';
+      list.appendChild(subChip);
+    }
+
+    packs.forEach(function (p) {
+      var remaining = p.credits_total - p.credits_used;
+      var chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'pack-chip';
+      chip.innerHTML =
+        '<span><b>' + esc(p.rubro) + '</b> en ' + esc(p.ciudad) + '</span>' +
+        '<span>' + remaining + ' créditos</span>';
+      chip.onclick = function () {
+        document.getElementById('rubro').value  = p.rubro;
+        document.getElementById('ciudad').value = p.ciudad;
+        window.scrollTo({ top: document.getElementById('btnSearch').offsetTop - 100, behavior: 'smooth' });
+      };
+      list.appendChild(chip);
+    });
+
+    box.classList.toggle('hidden', !subscription && !packs.length);
   }
 
   /* ── Helpers ─────────────────────────────────────── */

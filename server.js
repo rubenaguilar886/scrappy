@@ -709,11 +709,33 @@ app.post("/api/auth/logout", (_req, res) => {
 });
 
 // ── /api/public/me ────────────────────────────────────────────────────
-// Devuelve si hay sesión activa. El estado de créditos real se calcula
-// por rubro+ciudad en /api/public/scrape (ahí es donde importa).
+// Devuelve si hay sesión activa, y sus paquetes ciudad activos — para que
+// el cliente pueda mostrarlos como accesos directos. El match de créditos
+// exige texto EXACTO de rubro+ciudad, así que dejar que el usuario los
+// reescriba a mano es frágil ("veterinaria" vs "veterinarias" ya rompe el
+// match); mostrar el paquete y autocompletar evita ese problema de raíz.
 app.get("/api/public/me", async (req, res) => {
   const user = await auth.getUserFromRequest(req);
-  res.json({ loggedIn: Boolean(user), email: user?.email || null });
+  if (!user) return res.json({ loggedIn: false, email: null, cityPacks: [], subscription: null });
+
+  const packsRes = await db.query(
+    `SELECT rubro, ciudad, credits_total, credits_used, expires_at
+     FROM city_packs
+     WHERE user_id = $1 AND expires_at > now() AND credits_used < credits_total
+     ORDER BY purchased_at DESC`,
+    [user.id]
+  );
+  const subRes = await db.query(
+    "SELECT daily_limit FROM subscriptions WHERE user_id = $1 AND status = 'active' LIMIT 1",
+    [user.id]
+  );
+
+  res.json({
+    loggedIn: true,
+    email: user.email,
+    cityPacks: packsRes.rows,
+    subscription: subRes.rows[0] || null,
+  });
 });
 
 // ── /api/public/scrape ────────────────────────────────────────────────
