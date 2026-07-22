@@ -739,7 +739,11 @@ app.post("/api/public/scrape", async (req, res) => {
     });
   }
 
-  const limit = 100;
+  // No tiene sentido (ni conviene, en un servidor compartido) scrapear
+  // hasta 100 negocios si el usuario solo puede desbloquear unos pocos.
+  // Pedimos justo lo que puede ver + un colchón chico para el "hay X más".
+  const TEASER_BUFFER = 15;
+  const limit = Math.min(100, Math.max(access.remaining + TEASER_BUFFER, 10));
   const job = setJob(sid, {
     running: true,
     progress: { stage: "starting", message: "Iniciando busqueda..." },
