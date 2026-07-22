@@ -3,11 +3,27 @@ const { extractContactChannels, normalizeWebsiteUrl, mergeContactData, phoneToWh
 const { enrichBusinessesFromWebsites } = require("./website-deep");
 const { computeReviewPower, computeReputationScore, computeOpportunityScore, computeOpportunityTier } = require("./classify");
 
-const CONCURRENCY       = 6;
+// Bajado desde 6/8 — en un servidor compartido (Railway) con memoria
+// limitada, abrir muchas páginas de Chromium a la vez puede saturar el
+// proceso y colgarlo sin lanzar ningún error capturable. Menos paralelismo
+// es más lento pero mucho más confiable en ese entorno.
+const CONCURRENCY       = 3;
 const PAGE_WAIT_MS      = 550;
 const SCROLL_WAIT_MS    = 1000;
-const QUICK_CONCURRENCY = 8;
+const QUICK_CONCURRENCY = 4;
 const QUICK_WAIT_MS     = 150;
+
+// Si un lote entero no termina en este tiempo, se descarta y se sigue —
+// mejor entregar menos resultados que quedarse colgado para siempre.
+const BATCH_TIMEOUT_MS = 35000;
+
+function withTimeout(promise, ms, fallback) {
+  let timer;
+  const timeout = new Promise((resolve) => {
+    timer = setTimeout(() => resolve(fallback), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
 
 /** Cuántas URLs recolectar en la Fase 1 (siempre > maxResults). */
 function getOverfetchCount(maxResults) {
@@ -527,8 +543,11 @@ async function scrapePlacesParallel(context, urls, searchQuery, onProgress) {
       batch.map(() => context.newPage())
     );
 
-    const batchResults = await Promise.all(
-      batch.map((url, idx) => scrapePlace(pages[idx], url, searchQuery))
+    const fallback = batch.map(() => null);
+    const batchResults = await withTimeout(
+      Promise.all(batch.map((url, idx) => scrapePlace(pages[idx], url, searchQuery))),
+      BATCH_TIMEOUT_MS,
+      fallback
     );
 
     await Promise.all(pages.map((page) => page.close().catch(() => {})));
@@ -605,8 +624,11 @@ async function quickScrapeParallel(context, urls, searchQuery, onProgress) {
     const batch = urls.slice(i, i + QUICK_CONCURRENCY);
     const pages = await Promise.all(batch.map(() => context.newPage()));
 
-    const batchResults = await Promise.all(
-      batch.map((url, idx) => quickScrapePlace(pages[idx], url, searchQuery))
+    const fallback = batch.map(() => null);
+    const batchResults = await withTimeout(
+      Promise.all(batch.map((url, idx) => quickScrapePlace(pages[idx], url, searchQuery))),
+      BATCH_TIMEOUT_MS,
+      fallback
     );
 
     await Promise.all(pages.map(p => p.close().catch(() => {})));
