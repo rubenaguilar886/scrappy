@@ -586,6 +586,30 @@ async function gotoWithRetry(page, url, onProgress) {
   }
 }
 
+// Diagnóstico: solo se loguea la PRIMERA vez por corrida para no inundar
+// los logs de Railway — basta una muestra para saber si es un bloqueo real.
+let diagnosedThisRun = false;
+
+async function diagnoseFailure(page, url) {
+  if (diagnosedThisRun) return;
+  diagnosedThisRun = true;
+  try {
+    const title = await page.title().catch(() => "(sin título)");
+    const bodyText = await page.evaluate(() => document.body?.innerText?.slice(0, 300) || "").catch(() => "");
+    const blockedHints = ["unusual traffic", "captcha", "recaptcha", "tráfico inusual", "verifica que no eres un robot", "/sorry/"];
+    const currentUrl = page.url();
+    const looksBlocked = blockedHints.some(h =>
+      title.toLowerCase().includes(h) || bodyText.toLowerCase().includes(h) || currentUrl.includes("/sorry/")
+    );
+    console.log(
+      `[diagnostico-bloqueo] url=${url} → currentUrl=${currentUrl} title="${title}" looksBlocked=${looksBlocked}\n` +
+      `  bodyPreview="${bodyText.replace(/\n/g, " ").slice(0, 200)}"`
+    );
+  } catch (e) {
+    console.log(`[diagnostico-bloqueo] no se pudo diagnosticar: ${e.message}`);
+  }
+}
+
 /** Visita una ficha de Maps muy rápido: solo extrae lo necesario para el pre-score. */
 async function quickScrapePlace(page, url, searchQuery) {
   try {
@@ -593,7 +617,10 @@ async function quickScrapePlace(page, url, searchQuery) {
     await page.waitForTimeout(QUICK_WAIT_MS);
 
     const name = await getText(page, "h1");
-    if (!name) return null;
+    if (!name) {
+      await diagnoseFailure(page, url);
+      return null;
+    }
 
     const [phone, website, ratingData, category] = await Promise.all([
       getPhone(page),
@@ -611,7 +638,11 @@ async function quickScrapePlace(page, url, searchQuery) {
       reviewsCount: ratingData.reviewsCount,
       category:     category || null,
     };
-  } catch {
+  } catch (e) {
+    if (!diagnosedThisRun) {
+      diagnosedThisRun = true;
+      console.log(`[diagnostico-bloqueo] goto/extraccion fallo para url=${url} → error="${e.message}"`);
+    }
     return null;
   }
 }
@@ -664,6 +695,7 @@ async function searchGoogleMaps(
   maxResults = 20,
   options = {}
 ) {
+  diagnosedThisRun = false; // un diagnóstico fresco por cada búsqueda nueva
   const { onProgress, deepScan = false } = parseOptions(options);
   const fullQuery  = `${query} ${location}`.trim();
   const searchUrl  = `https://www.google.com/maps/search/${encodeURIComponent(fullQuery)}`;
