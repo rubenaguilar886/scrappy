@@ -532,6 +532,11 @@ async function extractBusinessFromPage(page, url, searchQuery) {
 async function scrapePlace(page, url, searchQuery) {
   try {
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 25000 });
+    // Google Maps es una SPA pesada — domcontentloaded solo garantiza el
+    // HTML crudo, el contenido real lo pinta JS después. Esperamos a que
+    // el h1 realmente aparezca (con margen generoso) en vez de una pausa
+    // fija corta que puede ganarle la carrera al render bajo carga.
+    await page.waitForSelector("h1", { timeout: 8000 }).catch(() => {});
     await page.waitForTimeout(PAGE_WAIT_MS);
     const result = await extractBusinessFromPage(page, url, searchQuery);
     if (!result) await diagnoseFailure(page, url);
@@ -647,6 +652,7 @@ async function diagnoseFailure(page, url) {
 async function quickScrapePlace(page, url, searchQuery) {
   try {
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 15000 });
+    await page.waitForSelector("h1", { timeout: 6000 }).catch(() => {});
     await page.waitForTimeout(QUICK_WAIT_MS);
 
     const name = await getText(page, "h1");
