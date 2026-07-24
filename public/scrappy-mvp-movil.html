@@ -482,12 +482,6 @@
         checkAuthOnLoad();
         throw new Error('Tu sesión expiró. Vuelve a pedir tu link de acceso.');
       }
-      if (res.status === 402) {
-        var banner = document.getElementById('upgradeBanner');
-        banner.textContent = data.error;
-        banner.classList.add('show');
-        throw new Error(data.error);
-      }
       if (!res.ok) throw new Error(data.error || 'Error al iniciar búsqueda.');
     } catch (e) {
       document.getElementById('loading').classList.remove('show');
@@ -510,7 +504,16 @@
           document.getElementById('loading').classList.remove('show');
           setSearching(false);
 
-          if (status.error) { showError(status.error); return; }
+          if (status.error) {
+            if (status.metrics && status.metrics.needsPayment) {
+              var payBanner = document.getElementById('upgradeBanner');
+              payBanner.textContent = status.error;
+              payBanner.classList.add('show');
+            } else {
+              showError(status.error);
+            }
+            return;
+          }
 
           var results = status.results || [];
           if (onlyNoWeb) results = results.filter(function (b) { return b.locked || !b.website; });

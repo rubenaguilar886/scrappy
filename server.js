@@ -752,13 +752,28 @@ app.post("/api/public/scrape", async (req, res) => {
   if (!query.trim())    return res.status(400).json({ error: "Escribe un rubro." });
   if (!location.trim()) return res.status(400).json({ error: "Escribe una ciudad." });
 
+  // IMPORTANTE: reclamamos el slot AQUÍ, de forma síncrona, antes de
+  // cualquier `await`. Antes, la verificación de créditos (asíncrona)
+  // corría entre el chequeo de "¿ya hay una búsqueda?" y el marcado de
+  // "ya está corriendo" — un doble clic o un reintento de red podía colar
+  // dos peticiones por esa rendija, cada una gastando créditos por su
+  // cuenta. Marcar el job como corriendo de inmediato cierra esa rendija.
+  const job = setJob(sid, {
+    running: true,
+    progress: { stage: "starting", message: "Verificando acceso..." },
+    results: null, error: null, metrics: null,
+  });
+  res.json({ ok: true, message: "Busqueda iniciada" });
+
+  const progressCallback = (progress) => { job.progress = progress; };
+
   const access = await credits.getUserAccess(user.id, query, location);
   if (access.remaining <= 0) {
-    return res.status(402).json({
-      error: "No tienes créditos disponibles para este rubro y ciudad. Compra un Paquete Ciudad o suscríbete al Plan Pro.",
-      needsPayment: true,
-      accessType: access.type,
-    });
+    job.error = "No tienes créditos disponibles para este rubro y ciudad. Compra un Paquete Ciudad o suscríbete al Plan Pro.";
+    job.progress = { stage: "error", message: job.error };
+    job.running = false;
+    job.metrics = { needsPayment: true, accessType: access.type };
+    return;
   }
 
   // No tiene sentido (ni conviene, en un servidor compartido) scrapear
@@ -766,20 +781,28 @@ app.post("/api/public/scrape", async (req, res) => {
   // Pedimos justo lo que puede ver + un colchón chico para el "hay X más".
   const TEASER_BUFFER = 15;
   const limit = Math.min(100, Math.max(access.remaining + TEASER_BUFFER, 10));
-  const job = setJob(sid, {
-    running: true,
-    progress: { stage: "starting", message: "Iniciando busqueda..." },
-    results: null, error: null, metrics: null,
-  });
-  res.json({ ok: true, message: "Busqueda iniciada" });
 
-  const progressCallback = (progress) => { job.progress = progress; };
+  // Techo duro de tiempo total: si Chromium muere por falta de memoria en
+  // Railway, hasta operaciones internas "protegidas" (como cerrar una
+  // página) pueden colgarse esperando un proceso que ya no responde. Este
+  // timeout es la última red de seguridad — pase lo que pase adentro, la
+  // búsqueda nunca corre más de este tiempo.
+  const HARD_TIMEOUT_MS = 4 * 60 * 1000; // 4 min
+  function withHardTimeout(promise, ms) {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) => setTimeout(() => reject(new Error("timeout_total_busqueda")), ms)),
+    ]);
+  }
 
   try {
-    const results = await searchGoogleMaps(query.trim(), location.trim(), limit, {
-      deepScan: Boolean(deepScan),
-      onProgress: progressCallback,
-    });
+    const results = await withHardTimeout(
+      searchGoogleMaps(query.trim(), location.trim(), limit, {
+        deepScan: Boolean(deepScan),
+        onProgress: progressCallback,
+      }),
+      HARD_TIMEOUT_MS
+    );
 
     // Si mientras tanto el usuario canceló (o el job fue reemplazado por
     // uno nuevo), NO gastar créditos por un resultado que nadie va a ver.
@@ -907,11 +930,19 @@ app.get("/api/admin/user-detail", requireAdmin, async (req, res) => {
       "SELECT id, status, daily_limit, created_at FROM subscriptions WHERE user_id = $1 ORDER BY created_at DESC",
       [user.id]
     );
-    const packs = await db.query(
+    const packsRaw = await db.query(
       `SELECT id, rubro, ciudad, credits_total, credits_used, purchased_at, expires_at
        FROM city_packs WHERE user_id = $1 ORDER BY purchased_at DESC`,
       [user.id]
     );
+    const packs = { rows: [] };
+    for (const p of packsRaw.rows) {
+      const delivered = await db.query(
+        "SELECT business_key, delivered_at FROM delivered_businesses WHERE city_pack_id = $1 ORDER BY delivered_at ASC",
+        [p.id]
+      );
+      packs.rows.push({ ...p, deliveredCount: delivered.rows.length, deliveredAt: delivered.rows.map(r => r.delivered_at) });
+    }
     const usage = await db.query(
       "SELECT usage_date, count FROM daily_usage WHERE user_id = $1 ORDER BY usage_date DESC LIMIT 10",
       [user.id]
