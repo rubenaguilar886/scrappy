@@ -748,7 +748,7 @@ app.post("/api/public/scrape", async (req, res) => {
   const sid = getSessionId(req);
   if (getJob(sid)?.running) return res.status(409).json({ error: "Ya hay una busqueda en progreso." });
 
-  const { query = "", location = "", deepScan = false } = req.body || {};
+  const { query = "", location = "", deepScan = false, onlyNoWeb = true } = req.body || {};
   if (!query.trim())    return res.status(400).json({ error: "Escribe un rubro." });
   if (!location.trim()) return res.status(400).json({ error: "Escribe una ciudad." });
 
@@ -779,8 +779,26 @@ app.post("/api/public/scrape", async (req, res) => {
   // No tiene sentido (ni conviene, en un servidor compartido) scrapear
   // hasta 100 negocios si el usuario solo puede desbloquear unos pocos.
   // Pedimos justo lo que puede ver + un colchón chico para el "hay X más".
-  const TEASER_BUFFER = 15;
-  const limit = Math.min(100, Math.max(access.remaining + TEASER_BUFFER, 10));
+  //
+  // OJO: si el usuario solo quiere negocios SIN web (el caso normal en la
+  // interfaz — toggle activado por default), la mayoría de lo que Google
+  // Maps devuelve no sirve (tiene web) y se descarta después de cobrarse.
+  // Ahí estaba el bug real reportado: "me cobraron 66 créditos y solo vi
+  // 10 negocios" — se cobraba por TODO lo extraído, no por lo que
+  // realmente cumplía el filtro que el cliente iba a mostrar. Ahora
+  // filtramos primero por "sin web" y recién ahí aplicamos créditos, así
+  // que se cobra exactamente por lo que el usuario ve. Como consecuencia,
+  // hace falta buscar bastante más candidatos en bruto para poder llenar
+  // el cupo real de negocios sin web.
+  // Si solo queremos "sin web", multiplicamos el objetivo (no lo dejamos
+  // fijo en 100 siempre) — así una prueba gratis de 3 créditos no obliga
+  // a scrapear el máximo cada vez, pero igual buscamos con margen de
+  // sobra para el descarte por "sí tiene web".
+  const TEASER_BUFFER    = 15;
+  const NO_WEB_MULTIPLIER = 3;
+  const limit = onlyNoWeb
+    ? Math.min(100, Math.max((access.remaining + TEASER_BUFFER) * NO_WEB_MULTIPLIER, 30))
+    : Math.min(100, Math.max(access.remaining + TEASER_BUFFER, 10));
 
   // Techo duro de tiempo total: si Chromium muere por falta de memoria en
   // Railway, hasta operaciones internas "protegidas" (como cerrar una
@@ -808,7 +826,12 @@ app.post("/api/public/scrape", async (req, res) => {
     // uno nuevo), NO gastar créditos por un resultado que nadie va a ver.
     if (job.aborted || getJob(sid) !== job) return;
 
-    const { unlocked, lockedCount, remainingAfter } = await credits.applyAccessToResults(access, results);
+    // Cobrar SOLO por lo que el usuario realmente va a ver. Si pidió "solo
+    // sin web", los que sí tienen web se descartan aquí — antes de tocar
+    // créditos — en vez de cobrarse y luego ocultarse en el cliente.
+    const relevant = onlyNoWeb ? results.filter((b) => !b.website) : results;
+
+    const { unlocked, lockedCount, remainingAfter } = await credits.applyAccessToResults(access, relevant);
 
     job.results = unlocked;
     job.metrics = { accessType: access.type, remaining: remainingAfter, lockedCount };

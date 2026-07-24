@@ -473,7 +473,7 @@
       var res = await sessionFetch('/api/public/scrape', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: rubro, location: ciudad, deepScan: false }),
+        body: JSON.stringify({ query: rubro, location: ciudad, deepScan: false, onlyNoWeb: onlyNoWeb }),
       });
       var data = await res.json();
 
