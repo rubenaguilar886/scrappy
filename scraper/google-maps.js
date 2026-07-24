@@ -15,12 +15,17 @@ const QUICK_WAIT_MS     = 150;
 
 // Si un lote entero no termina en este tiempo, se descarta y se sigue —
 // mejor entregar menos resultados que quedarse colgado para siempre.
-const BATCH_TIMEOUT_MS = 35000;
+// Subido de 35s: con concurrencia 5-6 páginas compitiendo por recursos en
+// Railway, una extracción legítima (no bloqueada) puede tardar bastante
+// más que en una compu local sin competencia.
+const BATCH_TIMEOUT_MS = 60000;
 
-function withTimeout(promise, ms, fallback) {
+const TIMEOUT_SENTINEL = Symbol("batch-timeout");
+
+function withTimeout(promise, ms) {
   let timer;
   const timeout = new Promise((resolve) => {
-    timer = setTimeout(() => resolve(fallback), ms);
+    timer = setTimeout(() => resolve(TIMEOUT_SENTINEL), ms);
   });
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
@@ -549,14 +554,20 @@ async function scrapePlacesParallel(context, urls, searchQuery, onProgress) {
       batch.map(() => context.newPage())
     );
 
-    const fallback = batch.map(() => null);
-    const batchResults = await withTimeout(
+    const raced = await withTimeout(
       Promise.all(batch.map((url, idx) => scrapePlace(pages[idx], url, searchQuery))),
-      BATCH_TIMEOUT_MS,
-      fallback
+      BATCH_TIMEOUT_MS
     );
+    const timedOut = raced === TIMEOUT_SENTINEL;
+    const batchResults = timedOut ? batch.map(() => null) : raced;
 
-    await Promise.all(pages.map((page) => page.close().catch(() => {})));
+    // Si de verdad terminaron a tiempo, cerramos sus páginas. Si hubo
+    // timeout, NO las tocamos — cerrarlas de golpe interrumpe a medias
+    // extracciones que quizás iban a terminar bien solas; las dejamos
+    // seguir en segundo plano y se limpian con browser.close() al final.
+    if (!timedOut) {
+      await Promise.all(pages.map((page) => page.close().catch(() => {})));
+    }
 
     businesses.push(...batchResults.filter(Boolean));
 
@@ -661,14 +672,16 @@ async function quickScrapeParallel(context, urls, searchQuery, onProgress) {
     const batch = urls.slice(i, i + QUICK_CONCURRENCY);
     const pages = await Promise.all(batch.map(() => context.newPage()));
 
-    const fallback = batch.map(() => null);
-    const batchResults = await withTimeout(
+    const raced = await withTimeout(
       Promise.all(batch.map((url, idx) => quickScrapePlace(pages[idx], url, searchQuery))),
-      BATCH_TIMEOUT_MS,
-      fallback
+      BATCH_TIMEOUT_MS
     );
+    const timedOut = raced === TIMEOUT_SENTINEL;
+    const batchResults = timedOut ? batch.map(() => null) : raced;
 
-    await Promise.all(pages.map(p => p.close().catch(() => {})));
+    if (!timedOut) {
+      await Promise.all(pages.map(p => p.close().catch(() => {})));
+    }
     results.push(...batchResults);
 
     onProgress?.({
