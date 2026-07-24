@@ -821,6 +821,7 @@ app.post("/api/public/scrape", async (req, res) => {
     };
   } catch (error) {
     const raw = error.message || "";
+    console.log(`[public-scrape-error] rubro="${query}" ciudad="${location}" error_crudo="${raw}"\n${error.stack || ""}`);
     let friendly = raw.length > 200 ? raw.slice(0, 200) + "..." : raw;
     if (raw.includes("Timeout") || raw.includes("timeout")) friendly = "Google Maps tardo demasiado. Espera y vuelve a intentar.";
     job.error = friendly;
