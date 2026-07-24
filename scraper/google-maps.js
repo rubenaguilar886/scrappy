@@ -36,6 +36,15 @@ function getOverfetchCount(maxResults) {
   return Math.min(Math.ceil(maxResults * mult), 120);
 }
 
+// Ya NO hacemos un "quick scan" previo que visita cada candidato dos veces
+// (una vez liviano, otra vez completo) — eso duplicaba el trabajo total.
+// Ahora vamos directo a la extracción completa sobre los primeros
+// candidatos recolectados (en el orden de relevancia que ya trae Google
+// Maps), con un margen chico para compensar extracciones fallidas.
+function getExtractBuffer(maxResults) {
+  return Math.ceil(maxResults * 1.3);
+}
+
 /**
  * Pre-score rápido para ordenar candidatos antes del Full Extract.
  * +20 teléfono · +30 web · +10 rating≥4.5 · +10 reviews≥50 · +20 categoría exacta
@@ -781,38 +790,27 @@ async function searchGoogleMaps(
       return [];
     }
 
-    // ── FASE 2: Quick pass ligero ─────────────────────────────────────────
-    onProgress?.({
-      stage: "quickpass",
-      message: `Quick scan: evaluando ${allUrls.length} candidatos...`,
-      total: allUrls.length,
-      current: 0,
-    });
+    // ── FASE 2: Full extract directo (sin quick-scan previo) ───────────────
+    // Antes visitábamos cada candidato dos veces (quick-scan + full extract).
+    // Ahora vamos directo a la extracción completa sobre los primeros
+    // candidatos recolectados — casi la mitad del trabajo total, a costa de
+    // perder el pre-orden por teléfono/web/rating (salen en el orden que
+    // Google Maps ya los entrega, que suele ser por relevancia/cercanía).
+    const extractBuffer = Math.min(getExtractBuffer(maxResults), allUrls.length);
+    const topUrls = allUrls.slice(0, extractBuffer);
 
-    const quickData = await quickScrapeParallel(context, allUrls, query, onProgress);
-
-    // ── FASE 3: Pre-score y selección ─────────────────────────────────────
-    const scored = quickData
-      .filter(Boolean)
-      .map(b => ({ ...b, preScore: calculatePreScore(b, query) }))
-      .sort((a, b) => b.preScore - a.preScore);
-
-    const topCandidates = scored.slice(0, maxResults);
-    const topUrls       = topCandidates.map(b => b.url);
-
-    metrics.urlsDiscarded  = allUrls.length - topCandidates.length;
-    metrics.yieldQuickPass = topCandidates.length;
+    metrics.urlsDiscarded  = allUrls.length - topUrls.length;
+    metrics.yieldQuickPass = topUrls.length;
 
     onProgress?.({
       stage: "scraping",
-      message: `Top ${topCandidates.length} de ${allUrls.length} seleccionados · extrayendo datos completos...`,
-      total: topCandidates.length,
+      message: `Extrayendo datos completos de ${topUrls.length} de ${allUrls.length} candidatos...`,
+      total: topUrls.length,
       current: 0,
     });
 
-    // ── FASE 4: Full extract ───────────────────────────────────────────────
     let businesses = await scrapePlacesParallel(context, topUrls, fullQuery, onProgress);
-    businesses = businesses.map(finalizeBusinessContacts);
+    businesses = businesses.slice(0, maxResults).map(finalizeBusinessContacts);
 
     metrics.yieldFullExtract = businesses.length;
 
