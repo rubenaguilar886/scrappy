@@ -787,7 +787,7 @@ app.post("/api/public/scrape", async (req, res) => {
   // página) pueden colgarse esperando un proceso que ya no responde. Este
   // timeout es la última red de seguridad — pase lo que pase adentro, la
   // búsqueda nunca corre más de este tiempo.
-  const HARD_TIMEOUT_MS = 4 * 60 * 1000; // 4 min
+  const HARD_TIMEOUT_MS = 6 * 60 * 1000; // 6 min — mas margen para busquedas grandes pero legitimas
   function withHardTimeout(promise, ms) {
     return Promise.race([
       promise,

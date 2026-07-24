@@ -3,11 +3,10 @@ const { extractContactChannels, normalizeWebsiteUrl, mergeContactData, phoneToWh
 const { enrichBusinessesFromWebsites } = require("./website-deep");
 const { computeReviewPower, computeReputationScore, computeOpportunityScore, computeOpportunityTier } = require("./classify");
 
-// El error "Target page, context or browser has been closed" confirmó que
-// el proceso de Chromium se está muriendo por falta de memoria bajo
-// concurrencia alta en Railway — no es un problema de timeouts ni de
-// bloqueo de Google. Priorizamos confiabilidad: menos paralelismo, más
-// lento, pero que nunca tumbe el navegador entero.
+// Un log real mostró page.goto tardando MAS de 15s incluso con
+// concurrencia baja (2/3) — eso es contención de recursos real (CPU o
+// red), no solo el bug de cerrar páginas antes de tiempo. Subir la
+// concurrencia empeoraría esto, así que la dejamos baja.
 const CONCURRENCY       = 2;
 const PAGE_WAIT_MS      = 550;
 const SCROLL_WAIT_MS    = 1000;
@@ -651,7 +650,7 @@ async function diagnoseFailure(page, url) {
 /** Visita una ficha de Maps muy rápido: solo extrae lo necesario para el pre-score. */
 async function quickScrapePlace(page, url, searchQuery) {
   try {
-    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 15000 });
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
     await page.waitForSelector("h1", { timeout: 6000 }).catch(() => {});
     await page.waitForTimeout(QUICK_WAIT_MS);
 
