@@ -527,8 +527,14 @@ async function scrapePlace(page, url, searchQuery) {
   try {
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 25000 });
     await page.waitForTimeout(PAGE_WAIT_MS);
-    return await extractBusinessFromPage(page, url, searchQuery);
-  } catch {
+    const result = await extractBusinessFromPage(page, url, searchQuery);
+    if (!result) await diagnoseFailure(page, url);
+    return result;
+  } catch (e) {
+    if (!diagnosedThisRun) {
+      diagnosedThisRun = true;
+      console.log(`[diagnostico-bloqueo][full-extract] goto/extraccion fallo para url=${url} → error="${e.message}"`);
+    }
     return null;
   }
 }
