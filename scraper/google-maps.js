@@ -3,14 +3,15 @@ const { extractContactChannels, normalizeWebsiteUrl, mergeContactData, phoneToWh
 const { enrichBusinessesFromWebsites } = require("./website-deep");
 const { computeReviewPower, computeReputationScore, computeOpportunityScore, computeOpportunityTier } = require("./classify");
 
-// La red de seguridad real contra colgados es BATCH_TIMEOUT_MS (abajo),
-// no la concurrencia baja. Con el timeout ya protegiendo, subimos de
-// nuevo el paralelismo (moderado, no al máximo original) para recuperar
-// rendimiento sin arriesgar saturar la memoria de Railway.
-const CONCURRENCY       = 5;
+// El error "Target page, context or browser has been closed" confirmó que
+// el proceso de Chromium se está muriendo por falta de memoria bajo
+// concurrencia alta en Railway — no es un problema de timeouts ni de
+// bloqueo de Google. Priorizamos confiabilidad: menos paralelismo, más
+// lento, pero que nunca tumbe el navegador entero.
+const CONCURRENCY       = 2;
 const PAGE_WAIT_MS      = 550;
 const SCROLL_WAIT_MS    = 1000;
-const QUICK_CONCURRENCY = 6;
+const QUICK_CONCURRENCY = 3;
 const QUICK_WAIT_MS     = 150;
 
 // Si un lote entero no termina en este tiempo, se descarta y se sigue —
@@ -544,15 +545,30 @@ async function scrapePlace(page, url, searchQuery) {
   }
 }
 
+function isBrowserDeadError(e) {
+  const msg = (e && e.message) || "";
+  return msg.includes("has been closed") || msg.includes("Target closed") || msg.includes("Browser closed");
+}
+
 async function scrapePlacesParallel(context, urls, searchQuery, onProgress) {
   const businesses = [];
   const total = urls.length;
 
   for (let i = 0; i < urls.length; i += CONCURRENCY) {
     const batch = urls.slice(i, i + CONCURRENCY);
-    const pages = await Promise.all(
-      batch.map(() => context.newPage())
-    );
+
+    let pages;
+    try {
+      pages = await Promise.all(batch.map(() => context.newPage()));
+    } catch (e) {
+      // El navegador ya murió (memoria) — no hay como seguir. Entregamos
+      // lo que se alcanzó a recolectar en vez de fallar toda la búsqueda.
+      if (isBrowserDeadError(e)) {
+        console.log(`[navegador-muerto] full-extract se detuvo en ${i}/${total} — entregando ${businesses.length} negocios recolectados.`);
+        break;
+      }
+      throw e;
+    }
 
     const raced = await withTimeout(
       Promise.all(batch.map((url, idx) => scrapePlace(pages[idx], url, searchQuery))),
@@ -670,7 +686,17 @@ async function quickScrapeParallel(context, urls, searchQuery, onProgress) {
 
   for (let i = 0; i < urls.length; i += QUICK_CONCURRENCY) {
     const batch = urls.slice(i, i + QUICK_CONCURRENCY);
-    const pages = await Promise.all(batch.map(() => context.newPage()));
+
+    let pages;
+    try {
+      pages = await Promise.all(batch.map(() => context.newPage()));
+    } catch (e) {
+      if (isBrowserDeadError(e)) {
+        console.log(`[navegador-muerto] quick-scan se detuvo en ${i}/${total} — entregando ${results.length} candidatos recolectados.`);
+        break;
+      }
+      throw e;
+    }
 
     const raced = await withTimeout(
       Promise.all(batch.map((url, idx) => quickScrapePlace(pages[idx], url, searchQuery))),
@@ -808,7 +834,7 @@ async function searchGoogleMaps(
 
     return businesses;
   } finally {
-    await browser.close();
+    await browser.close().catch(() => {}); // ya puede estar muerto — no bloquear la respuesta por eso
   }
 }
 
