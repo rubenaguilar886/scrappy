@@ -801,11 +801,17 @@ app.post("/api/public/scrape", async (req, res) => {
   // fijo en 100 siempre) — así una prueba gratis de 3 créditos no obliga
   // a scrapear el máximo cada vez, pero igual buscamos con margen de
   // sobra para el descarte por "sí tiene web".
+  // Techo duro por búsqueda: no importa cuántos créditos tenga disponibles
+  // el usuario, cada corrida individual nunca pide más de esto. Con packs
+  // grandes (ej. 100 créditos) esto significa que puede necesitar 2-3
+  // búsquedas para agotar su paquete — mejor eso que arriesgar el timeout
+  // de 6 min tratando de extraer 100+ negocios de una sola pasada.
+  const MAX_PER_SEARCH   = 50;
   const TEASER_BUFFER    = 15;
   const NO_WEB_MULTIPLIER = 3;
   const limit = onlyNoWeb
-    ? Math.min(100, Math.max((access.remaining + TEASER_BUFFER) * NO_WEB_MULTIPLIER, 30))
-    : Math.min(100, Math.max(access.remaining + TEASER_BUFFER, 10));
+    ? Math.min(MAX_PER_SEARCH, Math.max((access.remaining + TEASER_BUFFER) * NO_WEB_MULTIPLIER, 30))
+    : Math.min(MAX_PER_SEARCH, Math.max(access.remaining + TEASER_BUFFER, 10));
 
   // Techo duro de tiempo total: si Chromium muere por falta de memoria en
   // Railway, hasta operaciones internas "protegidas" (como cerrar una
