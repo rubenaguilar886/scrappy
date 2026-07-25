@@ -98,12 +98,20 @@
   .contact-check.checked{background:var(--ok);border-color:var(--ok);}
   .contact-check svg{width:12px;height:12px;color:#fff;opacity:0;}
   .contact-check.checked svg{opacity:1;}
-  .card-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;}
+  .card-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;cursor:pointer;}
   .card.contacted .card-name{text-decoration:line-through;text-decoration-color:var(--sub);}
   .no-web-tag{
     flex:0 0 auto;font-size:10.5px;font-weight:600;background:var(--accent-soft);color:var(--accent-deep);
     padding:3px 8px;border-radius:999px;white-space:nowrap;
   }
+  .expand-chevron{
+    flex:0 0 auto;width:20px;height:20px;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;color:var(--sub);
+  }
+  .expand-chevron svg{width:13px;height:13px;transition:transform .2s ease;}
+  .card.expanded .expand-chevron svg{transform:rotate(90deg);}
+  .card-details{display:none;}
+  .card.expanded .card-details{display:block;}
   .card-meta{display:flex;gap:12px;font-size:12.5px;color:var(--sub);margin-bottom:12px;flex-wrap:wrap;}
   .card-meta b{color:var(--ink);}
   .contact-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
@@ -123,10 +131,11 @@
   .msg-toggle svg{width:11px;height:11px;transition:transform .2s ease;}
   .msg-toggle.open svg{transform:rotate(90deg);}
   .msg-body{max-height:0;overflow:hidden;transition:max-height .25s ease;}
-  .msg-body.open{max-height:320px;}
+  .msg-body.open{max-height:1000px;}
   .msg-text{
     margin-top:10px;padding:12px;background:#eef2f6;border-radius:8px;
     font-size:13px;color:var(--navy);line-height:1.5;white-space:pre-wrap;
+    max-height:280px;overflow-y:auto;
   }
   .msg-text.loading{color:var(--sub);font-style:italic;}
   .copy-btn{
@@ -236,9 +245,9 @@
     </div>
 
     <div class="field">
-      <label for="ciudad">Ciudad</label>
-      <input id="ciudad" type="text" placeholder="Ej. Lima, Arequipa, Trujillo">
-      <p class="login-hint" style="margin-top:6px;">Busca por ciudad completa, no por distrito — así tu paquete cubre muchos más negocios.</p>
+      <label for="ciudad">Distrito, ciudad</label>
+      <input id="ciudad" type="text" placeholder="Ej. Miraflores, Lima">
+      <p class="login-hint" style="margin-top:6px;">Busca por distrito (no toda la ciudad de una vez) — tu paquete cubre cualquier distrito de la misma ciudad, así que puedes repetir la búsqueda cambiando solo el distrito para llegar a más negocios.</p>
     </div>
 
     <div class="field">
@@ -647,25 +656,30 @@
           '<div class="contact-check" onclick="toggleContact(this)">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10"/></svg>' +
           '</div>' +
-          '<div class="card-name">' + esc(biz.name) + '</div>' +
+          '<div class="card-name" onclick="toggleCardDetails(this)">' + esc(biz.name) + '</div>' +
         '</div>' +
         (noWeb ? '<div class="no-web-tag">' + (biz.deliveryApp ? 'Solo delivery' : 'Sin web') + '</div>' : '') +
+        '<div class="expand-chevron" onclick="toggleCardDetails(this)">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 18l6-6-6-6"/></svg>' +
+        '</div>' +
       '</div>' +
-      '<div class="card-meta">' + metaHtml + '</div>' +
-      contactHtml +
-      '<button class="msg-toggle" onclick="toggleMsg(this)">' +
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 18l6-6-6-6"/></svg>' +
-        'Ver mensaje generado' +
-      '</button>' +
-      '<div class="msg-body">' +
-        '<div class="msg-text" data-state="idle"></div>' +
-        '<button class="copy-btn" style="display:none" onclick="copyMsgFromCard(this)">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">' +
-            '<rect x="9" y="9" width="12" height="12" rx="2"/>' +
-            '<path d="M5 15V5a2 2 0 0 1 2-2h10"/>' +
-          '</svg>' +
-          'Copiar mensaje' +
+      '<div class="card-details">' +
+        '<div class="card-meta">' + metaHtml + '</div>' +
+        contactHtml +
+        '<button class="msg-toggle" onclick="toggleMsg(this)">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 18l6-6-6-6"/></svg>' +
+          'Ver mensaje generado' +
         '</button>' +
+        '<div class="msg-body">' +
+          '<div class="msg-text" data-state="idle"></div>' +
+          '<button class="copy-btn" style="display:none" onclick="copyMsgFromCard(this)">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">' +
+              '<rect x="9" y="9" width="12" height="12" rx="2"/>' +
+              '<path d="M5 15V5a2 2 0 0 1 2-2h10"/>' +
+            '</svg>' +
+            'Copiar mensaje' +
+          '</button>' +
+        '</div>' +
       '</div>';
 
     return card;
@@ -735,6 +749,12 @@
         btn.innerHTML = original;
       }, 1800);
     }).catch(function () {});
+  };
+
+  /* ── Expandir/colapsar detalles de la tarjeta ───────────────────── */
+  window.toggleCardDetails = function (el) {
+    var card = el.closest('.card');
+    card.classList.toggle('expanded');
   };
 
   /* ── Estado contactado ───────────────────────────── */
