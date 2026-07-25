@@ -652,7 +652,12 @@
   function buildCard(biz, i) {
     var leadId   = leadIdFor(biz);
     var noWeb    = !biz.website;
-    var distrito = (biz.searchLocation || (biz.address || '').split(',')[0] || '').trim();
+    // Preferimos el distrito real sacado de la dirección de Google Maps
+    // (biz.district) — no cambia entre búsquedas. searchLocation es solo
+    // lo que TÚ escribiste en el buscador esta vez, así que si el mismo
+    // negocio reaparece en otra búsqueda de otro distrito, mostraría el
+    // distrito equivocado si dependiéramos de eso.
+    var distrito = (biz.district || biz.searchLocation || (biz.address || '').split(',')[0] || '').trim();
 
     var card = document.createElement('div');
     card.className = biz.locked ? 'card locked' : 'card';

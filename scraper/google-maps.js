@@ -498,6 +498,23 @@ async function getHours(page) {
   return null;
 }
 
+/**
+ * Saca el distrito real de la dirección de Google Maps (que no cambia
+ * entre búsquedas), en vez de depender de qué texto escribió el usuario
+ * en el buscador esta vez. Direcciones peruanas en Maps suelen venir como
+ * "Av. X 123, Miraflores 15074, Perú" — el distrito es el segmento justo
+ * antes de "Perú", sin el código postal al final.
+ */
+function extractDistrictFromAddress(address) {
+  if (!address) return null;
+  const parts = address.split(",").map((s) => s.trim()).filter(Boolean);
+  const peruIdx = parts.findIndex((p) => /^per[uú]$/i.test(p));
+  let candidate = peruIdx > 0 ? parts[peruIdx - 1] : (parts.length >= 2 ? parts[parts.length - 2] : null);
+  if (!candidate) return null;
+  candidate = candidate.replace(/\s*\d{4,6}\s*$/, "").trim();
+  return candidate || null;
+}
+
 async function extractBusinessFromPage(page, url, searchQuery) {
   const name = await getText(page, "h1");
   if (!name) return null;
@@ -516,6 +533,7 @@ async function extractBusinessFromPage(page, url, searchQuery) {
   return {
     name,
     address,
+    district: extractDistrictFromAddress(address),
     phone: contacts.phone || phone,
     website: contacts.website || websiteFromMaps,
     email: contacts.email,
