@@ -765,7 +765,14 @@ app.post("/api/public/scrape", async (req, res) => {
   });
   res.json({ ok: true, message: "Busqueda iniciada" });
 
-  const progressCallback = (progress) => { job.progress = progress; };
+  // Antes esto solo se guardaba en memoria para la barra de carga del
+  // celular — invisible en los logs de Railway. Sin esto, un timeout de
+  // 6 min no deja ningún rastro de cuánto se alcanzó a avanzar. Ahora
+  // queda un trail con hora exacta de cada avance.
+  const progressCallback = (progress) => {
+    job.progress = progress;
+    console.log(`[progreso ${new Date().toISOString()}] ${progress.stage}: ${progress.message}`);
+  };
 
   const access = await credits.getUserAccess(user.id, query, location);
   if (access.remaining <= 0) {
