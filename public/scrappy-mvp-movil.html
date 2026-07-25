@@ -425,6 +425,26 @@
       .replace(/"/g, '&quot;');
   }
 
+  // Hash chiquito y estable — para identificar al negocio (no su posición
+  // en la lista) al guardar el estado de "contactado" en localStorage.
+  function stableHash(str) {
+    var h = 0;
+    var s = String(str);
+    for (var idx = 0; idx < s.length; idx++) {
+      h = ((h << 5) - h + s.charCodeAt(idx)) | 0;
+    }
+    return Math.abs(h).toString(36);
+  }
+
+  function leadIdFor(biz) {
+    // La URL de Google Maps identifica al negocio de forma única — a
+    // diferencia del nombre+posición, no cambia entre una búsqueda y
+    // otra, así que el casillero de "contactado" sí persiste de verdad
+    // para el MISMO negocio, sin importar en qué orden vuelva a salir.
+    var key = biz.googleMapsUrl || (biz.name + '|' + (biz.address || ''));
+    return stableHash(key);
+  }
+
   function slugify(str) {
     return String(str).toLowerCase()
       .replace(/[^a-z0-9]/g, '-')
@@ -630,7 +650,7 @@
   }
 
   function buildCard(biz, i) {
-    var leadId   = slugify(biz.name) + '-' + i;
+    var leadId   = leadIdFor(biz);
     var noWeb    = !biz.website;
     var distrito = (biz.searchLocation || (biz.address || '').split(',')[0] || '').trim();
 
