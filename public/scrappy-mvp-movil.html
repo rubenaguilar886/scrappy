@@ -204,6 +204,17 @@
     margin-bottom:18px;font-size:12.5px;color:var(--ok);
   }
   .account-bar b{color:var(--ink);}
+  .trial-banner{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:10px 14px;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:10px;
+    margin-bottom:18px;font-size:12.5px;color:var(--accent-deep);
+  }
+  .trial-banner span{display:flex;align-items:center;gap:8px;}
+  .trial-banner svg{width:15px;height:15px;flex:0 0 auto;}
+  .trial-banner button{
+    background:none;border:none;color:var(--accent-deep);font-size:12px;font-weight:600;
+    text-decoration:underline;cursor:pointer;font-family:inherit;flex:0 0 auto;white-space:nowrap;
+  }
   .account-bar button{
     background:none;border:none;color:var(--sub);font-size:12px;font-weight:600;
     text-decoration:underline;cursor:pointer;font-family:inherit;flex:0 0 auto;
@@ -268,8 +279,17 @@
     <div id="packsList"></div>
   </div>
 
+  <!-- Prueba gratis sin cuenta — se oculta sola si ya la usaste o si ya iniciaste sesión -->
+  <div class="trial-banner hidden" id="trialBanner">
+    <span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5z"/></svg>
+      Tu primera búsqueda es gratis — 3 prospectos completos, sin correo.
+    </span>
+    <button type="button" onclick="document.getElementById('loginBox').classList.remove('hidden'); document.getElementById('loginBox').scrollIntoView({behavior:'smooth'});">¿Ya tienes cuenta?</button>
+  </div>
+
   <!-- Login (magic link) -->
-  <div class="login-box" id="loginBox">
+  <div class="login-box hidden" id="loginBox">
     <div class="field">
       <label for="loginEmail">Tu correo</label>
       <input id="loginEmail" type="email" placeholder="tu@correo.com">
@@ -412,17 +432,30 @@
 
   async function checkAuthOnLoad() {
     try {
-      var res  = await fetch('/api/public/me');
+      var res  = await sessionFetch('/api/public/me');
       var data = await res.json();
       if (data.loggedIn) {
         document.getElementById('loginBox').classList.add('hidden');
+        document.getElementById('trialBanner').classList.add('hidden');
         document.getElementById('searchForm').classList.remove('hidden');
         document.getElementById('accountBar').classList.remove('hidden');
         document.getElementById('accountEmail').textContent = data.email;
         renderPacks(data.cityPacks || [], data.subscription || null);
-      } else {
+      } else if (data.anonTrialUsed) {
+        // Ya gastó su búsqueda gratis sin cuenta — ahora sí necesita login
+        // para seguir (comprar o buscar de nuevo).
         document.getElementById('loginBox').classList.remove('hidden');
+        document.getElementById('trialBanner').classList.add('hidden');
         document.getElementById('searchForm').classList.add('hidden');
+        document.getElementById('accountBar').classList.add('hidden');
+        document.getElementById('packsBox').classList.add('hidden');
+      } else {
+        // Sin cuenta todavía, pero con la prueba gratis disponible — deja
+        // buscar de una vez, sin pedir correo. Menos fricción para la
+        // primera impresión.
+        document.getElementById('loginBox').classList.add('hidden');
+        document.getElementById('trialBanner').classList.remove('hidden');
+        document.getElementById('searchForm').classList.remove('hidden');
         document.getElementById('accountBar').classList.add('hidden');
         document.getElementById('packsBox').classList.add('hidden');
       }
@@ -610,6 +643,13 @@
               var payBanner = document.getElementById('upgradeBanner');
               payBanner.textContent = status.error;
               payBanner.classList.add('show');
+              // Se acabó la prueba gratis sin cuenta — mostrar el login
+              // para que pueda actuar de inmediato, en vez de dejarlo
+              // varado viendo el formulario de búsqueda otra vez.
+              if (status.metrics.needsAuth) {
+                document.getElementById('loginBox').classList.remove('hidden');
+                document.getElementById('loginBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
             } else {
               showError(status.error);
             }

@@ -716,7 +716,11 @@ app.post("/api/auth/logout", (_req, res) => {
 // match); mostrar el paquete y autocompletar evita ese problema de raíz.
 app.get("/api/public/me", async (req, res) => {
   const user = await auth.getUserFromRequest(req);
-  if (!user) return res.json({ loggedIn: false, email: null, cityPacks: [], subscription: null });
+  if (!user) {
+    const sid = getSessionId(req);
+    const anonTrialUsed = await credits.hasAnonTrialUsed(sid);
+    return res.json({ loggedIn: false, email: null, cityPacks: [], subscription: null, anonTrialUsed });
+  }
 
   const packsRes = await db.query(
     `SELECT rubro, ciudad, credits_total, credits_used, expires_at
@@ -742,8 +746,11 @@ app.get("/api/public/me", async (req, res) => {
 // Versión monetizada de /api/scrape, para el MVP móvil. Requiere login
 // y créditos/cupo disponibles para el rubro+ciudad pedido.
 app.post("/api/public/scrape", async (req, res) => {
+  // Ya NO exigimos login para la primera búsqueda: la prueba gratis (3
+  // créditos) corre de forma anónima, identificada solo por el session id
+  // del navegador — menos fricción, igual al flujo de prospecto.tools.
+  // Recién se pide login para la SIGUIENTE búsqueda o para comprar.
   const user = await auth.getUserFromRequest(req);
-  if (!user) return res.status(401).json({ error: "Inicia sesión para buscar.", needsAuth: true });
 
   const sid = getSessionId(req);
   if (getJob(sid)?.running) return res.status(409).json({ error: "Ya hay una busqueda en progreso." });
@@ -774,12 +781,24 @@ app.post("/api/public/scrape", async (req, res) => {
     console.log(`[progreso ${new Date().toISOString()}] ${progress.stage}: ${progress.message}`);
   };
 
-  const access = await credits.getUserAccess(user.id, query, location);
+  const isAnonTrial = !user;
+  let access;
+  if (user) {
+    access = await credits.getUserAccess(user.id, query, location);
+  } else {
+    const alreadyUsed = await credits.hasAnonTrialUsed(sid);
+    access = alreadyUsed
+      ? { type: "none", userId: null, remaining: 0 }
+      : { type: "trial", userId: null, remaining: credits.TRIAL_CREDITS };
+  }
+
   if (access.remaining <= 0) {
-    job.error = "No tienes créditos disponibles para este rubro y ciudad. Compra un Paquete Ciudad o suscríbete al Plan Pro.";
+    job.error = isAnonTrial
+      ? "Ya usaste tu búsqueda de prueba gratis. Inicia sesión para comprar un paquete o el Plan Pro y seguir buscando."
+      : "No tienes créditos disponibles para este rubro y ciudad. Compra un Paquete Ciudad o suscríbete al Plan Pro.";
     job.progress = { stage: "error", message: job.error };
     job.running = false;
-    job.metrics = { needsPayment: true, accessType: access.type };
+    job.metrics = { needsPayment: true, accessType: access.type, needsAuth: isAnonTrial };
     return;
   }
 
@@ -853,9 +872,10 @@ app.post("/api/public/scrape", async (req, res) => {
     const relevant = onlyNoWeb ? results.filter((b) => !b.website) : results;
 
     const { unlocked, lockedCount, remainingAfter } = await credits.applyAccessToResults(access, relevant);
+    if (isAnonTrial) await credits.markAnonTrialUsed(sid);
 
     job.results = unlocked;
-    job.metrics = { accessType: access.type, remaining: remainingAfter, lockedCount };
+    job.metrics = { accessType: access.type, remaining: remainingAfter, lockedCount, isAnonTrial };
     job.progress = {
       stage: "done",
       message: lockedCount > 0
