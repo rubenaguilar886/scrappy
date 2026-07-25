@@ -569,11 +569,29 @@ function isBrowserDeadError(e) {
   return msg.includes("has been closed") || msg.includes("Target closed") || msg.includes("Browser closed");
 }
 
-async function scrapePlacesParallel(context, urls, searchQuery, onProgress) {
+// Cada cuántos negocios reiniciamos el navegador durante un full extract
+// largo. En logs reales, un mismo navegador que lleva 40-50 páginas
+// visitadas seguidas se va poniendo progresivamente más lento (de 3-8s
+// por par a 20-30s), sin que haya un segundo navegador compitiendo — o
+// se acumula memoria en Chromium, o Google va frenando una sesión que
+// detecta como sostenida/automatizada. Una sesión "fresca" cada tanto
+// mitiga ambos casos.
+const ROTATE_BROWSER_EVERY = 25;
+
+async function scrapePlacesParallel(browserHandle, urls, searchQuery, onProgress, abortHandle) {
   const businesses = [];
   const total = urls.length;
 
   for (let i = 0; i < urls.length; i += CONCURRENCY) {
+    if (i > 0 && i % ROTATE_BROWSER_EVERY === 0) {
+      console.log(`[rotacion-navegador] reiniciando navegador en ${i}/${total} para evitar degradacion progresiva`);
+      await browserHandle.browser.close().catch(() => {});
+      const fresh = await createBrowserContext();
+      browserHandle.browser = fresh.browser;
+      browserHandle.context = fresh.context;
+      if (abortHandle) abortHandle.browser = fresh.browser;
+    }
+    const context = browserHandle.context;
     const batch = urls.slice(i, i + CONCURRENCY);
 
     let pages;
@@ -774,6 +792,12 @@ async function searchGoogleMaps(
   const { browser, context } = await createBrowserContext();
   const page = await context.newPage();
 
+  // browserHandle es una referencia MUTABLE — scrapePlacesParallel puede
+  // reemplazar browser/context adentro (reinicio periódico de sesión) y
+  // el resto del código sigue viendo la instancia vigente a través de
+  // este mismo objeto, en vez de quedarse con la referencia vieja.
+  const browserHandle = { browser, context };
+
   // Si quien llama nos pasó un "abortHandle" (server.js lo usa para el
   // timeout duro de 6 min), le dejamos la referencia al navegador para
   // poder cerrarlo a la fuerza desde afuera. Sin esto, cuando el timeout
@@ -823,7 +847,7 @@ async function searchGoogleMaps(
       current: 0,
     });
 
-    let businesses = await scrapePlacesParallel(context, topUrls, fullQuery, onProgress);
+    let businesses = await scrapePlacesParallel(browserHandle, topUrls, fullQuery, onProgress, options.abortHandle);
     businesses = businesses.slice(0, maxResults).map(finalizeBusinessContacts);
 
     metrics.yieldFullExtract = businesses.length;
@@ -844,7 +868,7 @@ async function searchGoogleMaps(
 
     // ── FASE 5: Deep scan (solo si tiene web y le faltan datos) ───────────
     if (deepScan && businesses.length) {
-      businesses = await enrichBusinessesFromWebsites(businesses, context, onProgress);
+      businesses = await enrichBusinessesFromWebsites(businesses, browserHandle.context, onProgress);
     }
 
     businesses = businesses
@@ -865,7 +889,10 @@ async function searchGoogleMaps(
 
     return businesses;
   } finally {
-    await browser.close().catch(() => {}); // ya puede estar muerto — no bloquear la respuesta por eso
+    // Usamos browserHandle.browser (no la constante original "browser")
+    // porque puede haber sido reemplazada por una rotación a mitad de la
+    // búsqueda — cerrar la referencia vieja dejaría viva la nueva.
+    await browserHandle.browser.close().catch(() => {}); // ya puede estar muerto — no bloquear la respuesta por eso
   }
 }
 
