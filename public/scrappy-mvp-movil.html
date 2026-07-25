@@ -10,16 +10,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
+    /* Paleta "Azul confianza" — elegida entre 5 opciones para Scrappy Lite */
     --bg:#ffffff;
-    --ink:#16273f;
-    --sub:#5c6f7d;
-    --accent:#f5a623;
-    --accent-deep:#c9820f;
-    --accent-soft:#fdecc9;
-    --line:#c9dfe2;
-    --card:#dbeaec;
-    --navy:#16273f;
-    --navy-deep:#0e1a2c;
+    --ink:#042c53;
+    --sub:#4a6a8f;
+    --accent:#ef9f27;
+    --accent-deep:#8f5c0e;
+    --accent-soft:#fbe8c8;
+    --line:#bcdcf5;
+    --card:#e6f1fb;
+    --navy:#042c53;
+    --navy-deep:#02203d;
     --ok:#2f6b47;
     --ok-soft:#e4efe6;
   }
@@ -45,6 +46,18 @@
 
   .field{margin-bottom:16px;}
   .field label{display:block;font-size:12.5px;font-weight:600;color:var(--sub);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;}
+
+  .section-label{
+    font-size:11.5px;font-weight:600;color:var(--sub);text-transform:uppercase;
+    letter-spacing:.05em;margin:0 0 10px;display:flex;align-items:center;gap:6px;
+  }
+  .section-label svg{width:13px;height:13px;flex:0 0 auto;}
+  .search-group{
+    background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+    padding:16px 16px 4px;margin-bottom:18px;
+  }
+  .search-group .field input{background:#fff;}
+  .prefs-group{margin-bottom:22px;}
   .field input{
     width:100%;border:1.5px solid var(--line);border-radius:10px;padding:13px 14px;
     font-family:inherit;font-size:15px;background:var(--card);color:var(--ink);
@@ -69,8 +82,10 @@
     width:100%;padding:15px;border-radius:10px;border:none;background:var(--ink);color:#fff;
     font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;cursor:pointer;
     display:flex;align-items:center;justify-content:center;gap:8px;
+    transition:transform .12s ease,background .15s ease;
   }
-  .btn-search:active{background:#000;}
+  .btn-search:hover{background:var(--navy-deep);}
+  .btn-search:active{background:#000;transform:scale(.98);}
   .btn-search:disabled{opacity:.5;cursor:not-allowed;}
 
   .loading{display:none;align-items:center;justify-content:center;gap:10px;padding:28px 0 8px;color:var(--sub);font-size:13.5px;}
@@ -86,29 +101,37 @@
 
   .card{
     background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;
-    transition:opacity .2s ease;
+    transition:opacity .2s ease,border-color .15s ease;
   }
   .card.contacted{opacity:.55;}
-  .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px;}
+  .card.expanded{border-color:var(--ink);}
+  .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+  .card.expanded .card-top{margin-bottom:8px;}
   .card-left{display:flex;align-items:flex-start;gap:10px;flex:1;min-width:0;}
   .contact-check{
     flex:0 0 auto;width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line);
-    background:var(--card);margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    background:#fff;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:transform .12s ease,background .15s ease,border-color .15s ease;
   }
+  .contact-check:active{transform:scale(.9);}
   .contact-check.checked{background:var(--ok);border-color:var(--ok);}
   .contact-check svg{width:12px;height:12px;color:#fff;opacity:0;}
   .contact-check.checked svg{opacity:1;}
   .card-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;cursor:pointer;}
   .card.contacted .card-name{text-decoration:line-through;text-decoration-color:var(--sub);}
   .no-web-tag{
-    flex:0 0 auto;font-size:10.5px;font-weight:600;background:var(--accent-soft);color:var(--accent-deep);
+    flex:0 0 auto;display:flex;align-items:center;gap:4px;
+    font-size:10.5px;font-weight:600;background:var(--accent-soft);color:var(--accent-deep);
     padding:3px 8px;border-radius:999px;white-space:nowrap;
   }
+  .no-web-tag svg{width:9px;height:9px;flex:0 0 auto;}
   .expand-chevron{
-    flex:0 0 auto;width:20px;height:20px;display:flex;align-items:center;justify-content:center;
-    cursor:pointer;color:var(--sub);
+    flex:0 0 auto;width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;color:var(--sub);transition:background .15s ease,color .15s ease;
   }
+  .expand-chevron:hover{background:#fff;color:var(--ink);}
   .expand-chevron svg{width:13px;height:13px;transition:transform .2s ease;}
+  .card.expanded .expand-chevron{color:var(--ink);}
   .card.expanded .expand-chevron svg{transform:rotate(90deg);}
   .card-details{display:none;}
   .card.expanded .card-details{display:block;}
@@ -119,9 +142,12 @@
     display:flex;align-items:center;gap:6px;padding:7px 11px;border-radius:8px;
     background:#eef2f6;color:var(--navy);font-size:12.5px;font-weight:600;
     text-decoration:none;border:1.5px solid var(--line);
+    transition:transform .12s ease,border-color .15s ease;
   }
-  .contact-chip svg{width:13px;height:13px;flex:0 0 auto;}
+  .contact-chip:active{transform:scale(.96);}
+  .contact-chip svg{width:14px;height:14px;flex:0 0 auto;}
   .contact-chip.whatsapp{background:#e4f7ea;color:#1f7a3f;border-color:#bfe8cd;}
+  .contact-chip.whatsapp:hover{border-color:#1f7a3f;}
   .contact-none{font-size:12px;color:var(--sub);font-style:italic;margin-bottom:12px;}
   .msg-toggle{
     width:100%;text-align:left;background:none;border:none;padding:0;
@@ -142,8 +168,11 @@
     display:flex;align-items:center;gap:6px;margin-top:8px;padding:8px 12px;
     background:none;border:1.5px solid var(--line);border-radius:8px;
     font-family:inherit;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;
+    transition:transform .12s ease,border-color .15s ease,color .15s ease;
   }
-  .copy-btn svg{width:13px;height:13px;flex:0 0 auto;}
+  .copy-btn:hover{border-color:var(--ink);color:var(--ink);}
+  .copy-btn:active{transform:scale(.96);}
+  .copy-btn svg{width:14px;height:14px;flex:0 0 auto;}
   .copy-btn.copied{color:var(--ok);border-color:var(--ok);}
 
   .empty-hint{text-align:center;color:var(--sub);font-size:12.5px;margin-top:22px;line-height:1.6;}
@@ -178,7 +207,9 @@
   .account-bar button{
     background:none;border:none;color:var(--sub);font-size:12px;font-weight:600;
     text-decoration:underline;cursor:pointer;font-family:inherit;flex:0 0 auto;
+    transition:color .15s ease;
   }
+  .account-bar button:hover{color:var(--ink);}
   .upgrade-banner{
     display:none;margin-top:16px;padding:14px;background:var(--accent-soft);
     border:1.5px solid var(--accent);border-radius:10px;font-size:13px;color:var(--accent-deep);
@@ -187,9 +218,11 @@
   .upgrade-banner.show{display:block;}
   .card.locked{opacity:.6;}
   .locked-tag{
+    display:flex;align-items:center;gap:4px;flex:0 0 auto;
     font-size:10.5px;font-weight:600;background:#e5e7eb;color:#6b7280;
     padding:3px 8px;border-radius:999px;white-space:nowrap;
   }
+  .locked-tag svg{width:10px;height:10px;flex:0 0 auto;}
   .hidden{display:none !important;}
 
   .packs-box{margin-bottom:18px;}
@@ -199,10 +232,14 @@
     width:100%;text-align:left;padding:12px 14px;margin-bottom:8px;
     background:var(--card);border:1.5px solid var(--line);border-radius:10px;
     font-family:inherit;font-size:13.5px;color:var(--ink);cursor:pointer;
+    transition:transform .12s ease,border-color .15s ease,background .15s ease;
   }
-  .pack-chip:hover{border-color:var(--accent);}
+  .pack-chip:hover{border-color:var(--accent);background:#fff;}
+  .pack-chip:active{transform:scale(.98);}
   .pack-chip b{font-weight:600;}
+  .pack-chip .pack-chip-right{display:flex;align-items:center;gap:6px;flex:0 0 auto;}
   .pack-chip span{font-size:12px;color:var(--sub);white-space:nowrap;}
+  .pack-chip .pack-chip-arrow{width:15px;height:15px;color:var(--accent-deep);flex:0 0 auto;}
 </style>
 </head>
 <body>
@@ -218,7 +255,10 @@
 
   <!-- Estado de sesión -->
   <div class="account-bar hidden" id="accountBar">
-    <span>Sesión activa: <b id="accountEmail"></b></span>
+    <span style="display:flex;align-items:center;gap:6px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" style="width:14px;height:14px;flex:0 0 auto;"><path d="M5 13l4 4L19 7"/></svg>
+      Sesión activa: <b id="accountEmail"></b>
+    </span>
     <button onclick="logout()">Cerrar sesión</button>
   </div>
 
@@ -239,29 +279,42 @@
   </div>
 
   <div class="hidden" id="searchForm">
-    <div class="field">
-      <label for="rubro">Rubro</label>
-      <input id="rubro" type="text" placeholder="Ej. Tatuajes, veterinarias, spas">
+
+    <div class="search-group">
+      <p class="section-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        Qué y dónde buscar
+      </p>
+      <div class="field">
+        <label for="rubro">Rubro</label>
+        <input id="rubro" type="text" placeholder="Ej. Tatuajes, veterinarias, spas">
+      </div>
+
+      <div class="field">
+        <label for="ciudad">Distrito, ciudad</label>
+        <input id="ciudad" type="text" placeholder="Ej. Miraflores, Lima">
+        <p class="login-hint" style="margin-top:6px;">Busca por distrito (no toda la ciudad de una vez) — tu paquete cubre cualquier distrito de la misma ciudad, así que puedes repetir la búsqueda cambiando solo el distrito para llegar a más negocios.</p>
+      </div>
     </div>
 
-    <div class="field">
-      <label for="ciudad">Distrito, ciudad</label>
-      <input id="ciudad" type="text" placeholder="Ej. Miraflores, Lima">
-      <p class="login-hint" style="margin-top:6px;">Busca por distrito (no toda la ciudad de una vez) — tu paquete cubre cualquier distrito de la misma ciudad, así que puedes repetir la búsqueda cambiando solo el distrito para llegar a más negocios.</p>
-    </div>
+    <div class="prefs-group">
+      <p class="section-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+        Personaliza (opcional)
+      </p>
+      <div class="field">
+        <label for="servicio">Servicio que ofreces</label>
+        <input id="servicio" type="text" placeholder="Ej. Diseño de landing pages">
+      </div>
 
-    <div class="field">
-      <label for="servicio">Servicio que ofreces</label>
-      <input id="servicio" type="text" placeholder="Ej. Diseño de landing pages">
-    </div>
-
-    <div class="toggle-row">
-      <span>Solo negocios sin sitio web</span>
-      <label class="switch">
-        <input type="checkbox" id="onlyNoWeb" checked>
-        <span class="track"></span>
-        <span class="knob"></span>
-      </label>
+      <div class="toggle-row">
+        <span>Solo negocios sin sitio web</span>
+        <label class="switch">
+          <input type="checkbox" id="onlyNoWeb" checked>
+          <span class="track"></span>
+          <span class="knob"></span>
+        </label>
+      </div>
     </div>
 
     <button class="btn-search" id="btnSearch" onclick="runSearch()">
@@ -396,7 +449,9 @@
       chip.className = 'pack-chip';
       chip.innerHTML =
         '<span><b>' + esc(p.rubro) + '</b> — cualquier distrito de ' + esc(p.ciudad) + '</span>' +
-        '<span>' + remaining + ' créditos</span>';
+        '<span class="pack-chip-right">' + remaining + ' créditos' +
+          '<svg class="pack-chip-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M9 18l6-6-6-6"/></svg>' +
+        '</span>';
       chip.onclick = function () {
         // Solo rellenamos el rubro — el paquete cubre cualquier distrito
         // de la ciudad, así que dejamos el campo de distrito vacío (y con
@@ -677,7 +732,7 @@
           '<div class="card-left">' +
             '<div class="card-name">' + esc(biz.name) + '</div>' +
           '</div>' +
-          '<div class="locked-tag">🔒 Bloqueado</div>' +
+          '<div class="locked-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Bloqueado</div>' +
         '</div>' +
         '<div class="card-meta">' + metaHtml + '</div>';
       return card;
@@ -691,7 +746,7 @@
           '</div>' +
           '<div class="card-name" onclick="toggleCardDetails(this)">' + esc(biz.name) + '</div>' +
         '</div>' +
-        (noWeb ? '<div class="no-web-tag">' + (biz.deliveryApp ? 'Solo delivery' : 'Sin web') + '</div>' : '') +
+        (noWeb ? '<div class="no-web-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="9"/><path d="M4.5 4.5l15 15"/></svg>' + (biz.deliveryApp ? 'Solo delivery' : 'Sin web') + '</div>' : '') +
         '<div class="expand-chevron" onclick="toggleCardDetails(this)">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 18l6-6-6-6"/></svg>' +
         '</div>' +
