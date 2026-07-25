@@ -198,6 +198,27 @@ function isUsefulWebsite(url) {
   return !blockedHosts.some((host) => lower.includes(host));
 }
 
+// Muchos negocios (sobre todo restaurantes) ponen en el botón "Sitio web"
+// de Google Maps un link a una app de delivery en vez de una web propia.
+// Eso NO es una web real — es exactamente el tipo de negocio que Scrappy
+// debería mostrar como "sin web". Si no filtramos esto, se cuentan como
+// "tiene web" y desaparecen del pool de leads vendibles.
+const DELIVERY_HOSTS = [
+  "rappi.com",
+  "pedidosya.com",
+  "glovoapp.com",
+  "ubereats.com",
+  "didi-food.com",
+  "justo.pe",
+  "yaguara.pe",
+];
+
+function isDeliveryPlatformUrl(url) {
+  if (!url) return false;
+  const lower = url.toLowerCase();
+  return DELIVERY_HOSTS.some((host) => lower.includes(host));
+}
+
 function pickBestEmail(candidates) {
   const filtered = [...new Set(candidates)].filter((email) => {
     const lower = email.toLowerCase();
@@ -280,6 +301,8 @@ function classifyUrl(url) {
 
   const fb = normalizeFacebook(url);
   if (fb) return { type: "facebook", value: fb };
+
+  if (isDeliveryPlatformUrl(url)) return { type: "delivery", value: url.split("?")[0] };
 
   if (isUsefulWebsite(url)) return { type: "website", value: normalizeWebsiteUrl(url) };
 

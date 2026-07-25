@@ -153,6 +153,11 @@ function reclassifyWebsite(business) {
     updates.phone = classified.value;
   } else if (classified.type === "email" && !business.email) {
     updates.email = classified.value;
+  } else if (classified.type === "delivery") {
+    // El botón "Sitio web" de Maps apuntaba a una app de delivery
+    // (Rappi, PedidosYa, etc.), no a una web propia del negocio. Se
+    // guarda como dato informativo, pero NO cuenta como "tiene web".
+    updates.deliveryApp = classified.value;
   }
 
   return { ...business, ...updates };
@@ -526,6 +531,7 @@ async function extractBusinessFromPage(page, url, searchQuery) {
     googleMapsUrl: url.split("?")[0],
     latitude,
     longitude,
+    deliveryApp: null,
     source: "google_maps",
     searchQuery,
     searchLocation: "",
@@ -813,6 +819,20 @@ async function searchGoogleMaps(
     businesses = businesses.slice(0, maxResults).map(finalizeBusinessContacts);
 
     metrics.yieldFullExtract = businesses.length;
+
+    // ── Diagnóstico de embudo: para saber en qué etapa se pierde todo ──────
+    // rawCandidates  = lo que Google Maps mostró en el scroll (fase 1)
+    // intentados     = cuántos de esos se intentó extraer completo
+    // extraidosOk    = cuántos de esos intentos SÍ devolvieron datos
+    // conWebReal     = de los extraídos ok, cuántos tienen web real
+    // sinWebReal     = de los extraídos ok, cuántos NO (leads vendibles)
+    const conWebReal = businesses.filter(b => b.website).length;
+    const sinWebReal = businesses.length - conWebReal;
+    console.log(
+      `[embudo] rawCandidates=${allUrls.length} intentados=${topUrls.length} ` +
+      `extraidosOk=${businesses.length} (${Math.round(businesses.length / topUrls.length * 100)}%) ` +
+      `conWebReal=${conWebReal} sinWebReal=${sinWebReal} rubro="${query}" ciudad="${location}"`
+    );
 
     // ── FASE 5: Deep scan (solo si tiene web y le faltan datos) ───────────
     if (deepScan && businesses.length) {

@@ -596,7 +596,7 @@
           '</div>' +
           '<div class="card-name">' + esc(biz.name) + '</div>' +
         '</div>' +
-        (noWeb ? '<div class="no-web-tag">Sin web</div>' : '') +
+        (noWeb ? '<div class="no-web-tag">' + (biz.deliveryApp ? 'Solo delivery' : 'Sin web') + '</div>' : '') +
       '</div>' +
       '<div class="card-meta">' + metaHtml + '</div>' +
       '<button class="msg-toggle" onclick="toggleMsg(this)">' +
