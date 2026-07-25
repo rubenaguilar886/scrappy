@@ -774,6 +774,14 @@ async function searchGoogleMaps(
   const { browser, context } = await createBrowserContext();
   const page = await context.newPage();
 
+  // Si quien llama nos pasó un "abortHandle" (server.js lo usa para el
+  // timeout duro de 6 min), le dejamos la referencia al navegador para
+  // poder cerrarlo a la fuerza desde afuera. Sin esto, cuando el timeout
+  // de arriba "gana" el race, esta función sigue corriendo en segundo
+  // plano indefinidamente — un navegador fantasma consumiendo CPU/memoria
+  // que compite con la SIGUIENTE búsqueda que el usuario lance.
+  if (options.abortHandle) options.abortHandle.browser = browser;
+
   try {
     // ── FASE 1: Scroll y colecta de URLs (overfetch) ───────────────────────
     onProgress?.({ stage: "loading", message: "Abriendo Google Maps..." });

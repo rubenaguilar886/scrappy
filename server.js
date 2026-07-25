@@ -826,11 +826,19 @@ app.post("/api/public/scrape", async (req, res) => {
     ]);
   }
 
+  // El scraper deja aquí la referencia a SU navegador. Si el timeout duro
+  // se cumple, el navegador no muere solo — sigue extrayendo en segundo
+  // plano indefinidamente. Sin cerrarlo a la fuerza, queda compitiendo por
+  // CPU/memoria con la SIGUIENTE búsqueda (de este u otro usuario),
+  // arrastrándola a timeouts en cadena. Esto cierra esa fuga.
+  const abortHandle = {};
+
   try {
     const results = await withHardTimeout(
       searchGoogleMaps(query.trim(), location.trim(), limit, {
         deepScan: Boolean(deepScan),
         onProgress: progressCallback,
+        abortHandle,
       }),
       HARD_TIMEOUT_MS
     );
@@ -858,6 +866,16 @@ app.post("/api/public/scrape", async (req, res) => {
   } catch (error) {
     const raw = error.message || "";
     console.log(`[public-scrape-error] rubro="${query}" ciudad="${location}" error_crudo="${raw}"\n${error.stack || ""}`);
+
+    // Si el que "ganó" fue nuestro timeout duro (no un error real de
+    // Playwright), el scraper sigue corriendo en segundo plano con su
+    // propio navegador abierto. Lo matamos a la fuerza para que no quede
+    // compitiendo por recursos con la próxima búsqueda.
+    if (raw === "timeout_total_busqueda" && abortHandle.browser) {
+      console.log("[abort] cerrando navegador huerfano tras timeout_total_busqueda");
+      abortHandle.browser.close().catch(() => {});
+    }
+
     let friendly = raw.length > 200 ? raw.slice(0, 200) + "..." : raw;
     if (raw.includes("Timeout") || raw.includes("timeout")) friendly = "Google Maps tardo demasiado. Espera y vuelve a intentar.";
     job.error = friendly;

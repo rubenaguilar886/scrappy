@@ -395,12 +395,20 @@
       chip.type = 'button';
       chip.className = 'pack-chip';
       chip.innerHTML =
-        '<span><b>' + esc(p.rubro) + '</b> en ' + esc(p.ciudad) + '</span>' +
+        '<span><b>' + esc(p.rubro) + '</b> — cualquier distrito de ' + esc(p.ciudad) + '</span>' +
         '<span>' + remaining + ' créditos</span>';
       chip.onclick = function () {
+        // Solo rellenamos el rubro — el paquete cubre cualquier distrito
+        // de la ciudad, así que dejamos el campo de distrito vacío (y con
+        // el foco puesto ahí) para que el usuario escriba el distrito que
+        // quiere buscar, en vez de autocompletar solo "Lima" y dar la
+        // impresión de que ya está listo para buscar sin especificarlo.
         document.getElementById('rubro').value  = p.rubro;
-        document.getElementById('ciudad').value = p.ciudad;
-        window.scrollTo({ top: document.getElementById('btnSearch').offsetTop - 100, behavior: 'smooth' });
+        var ciudadInput = document.getElementById('ciudad');
+        ciudadInput.value = '';
+        ciudadInput.placeholder = 'Ej. Miraflores, ' + p.ciudad;
+        window.scrollTo({ top: ciudadInput.offsetTop - 100, behavior: 'smooth' });
+        ciudadInput.focus();
       };
       list.appendChild(chip);
     });
