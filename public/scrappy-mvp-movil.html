@@ -41,6 +41,16 @@
   }
   .mark svg{width:16px;height:16px;color:var(--accent);}
   header .name{font-weight:700;font-size:19px;}
+  .header-account{
+    margin-left:auto;display:flex;align-items:center;gap:6px;
+    font-size:11.5px;color:var(--sub);white-space:nowrap;
+  }
+  .header-account b{color:var(--sub);font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;}
+  .header-account button{
+    background:none;border:none;color:var(--sub);font-size:11px;font-weight:600;
+    text-decoration:underline;cursor:pointer;font-family:inherit;padding:0;
+  }
+  .header-account button:hover{color:var(--ink);}
 
   .tagline{color:var(--sub);font-size:14px;margin:2px 0 26px;}
   .hero{margin:4px 0 20px;}
@@ -210,6 +220,7 @@
   .action-btn svg{width:15px;height:15px;flex:0 0 auto;}
   .action-btn.whatsapp{background:#1f7a3f;color:#fff;}
   .action-btn.email{background:var(--ink);color:#fff;}
+  .retry-link{background:none;border:none;color:var(--accent-deep);font-weight:600;text-decoration:underline;cursor:pointer;padding:0;font-size:inherit;}
   .msg-toggle{
     width:100%;text-align:left;background:none;border:none;padding:0;
     font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:600;color:var(--accent-deep);cursor:pointer;
@@ -259,12 +270,6 @@
   .login-box input:focus{outline:none;border-color:var(--accent);}
   .login-hint{font-size:12.5px;color:var(--sub);margin-top:10px;line-height:1.5;}
   .login-hint a{color:var(--accent-deep);font-weight:600;text-decoration:none;}
-  .account-bar{
-    display:flex;align-items:center;justify-content:space-between;gap:10px;
-    padding:10px 14px;background:var(--ok-soft);border:1.5px solid var(--ok);border-radius:10px;
-    margin-bottom:18px;font-size:12.5px;color:var(--ok);
-  }
-  .account-bar b{color:var(--ink);}
   .trial-banner{
     display:flex;align-items:center;justify-content:space-between;gap:10px;
     padding:10px 14px;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:10px;
@@ -276,12 +281,6 @@
     background:none;border:none;color:var(--accent-deep);font-size:12px;font-weight:600;
     text-decoration:underline;cursor:pointer;font-family:inherit;flex:0 0 auto;white-space:nowrap;
   }
-  .account-bar button{
-    background:none;border:none;color:var(--sub);font-size:12px;font-weight:600;
-    text-decoration:underline;cursor:pointer;font-family:inherit;flex:0 0 auto;
-    transition:color .15s ease;
-  }
-  .account-bar button:hover{color:var(--ink);}
   .upgrade-banner{
     display:none;margin-top:16px;padding:14px;background:var(--accent-soft);
     border:1.5px solid var(--accent);border-radius:10px;font-size:13px;color:var(--accent-deep);
@@ -323,6 +322,11 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M4 12h16M4 6h10M4 18h13"/></svg>
     </div>
     <span class="name">Scrappy</span>
+    <!-- Estado de sesión — chip chico, no una tarjeta aparte, para no robarle protagonismo a la búsqueda -->
+    <div class="header-account hidden" id="accountBar">
+      <b id="accountEmail"></b>
+      <button onclick="logout()">Salir</button>
+    </div>
   </header>
   <p class="tagline">Encuentra negocios sin web, listos para contactar.</p>
 
@@ -330,15 +334,6 @@
   <div class="hero hidden" id="heroSection">
     <h1 class="hero-title">Encuentra negocios <span>sin web</span>, listos para contactar</h1>
     <p class="hero-sub">Buscamos en Google Maps los negocios de tu rubro y ciudad que no tienen sitio web — te damos su contacto (WhatsApp, email, Instagram) y un mensaje listo para vender tu servicio.</p>
-  </div>
-
-  <!-- Estado de sesión -->
-  <div class="account-bar hidden" id="accountBar">
-    <span style="display:flex;align-items:center;gap:6px;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" style="width:14px;height:14px;flex:0 0 auto;"><path d="M5 13l4 4L19 7"/></svg>
-      Sesión activa: <b id="accountEmail"></b>
-    </span>
-    <button onclick="logout()">Cerrar sesión</button>
   </div>
 
   <!-- Paquetes activos — clic para autocompletar y evitar mismatches de texto -->
@@ -919,6 +914,7 @@
           'Ver diagnóstico y mensajes' +
         '</button>' +
         '<div class="msg-body">' +
+          '<div class="diagnostico-content" data-loaded="0"></div>' +
           '<div class="channel-tabs">' +
             '<button type="button" class="channel-tab active" data-channel="whatsapp" onclick="selectChannel(this)">WhatsApp</button>' +
             '<button type="button" class="channel-tab" data-channel="email" onclick="selectChannel(this)">Email</button>' +
@@ -932,7 +928,8 @@
   }
 
   /* ── Diagnóstico + mensajes por canal (lazy, uno por canal tocado) ── */
-  var outreachCache = {}; // "bizIdx|canal" -> respuesta de /api/outreach
+  var outreachCache      = {}; // "bizIdx|canal" -> respuesta de /api/outreach
+  var diagnosticoShown   = {}; // bizIdx -> true una vez pintado (es igual para cualquier canal)
 
   window.toggleMsg = function (btn) {
     btn.classList.toggle('open');
@@ -954,6 +951,41 @@
     loadOutreach(btn.closest('.card'), btn.dataset.channel);
   };
 
+  window.retryOutreach = function (btn) {
+    var card    = btn.closest('.card');
+    var channel = card.querySelector('.channel-tab.active');
+    loadOutreach(card, channel ? channel.dataset.channel : 'whatsapp');
+  };
+
+  function renderDiagnosticoIfNeeded(card, bizIdx, data) {
+    if (diagnosticoShown[bizIdx]) return;
+    var diagBox = card.querySelector('.diagnostico-content');
+    if (!diagBox) return;
+    diagBox.innerHTML = diagnosticoBoxHtml(data);
+    diagBox.dataset.loaded = '1';
+    diagnosticoShown[bizIdx] = true;
+  }
+
+  function diagnosticoBoxHtml(data) {
+    if (!data.diagnostico || !data.diagnostico.length) return '';
+    return '<div class="diagnostico-box"><p>Diagnóstico para vender</p><ul>' +
+      data.diagnostico.map(function (d) { return '<li>' + esc(d) + '</li>'; }).join('') +
+      '</ul></div>';
+  }
+
+  function channelContentHtml(data, channel, biz) {
+    var html = '';
+    if (channel === 'email' && data.subject) html += msgBlockHtml('Asunto', data.subject);
+    html += msgBlockHtml('Mensaje', data.message);
+    if (data.followups && data.followups.length) {
+      data.followups.forEach(function (f, i) {
+        html += msgBlockHtml('Seguimiento ' + (i + 1), f);
+      });
+    }
+    html += buildActionButton(channel, biz, data);
+    return html;
+  }
+
   async function loadOutreach(card, channel) {
     var bizIdx  = parseInt(card.dataset.bizIdx, 10);
     var biz     = currentResults[bizIdx];
@@ -962,7 +994,8 @@
 
     var cacheKey = bizIdx + '|' + channel;
     if (outreachCache[cacheKey]) {
-      content.innerHTML = renderOutreachHtml(outreachCache[cacheKey], channel, biz);
+      renderDiagnosticoIfNeeded(card, bizIdx, outreachCache[cacheKey]);
+      content.innerHTML = channelContentHtml(outreachCache[cacheKey], channel, biz);
       return;
     }
 
@@ -980,12 +1013,14 @@
 
       if (data.message || (data.diagnostico && data.diagnostico.length)) {
         outreachCache[cacheKey] = data;
-        content.innerHTML = renderOutreachHtml(data, channel, biz);
+        renderDiagnosticoIfNeeded(card, bizIdx, data);
+        content.innerHTML = channelContentHtml(data, channel, biz);
       } else {
         content.innerHTML = '<p class="msg-text">Error al generar: ' + esc(data.error || 'respuesta vacía') + '</p>';
       }
     } catch (e) {
-      content.innerHTML = '<p class="msg-text">Error de conexión. ¿Está corriendo el servidor?</p>';
+      content.innerHTML = '<p class="msg-text">No se pudo generar el mensaje (posible pérdida de conexión). ' +
+        '<button type="button" class="retry-link" onclick="retryOutreach(this)">Reintentar</button></p>';
     }
   }
 
@@ -1016,22 +1051,6 @@
         'Abrir email</a>';
     }
     return '';
-  }
-
-  function renderOutreachHtml(data, channel, biz) {
-    var html = '';
-    if (data.diagnostico && data.diagnostico.length) {
-      html += '<div class="diagnostico-box"><p>Diagnóstico para vender</p><ul>' +
-        data.diagnostico.map(function (d) { return '<li>' + esc(d) + '</li>'; }).join('') +
-        '</ul></div>';
-    }
-    if (channel === 'email' && data.subject) html += msgBlockHtml('Asunto', data.subject);
-    html += msgBlockHtml(channel === 'email' ? 'Mensaje' : 'Primer mensaje', data.message);
-    (data.followups || []).forEach(function (f, idx) {
-      html += msgBlockHtml('Seguimiento ' + (idx + 1), f);
-    });
-    html += buildActionButton(channel, biz, data);
-    return html;
   }
 
   /* ── Copiar (mensajes por canal) ──────────────────── */
