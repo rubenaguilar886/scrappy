@@ -594,14 +594,24 @@ function isBrowserDeadError(e) {
 // se acumula memoria en Chromium, o Google va frenando una sesión que
 // detecta como sostenida/automatizada. Una sesión "fresca" cada tanto
 // mitiga ambos casos.
-const ROTATE_BROWSER_EVERY = 25;
+// BUG encontrado en logs reales: con CONCURRENCY=2, "i" solo avanza en
+// numeros pares (0,2,4,...), asi que "i % 25 === 0" NUNCA es cierto salvo
+// en el multiplo comun de 2 y 25 (osea recien en i=50). Eso significaba
+// que la rotacion casi nunca disparaba a tiempo — el navegador se
+// degradaba desde el negocio ~15-16 en adelante y no se refrescaba hasta
+// (si acaso) el 50, momento en el que ya se habia comido varios minutos
+// del presupuesto de 6 min en paginas lentas/timeouts. Se corrige
+// comparando con "< CONCURRENCY" (dispara en el primer batch que cruza
+// cada multiplo, sin importar el paso) y se baja el umbral a 15, que es
+// donde los logs muestran que empieza la degradacion.
+const ROTATE_BROWSER_EVERY = 15;
 
 async function scrapePlacesParallel(browserHandle, urls, searchQuery, onProgress, abortHandle) {
   const businesses = [];
   const total = urls.length;
 
   for (let i = 0; i < urls.length; i += CONCURRENCY) {
-    if (i > 0 && i % ROTATE_BROWSER_EVERY === 0) {
+    if (i > 0 && i % ROTATE_BROWSER_EVERY < CONCURRENCY) {
       console.log(`[rotacion-navegador] reiniciando navegador en ${i}/${total} para evitar degradacion progresiva`);
       await browserHandle.browser.close().catch(() => {});
       const fresh = await createBrowserContext();
