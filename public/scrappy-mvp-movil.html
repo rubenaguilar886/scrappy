@@ -43,6 +43,10 @@
   header .name{font-weight:700;font-size:19px;}
 
   .tagline{color:var(--sub);font-size:14px;margin:2px 0 26px;}
+  .hero{margin:4px 0 20px;}
+  .hero-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600;line-height:1.25;margin:0 0 8px;}
+  .hero-title span{color:var(--ink);}
+  .hero-sub{font-size:13.5px;color:var(--sub);line-height:1.55;margin:0;}
 
   .field{margin-bottom:16px;}
   .field label{display:block;font-size:12.5px;font-weight:600;color:var(--sub);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;}
@@ -88,16 +92,40 @@
   .btn-search:active{background:#000;transform:scale(.98);}
   .btn-search:disabled{opacity:.5;cursor:not-allowed;}
 
-  .loading{display:none;align-items:center;justify-content:center;gap:10px;padding:28px 0 8px;color:var(--sub);font-size:13.5px;}
+  .loading{display:none;flex-direction:column;gap:10px;padding:28px 0 8px;color:var(--sub);font-size:13.5px;}
   .loading.show{display:flex;}
+  .loading-row{display:flex;align-items:center;justify-content:center;gap:10px;}
   .spinner{width:15px;height:15px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex:0 0 auto;}
   @keyframes spin{to{transform:rotate(360deg);}}
 
+  .progress-track{width:100%;height:5px;background:var(--card);border-radius:999px;overflow:hidden;margin:2px 0 8px;}
+  .progress-fill{
+    height:100%;width:12%;background:var(--accent);border-radius:999px;
+    transition:width .4s ease;
+  }
+  .progress-fill.indeterminate{
+    width:35%;animation:progress-slide 1.3s ease-in-out infinite;
+  }
+  @keyframes progress-slide{
+    0%{margin-left:-35%;}
+    100%{margin-left:100%;}
+  }
+
+  .skeleton-card{
+    background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+    padding:16px;margin-top:4px;
+  }
+  .skeleton-line{height:11px;border-radius:4px;background:var(--line);margin-bottom:8px;opacity:.6;}
+  .skeleton-block{height:34px;border-radius:8px;background:var(--line);opacity:.4;margin-top:4px;}
+  .skeleton-card,.skeleton-line,.skeleton-block{animation:skeleton-pulse 1.4s ease-in-out infinite;}
+  @keyframes skeleton-pulse{0%,100%{opacity:1;}50%{opacity:.55;}}
+
   .results{margin-top:8px;display:none;}
   .results.show{display:block;}
-  .results-head{display:flex;align-items:baseline;justify-content:space-between;margin:20px 0 12px;}
+  .results-head{display:flex;align-items:baseline;justify-content:space-between;margin:20px 0 4px;}
   .results-head h2{font-size:15px;}
   .results-head span{font-size:12px;color:var(--sub);}
+  .results-subtitle{font-size:12.5px;color:var(--sub);margin:0 0 14px;}
 
   .card{
     background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;
@@ -119,6 +147,12 @@
   .contact-check.checked svg{opacity:1;}
   .card-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;cursor:pointer;}
   .card.contacted .card-name{text-decoration:line-through;text-decoration-color:var(--sub);}
+  .card-category{font-size:11px;color:var(--sub);margin-top:1px;}
+  .card-tags{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:0 0 auto;}
+  .quality-tag{
+    font-size:10.5px;font-weight:600;background:var(--ok-soft);color:var(--ok);
+    padding:3px 8px;border-radius:999px;white-space:nowrap;
+  }
   .no-web-tag{
     flex:0 0 auto;display:flex;align-items:center;gap:4px;
     font-size:10.5px;font-weight:600;background:var(--accent-soft);color:var(--accent-deep);
@@ -255,6 +289,7 @@
   }
   .upgrade-banner.show{display:block;}
   .card.locked{opacity:.6;}
+  .card-name.blurred{filter:blur(4px);user-select:none;}
   .locked-tag{
     display:flex;align-items:center;gap:4px;flex:0 0 auto;
     font-size:10.5px;font-weight:600;background:#e5e7eb;color:#6b7280;
@@ -290,6 +325,12 @@
     <span class="name">Scrappy</span>
   </header>
   <p class="tagline">Encuentra negocios sin web, listos para contactar.</p>
+
+  <!-- Hero — solo se muestra a alguien que aún no tiene cuenta ni usó su prueba gratis -->
+  <div class="hero hidden" id="heroSection">
+    <h1 class="hero-title">Encuentra negocios <span>sin web</span>, listos para contactar</h1>
+    <p class="hero-sub">Buscamos en Google Maps los negocios de tu rubro y ciudad que no tienen sitio web — te damos su contacto (WhatsApp, email, Instagram) y un mensaje listo para vender tu servicio.</p>
+  </div>
 
   <!-- Estado de sesión -->
   <div class="account-bar hidden" id="accountBar">
@@ -375,8 +416,21 @@
   <button class="btn-reset" id="btnReset" onclick="resetJob()">↺ Cancelar búsqueda atascada</button>
 
   <div class="loading" id="loading">
-    <div class="spinner"></div>
-    <span id="loadingMsg">Buscando en Google Maps...</span>
+    <div class="loading-row">
+      <div class="spinner"></div>
+      <span id="loadingMsg">Buscando en Google Maps...</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="skeleton-card">
+      <div class="skeleton-line" style="width:55%"></div>
+      <div class="skeleton-line" style="width:35%"></div>
+      <div class="skeleton-block"></div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skeleton-line" style="width:60%"></div>
+      <div class="skeleton-line" style="width:30%"></div>
+      <div class="skeleton-block"></div>
+    </div>
   </div>
 
   <div class="results" id="results">
@@ -384,6 +438,7 @@
       <h2 id="resultsTitle">0 negocios encontrados</h2>
       <span id="progressCount"></span>
     </div>
+    <p class="results-subtitle" id="resultsSubtitle"></p>
   </div>
 
 </div>
@@ -464,6 +519,7 @@
       if (data.loggedIn) {
         document.getElementById('loginBox').classList.add('hidden');
         document.getElementById('trialBanner').classList.add('hidden');
+        document.getElementById('heroSection').classList.add('hidden');
         document.getElementById('searchForm').classList.remove('hidden');
         document.getElementById('accountBar').classList.remove('hidden');
         document.getElementById('accountEmail').textContent = data.email;
@@ -473,15 +529,19 @@
         // para seguir (comprar o buscar de nuevo).
         document.getElementById('loginBox').classList.remove('hidden');
         document.getElementById('trialBanner').classList.add('hidden');
+        document.getElementById('heroSection').classList.add('hidden');
         document.getElementById('searchForm').classList.add('hidden');
         document.getElementById('accountBar').classList.add('hidden');
         document.getElementById('packsBox').classList.add('hidden');
       } else {
         // Sin cuenta todavía, pero con la prueba gratis disponible — deja
         // buscar de una vez, sin pedir correo. Menos fricción para la
-        // primera impresión.
+        // primera impresión. El hero (titular + explicación) solo se
+        // muestra en este estado — a un usuario que ya vuelve no le hace
+        // falta que se lo expliquen otra vez.
         document.getElementById('loginBox').classList.add('hidden');
         document.getElementById('trialBanner').classList.remove('hidden');
+        document.getElementById('heroSection').classList.remove('hidden');
         document.getElementById('searchForm').classList.remove('hidden');
         document.getElementById('accountBar').classList.add('hidden');
         document.getElementById('packsBox').classList.add('hidden');
@@ -625,6 +685,10 @@
     setSearching(true);
     document.getElementById('loading').classList.add('show');
     document.getElementById('results').classList.remove('show');
+    document.getElementById('resultsSubtitle').textContent = '';
+    var progressFillEl = document.getElementById('progressFill');
+    progressFillEl.classList.add('indeterminate');
+    progressFillEl.style.width = '';
     setLoadingMsg('Iniciando búsqueda…');
 
     document.getElementById('upgradeBanner').classList.remove('show');
@@ -660,6 +724,12 @@
         if (status.progress && status.progress.message) {
           setLoadingMsg(status.progress.message);
         }
+        var pfEl = document.getElementById('progressFill');
+        if (status.progress && status.progress.total > 0) {
+          pfEl.classList.remove('indeterminate');
+          var pct = Math.min(100, Math.round((status.progress.current / status.progress.total) * 100));
+          pfEl.style.width = pct + '%';
+        }
         if (!status.running) {
           clearInterval(pollTimer);
           document.getElementById('loading').classList.remove('show');
@@ -686,10 +756,24 @@
           var results = status.results || [];
           if (onlyNoWeb) results = results.filter(function (b) { return b.locked || !b.website; });
 
-          if (status.metrics && status.metrics.lockedCount > 0) {
+          var lockedCount = (status.metrics && status.metrics.lockedCount) || 0;
+          if (lockedCount > 0) {
             var banner = document.getElementById('upgradeBanner');
-            banner.textContent = 'Hay ' + status.metrics.lockedCount + ' prospectos más para este rubro y ciudad — compra un Paquete Ciudad o el Plan Pro para desbloquearlos.';
+            banner.textContent = 'Hay ' + lockedCount + ' prospectos más para este rubro y ciudad — compra un Paquete Ciudad o el Plan Pro para desbloquearlos.';
             banner.classList.add('show');
+          }
+
+          var totalFound  = results.length;
+          var unlockedN   = totalFound - lockedCount;
+          var subtitle    = document.getElementById('resultsSubtitle');
+          if (lockedCount > 0) {
+            subtitle.textContent = unlockedN + ' de ' + totalFound + ' completos' +
+              (status.metrics && status.metrics.isAnonTrial ? ' · viendo tu búsqueda gratis' : '') +
+              ' — el resto se desbloquea con un paquete.';
+          } else if (status.metrics && status.metrics.isAnonTrial) {
+            subtitle.textContent = 'Viendo tu búsqueda gratis — inicia sesión para buscar de nuevo.';
+          } else {
+            subtitle.textContent = '';
           }
 
           currentResults = results;
@@ -797,7 +881,7 @@
       card.innerHTML =
         '<div class="card-top">' +
           '<div class="card-left">' +
-            '<div class="card-name">' + esc(biz.name) + '</div>' +
+            '<div class="card-name blurred">' + esc(biz.name) + '</div>' +
           '</div>' +
           '<div class="locked-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Bloqueado</div>' +
         '</div>' +
@@ -805,15 +889,24 @@
       return card;
     }
 
+    var qualityLabel = biz.opportunityTier === 'A' ? 'Excelente prospecto'
+      : biz.opportunityTier === 'B' ? 'Buen prospecto' : '';
+
     card.innerHTML =
       '<div class="card-top">' +
         '<div class="card-left">' +
           '<div class="contact-check" onclick="toggleContact(this)">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10"/></svg>' +
           '</div>' +
-          '<div class="card-name" onclick="toggleCardDetails(this)">' + esc(biz.name) + '</div>' +
+          '<div>' +
+            '<div class="card-name" onclick="toggleCardDetails(this)">' + esc(biz.name) + '</div>' +
+            (biz.category ? '<div class="card-category">' + esc(biz.category) + '</div>' : '') +
+          '</div>' +
         '</div>' +
-        (noWeb ? '<div class="no-web-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="9"/><path d="M4.5 4.5l15 15"/></svg>' + (biz.deliveryApp ? 'Solo delivery' : 'Sin web') + '</div>' : '') +
+        '<div class="card-tags">' +
+          (noWeb ? '<div class="no-web-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="9"/><path d="M4.5 4.5l15 15"/></svg>' + (biz.deliveryApp ? 'Solo delivery' : 'Sin web') + '</div>' : '') +
+          (qualityLabel ? '<div class="quality-tag">' + esc(qualityLabel) + '</div>' : '') +
+        '</div>' +
         '<div class="expand-chevron" onclick="toggleCardDetails(this)">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 18l6-6-6-6"/></svg>' +
         '</div>' +
