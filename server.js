@@ -529,14 +529,25 @@ app.post("/api/tone-config", (req, res) => {
 });
 
 // ── /api/outreach ─────────────────────────────────────────────────────
+// Sin "channel": comportamiento de siempre (usado por la herramienta
+// interna/CRM) — un solo mensaje de texto, sin tocar su forma de
+// respuesta para no romper nada ahí.
+// Con "channel" (whatsapp/email/instagram): usado por el MVP público —
+// devuelve un formato enriquecido con diagnóstico de venta + secuencia
+// de seguimiento + tono/formato adaptado al canal.
 app.post("/api/outreach", async (req, res) => {
-  const { business, bd, regenerate } = req.body || {};
+  const { business, bd, regenerate, channel } = req.body || {};
   if (!business?.name) return res.status(400).json({ error: "Faltan datos del negocio." });
 
-  // Caché por teléfono: si ya generamos un mensaje para este lead y no
-  // se pidió regenerar explícitamente, lo devolvemos sin llamar a Claude.
   const phone = business.phone || business.whatsapp || "";
-  if (phone && !regenerate) {
+
+  if (channel) {
+    const cacheKey = phone ? `${phone}|${channel}` : "";
+    if (cacheKey && !regenerate) {
+      const cached = messageCache.getCachedRaw(cacheKey);
+      if (cached) return res.json({ ...cached, cached: true });
+    }
+  } else if (phone && !regenerate) {
     const cached = messageCache.getCached(phone);
     if (cached) return res.json({ message: cached.message, cached: true });
   }
@@ -568,10 +579,59 @@ app.post("/api/outreach", async (req, res) => {
     webLine +
     "\n\nGenera el mensaje de outreach en Espanol neutro latinoamericano.";
 
+  if (!channel) {
+    // Comportamiento de siempre — sin tocar (lo usa la herramienta interna).
+    try {
+      const text = await callClaude(system, user);
+      if (phone) messageCache.setCached(phone, text);
+      res.json({ message: text, cached: false });
+    } catch (err) {
+      console.error("outreach error:", err.message);
+      res.status(500).json({ error: err.message });
+    }
+    return;
+  }
+
+  // ── Formato enriquecido para el MVP público ───────────────────────────
+  const CHANNEL_INSTRUCTIONS = {
+    whatsapp:  "Canal: WhatsApp. Mensaje principal corto y directo, tono cercano/casual, maximo 3 lineas. Sin asunto (subject debe ser null).",
+    email:     "Canal: Email. Incluye un asunto corto y persuasivo. El mensaje principal es un poco mas formal y completo (4-6 lineas).",
+    instagram: "Canal: Instagram DM. Mensaje muy corto y casual (1-2 lineas), como un mensaje directo informal. Sin asunto (subject debe ser null).",
+  };
+  const channelInstr = CHANNEL_INSTRUCTIONS[channel] || CHANNEL_INSTRUCTIONS.whatsapp;
+
+  const richUser = user + "\n\n" + channelInstr + "\n\n" +
+    "Ademas del mensaje, arma un 'diagnostico para vender': 2-3 frases " +
+    "cortas y especificas (no genericas) que le expliquen al PROPIO " +
+    "negocio por que le conviene contratar el servicio, usando sus datos " +
+    "reales (rating, cantidad de resenas, categoria) como argumento — " +
+    "el mismo estilo que usaria un consultor mostrandole una oportunidad " +
+    "concreta, no una lista de beneficios generica del servicio.\n\n" +
+    "Responde EXCLUSIVAMENTE con un JSON valido, sin texto antes ni " +
+    "despues, con esta forma exacta:\n" +
+    '{"diagnostico": ["frase 1", "frase 2", "frase 3"], "subject": "asunto o null si no es email", "message": "mensaje principal", "followups": ["mensaje de seguimiento 1", "mensaje de seguimiento 2"]}';
+
   try {
-    const text = await callClaude(system, user);
-    if (phone) messageCache.setCached(phone, text);
-    res.json({ message: text, cached: false });
+    const raw = await callClaude(system, richUser);
+    let parsed;
+    try {
+      const jsonMatch = raw.match(/\{[\s\S]*\}/);
+      parsed = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
+    } catch (parseErr) {
+      // Claude no devolvio JSON limpio — degradar con gracia en vez de
+      // fallar toda la peticion: usamos el texto crudo como mensaje único.
+      parsed = { diagnostico: [], subject: null, message: raw, followups: [] };
+    }
+
+    const result = {
+      diagnostico: Array.isArray(parsed.diagnostico) ? parsed.diagnostico.slice(0, 3) : [],
+      subject: parsed.subject || null,
+      message: parsed.message || "",
+      followups: Array.isArray(parsed.followups) ? parsed.followups.slice(0, 2) : [],
+    };
+
+    if (phone) messageCache.setCachedRaw(`${phone}|${channel}`, result);
+    res.json({ ...result, cached: false });
   } catch (err) {
     console.error("outreach error:", err.message);
     res.status(500).json({ error: err.message });

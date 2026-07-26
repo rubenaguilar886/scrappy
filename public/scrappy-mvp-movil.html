@@ -149,6 +149,33 @@
   .contact-chip.whatsapp{background:#e4f7ea;color:#1f7a3f;border-color:#bfe8cd;}
   .contact-chip.whatsapp:hover{border-color:#1f7a3f;}
   .contact-none{font-size:12px;color:var(--sub);font-style:italic;margin-bottom:12px;}
+  .channel-tabs{display:flex;gap:6px;margin-bottom:12px;}
+  .channel-tab{
+    flex:1;padding:8px 6px;border-radius:8px;border:1.5px solid var(--line);
+    background:#fff;font-family:inherit;font-size:12px;font-weight:600;color:var(--sub);cursor:pointer;
+    transition:background .15s ease,color .15s ease,border-color .15s ease;
+  }
+  .channel-tab.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .diagnostico-box{
+    background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:8px;
+    padding:12px;margin-bottom:12px;
+  }
+  .diagnostico-box p{font-size:11px;font-weight:600;color:var(--accent-deep);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px;}
+  .diagnostico-box ul{margin:0;padding-left:16px;}
+  .diagnostico-box li{font-size:12.5px;color:var(--accent-deep);line-height:1.5;margin-bottom:4px;}
+  .msg-block{margin-bottom:10px;}
+  .msg-block-label{font-size:11px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;}
+  .copy-inline{background:none;border:none;color:var(--sub);font-size:11.5px;font-weight:600;cursor:pointer;text-decoration:underline;font-family:inherit;text-transform:none;letter-spacing:0;}
+  .copy-inline:hover{color:var(--ink);}
+  .action-btn{
+    width:100%;padding:11px;border-radius:8px;border:none;font-family:'Space Grotesk',sans-serif;
+    font-weight:600;font-size:13.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+    margin-top:4px;transition:transform .12s ease;text-decoration:none;
+  }
+  .action-btn:active{transform:scale(.98);}
+  .action-btn svg{width:15px;height:15px;flex:0 0 auto;}
+  .action-btn.whatsapp{background:#1f7a3f;color:#fff;}
+  .action-btn.email{background:var(--ink);color:#fff;}
   .msg-toggle{
     width:100%;text-align:left;background:none;border:none;padding:0;
     font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:600;color:var(--accent-deep);cursor:pointer;
@@ -796,45 +823,57 @@
         contactHtml +
         '<button class="msg-toggle" onclick="toggleMsg(this)">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 18l6-6-6-6"/></svg>' +
-          'Ver mensaje generado' +
+          'Ver diagnóstico y mensajes' +
         '</button>' +
         '<div class="msg-body">' +
-          '<div class="msg-text" data-state="idle"></div>' +
-          '<button class="copy-btn" style="display:none" onclick="copyMsgFromCard(this)">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">' +
-              '<rect x="9" y="9" width="12" height="12" rx="2"/>' +
-              '<path d="M5 15V5a2 2 0 0 1 2-2h10"/>' +
-            '</svg>' +
-            'Copiar mensaje' +
-          '</button>' +
+          '<div class="channel-tabs">' +
+            '<button type="button" class="channel-tab active" data-channel="whatsapp" onclick="selectChannel(this)">WhatsApp</button>' +
+            '<button type="button" class="channel-tab" data-channel="email" onclick="selectChannel(this)">Email</button>' +
+            '<button type="button" class="channel-tab" data-channel="instagram" onclick="selectChannel(this)">Instagram</button>' +
+          '</div>' +
+          '<div class="outreach-content" data-loaded="0"></div>' +
         '</div>' +
       '</div>';
 
     return card;
   }
 
-  /* ── Mensaje outreach (lazy) ─────────────────────── */
-  window.toggleMsg = async function (btn) {
+  /* ── Diagnóstico + mensajes por canal (lazy, uno por canal tocado) ── */
+  var outreachCache = {}; // "bizIdx|canal" -> respuesta de /api/outreach
+
+  window.toggleMsg = function (btn) {
     btn.classList.toggle('open');
     var body = btn.nextElementSibling;
     body.classList.toggle('open');
     if (!body.classList.contains('open')) return;
 
-    var msgText = body.querySelector('.msg-text');
-    if (msgText.dataset.state !== 'idle') return; /* ya está cargando o cargado */
+    var card    = btn.closest('.card');
+    var content = body.querySelector('.outreach-content');
+    if (content.dataset.loaded === '1') return; /* ya se cargó el canal default */
+    content.dataset.loaded = '1';
+    loadOutreach(card, 'whatsapp');
+  };
 
-    msgText.dataset.state = 'loading';
-    msgText.classList.add('loading');
-    msgText.textContent = 'Generando mensaje personalizado…';
+  window.selectChannel = function (btn) {
+    var tabs = btn.parentElement.querySelectorAll('.channel-tab');
+    tabs.forEach(function (t) { t.classList.remove('active'); });
+    btn.classList.add('active');
+    loadOutreach(btn.closest('.card'), btn.dataset.channel);
+  };
 
-    var card   = btn.closest('.card');
-    var bizIdx = parseInt(card.dataset.bizIdx, 10);
-    var biz    = currentResults[bizIdx];
-    if (!biz) {
-      msgText.textContent   = 'Error: negocio no encontrado.';
-      msgText.dataset.state = 'error';
+  async function loadOutreach(card, channel) {
+    var bizIdx  = parseInt(card.dataset.bizIdx, 10);
+    var biz     = currentResults[bizIdx];
+    var content = card.querySelector('.outreach-content');
+    if (!biz) { content.innerHTML = '<p class="msg-text">Error: negocio no encontrado.</p>'; return; }
+
+    var cacheKey = bizIdx + '|' + channel;
+    if (outreachCache[cacheKey]) {
+      content.innerHTML = renderOutreachHtml(outreachCache[cacheKey], channel, biz);
       return;
     }
+
+    content.innerHTML = '<p class="msg-text loading">Generando mensaje personalizado…</p>';
 
     var bd = currentServicio ? { oferta: currentServicio } : null;
 
@@ -842,40 +881,73 @@
       var res  = await fetch('/api/outreach', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ business: biz, bd: bd }),
+        body: JSON.stringify({ business: biz, bd: bd, channel: channel }),
       });
       var data = await res.json();
 
-      if (data.message) {
-        msgText.textContent   = data.message;
-        msgText.dataset.state = 'done';
-        msgText.classList.remove('loading');
-        body.querySelector('.copy-btn').style.display = 'flex';
+      if (data.message || (data.diagnostico && data.diagnostico.length)) {
+        outreachCache[cacheKey] = data;
+        content.innerHTML = renderOutreachHtml(data, channel, biz);
       } else {
-        msgText.textContent   = 'Error al generar: ' + (data.error || 'respuesta vacía');
-        msgText.dataset.state = 'error';
-        msgText.classList.remove('loading');
+        content.innerHTML = '<p class="msg-text">Error al generar: ' + esc(data.error || 'respuesta vacía') + '</p>';
       }
     } catch (e) {
-      msgText.textContent   = 'Error de conexión. ¿Está corriendo el servidor?';
-      msgText.dataset.state = 'error';
-      msgText.classList.remove('loading');
+      content.innerHTML = '<p class="msg-text">Error de conexión. ¿Está corriendo el servidor?</p>';
     }
-  };
+  }
 
-  /* ── Copiar mensaje ──────────────────────────────── */
-  window.copyMsgFromCard = function (btn) {
-    var text = btn.previousElementSibling.textContent;
+  function msgBlockHtml(label, text) {
+    if (!text) return '';
+    return '<div class="msg-block">' +
+      '<div class="msg-block-label"><span>' + esc(label) + '</span>' +
+        '<button type="button" class="copy-inline" onclick="copyInlineMsg(this)">Copiar</button>' +
+      '</div>' +
+      '<div class="msg-text">' + esc(text) + '</div>' +
+    '</div>';
+  }
+
+  function buildActionButton(channel, biz, data) {
+    if (channel === 'whatsapp' && biz.whatsapp && data.message) {
+      var sep  = biz.whatsapp.indexOf('?') >= 0 ? '&' : '?';
+      var link = biz.whatsapp + sep + 'text=' + encodeURIComponent(data.message);
+      return '<a class="action-btn whatsapp" href="' + esc(link) + '" target="_blank" rel="noopener">' +
+        '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.5.8 3.1 1.2 4.8 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>' +
+        'Enviar por WhatsApp</a>';
+    }
+    if (channel === 'email' && biz.email && data.message) {
+      var link = 'mailto:' + biz.email +
+        '?subject=' + encodeURIComponent(data.subject || '') +
+        '&body=' + encodeURIComponent(data.message);
+      return '<a class="action-btn email" href="' + link + '">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 6l8 6 8-6"/></svg>' +
+        'Abrir email</a>';
+    }
+    return '';
+  }
+
+  function renderOutreachHtml(data, channel, biz) {
+    var html = '';
+    if (data.diagnostico && data.diagnostico.length) {
+      html += '<div class="diagnostico-box"><p>Diagnóstico para vender</p><ul>' +
+        data.diagnostico.map(function (d) { return '<li>' + esc(d) + '</li>'; }).join('') +
+        '</ul></div>';
+    }
+    if (channel === 'email' && data.subject) html += msgBlockHtml('Asunto', data.subject);
+    html += msgBlockHtml(channel === 'email' ? 'Mensaje' : 'Primer mensaje', data.message);
+    (data.followups || []).forEach(function (f, idx) {
+      html += msgBlockHtml('Seguimiento ' + (idx + 1), f);
+    });
+    html += buildActionButton(channel, biz, data);
+    return html;
+  }
+
+  /* ── Copiar (mensajes por canal) ──────────────────── */
+  window.copyInlineMsg = function (btn) {
+    var text = btn.closest('.msg-block-label').nextElementSibling.textContent;
     navigator.clipboard.writeText(text).then(function () {
-      var original = btn.innerHTML;
-      btn.classList.add('copied');
-      btn.innerHTML =
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
-        '<path d="M5 12l5 5 9-9"/></svg> Copiado';
-      setTimeout(function () {
-        btn.classList.remove('copied');
-        btn.innerHTML = original;
-      }, 1800);
+      var original = btn.textContent;
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = original; }, 1500);
     }).catch(function () {});
   };
 
