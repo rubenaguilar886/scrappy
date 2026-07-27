@@ -107,6 +107,12 @@
   .faq-a{max-height:0;overflow:hidden;font-size:12.5px;color:var(--sub);line-height:1.55;transition:max-height .2s ease;}
   .faq-item.open .faq-a{max-height:260px;margin-top:10px;}
 
+  /* ── Footer ────────────────────────────────────────── */
+  .site-footer{margin-top:36px;padding-top:22px;border-top:1.5px solid var(--line);text-align:center;}
+  .site-footer .footer-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:var(--ink);margin-bottom:6px;}
+  .site-footer p{font-size:11.5px;color:var(--sub);line-height:1.6;margin:4px 0;}
+  .site-footer a{color:var(--accent-deep);font-weight:600;text-decoration:none;}
+
   .field{margin-bottom:16px;}
   .field label{display:block;font-size:12.5px;font-weight:600;color:var(--sub);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;}
 
@@ -582,6 +588,16 @@
     </div>
   </div>
 
+  <footer class="site-footer">
+    <div class="footer-name">Scrappy</div>
+    <p>Encuentra a quién venderle, cada semana.</p>
+    <p>Datos públicos de Google Maps ·
+      <a href="https://wa.me/51984235158" target="_blank" rel="noopener">WhatsApp</a> ·
+      <a href="mailto:ruben.aguilar@scrappy-studio.com">ruben.aguilar@scrappy-studio.com</a>
+    </p>
+    <p id="footerYear"></p>
+  </footer>
+
 </div>
 
 <script>
@@ -591,6 +607,9 @@
   var currentResults = [];
   var currentServicio = '';
   var pollTimer = null;
+
+  var footerYearEl = document.getElementById('footerYear');
+  if (footerYearEl) footerYearEl.textContent = '© ' + new Date().getFullYear() + ' Scrappy';
 
   /* ── Sesión — cada navegador tiene su propia búsqueda ──────────── */
   /* Antes toda la app compartía un solo job en el servidor: si dos    */
