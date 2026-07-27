@@ -35,11 +35,6 @@
   .wrap{max-width:480px;margin:0 auto;padding:22px 20px 48px;}
 
   header{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
-  .mark{
-    width:32px;height:32px;border-radius:8px;background:var(--ink);
-    display:flex;align-items:center;justify-content:center;flex:0 0 auto;
-  }
-  .mark svg{width:16px;height:16px;color:var(--accent);}
   header .name{font-weight:700;font-size:19px;}
   .header-account{
     margin-left:auto;display:flex;align-items:center;gap:6px;
@@ -52,7 +47,6 @@
   }
   .header-account button:hover{color:var(--ink);}
 
-  .tagline{color:var(--sub);font-size:14px;margin:2px 0 26px;}
   .hero{margin:4px 0 24px;padding:34px 6px 38px;text-align:center;}
   .hero-badge{
     display:inline-flex;align-items:center;gap:6px;background:var(--card);
@@ -373,9 +367,6 @@
 <div class="wrap">
 
   <header>
-    <div class="mark">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M4 12h16M4 6h10M4 18h13"/></svg>
-    </div>
     <span class="name">Scrappy</span>
     <!-- Estado de sesión — chip chico, no una tarjeta aparte, para no robarle protagonismo a la búsqueda -->
     <div class="header-account hidden" id="accountBar">
@@ -383,13 +374,12 @@
       <button onclick="logout()">Salir</button>
     </div>
   </header>
-  <p class="tagline">Encuentra negocios sin web, listos para contactar.</p>
 
   <!-- Hero — solo se muestra a alguien que aún no tiene cuenta ni usó su prueba gratis -->
   <div class="hero hidden" id="heroSection">
     <span class="hero-badge">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      Scrappy · prospectos locales, listos para contactar
+      Scrappy · encuentra a quién venderle hoy
     </span>
     <h1 class="hero-title">Encuentra negocios <span>sin web</span>, listos para contactar</h1>
     <p class="hero-sub">Buscamos en Google Maps los negocios de tu rubro y ciudad que no tienen sitio web — te damos su contacto (WhatsApp, email, Instagram) y un mensaje listo para vender tu servicio.</p>
@@ -542,7 +532,7 @@
       <button type="button" class="price-cta accent" onclick="startPurchase('lite')">Suscribirme · S/59/mes</button>
     </div>
 
-    <p class="pricing-guarantee">Garantía Scrappy: si en tus primeros 30 días con el Plan Lite no encuentras oportunidades reales para contactar, te devolvemos tu dinero. Nuestro compromiso es ponerte frente a los negocios correctos — lo que pase después de contactarlos depende de ti.</p>
+    <p class="pricing-guarantee">Garantía Scrappy: si en tus primeros 30 días con el Plan Lite no encuentras oportunidades reales para contactar, te devolvemos tu dinero. Nuestro trabajo es ponerte frente a los negocios correctos — el resto ya es tu talento cerrando ventas.</p>
 
     <div class="price-card">
       <h3>Enterprise</h3>
@@ -574,7 +564,7 @@
       <div class="faq-q">¿Qué incluye la Búsqueda Única?
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 5v14M5 12h14"/></svg>
       </div>
-      <div class="faq-a">Por S/39, una sola vez y sin suscripción, recibes 100 prospectos completos de un rubro y una ciudad, con mensajes listos y exportación a CSV. La usas en las búsquedas que necesites durante 30 días.</div>
+      <div class="faq-a">Por S/39, una sola vez y sin suscripción, recibes 100 prospectos completos de un rubro, con mensajes listos y exportación a CSV. Puedes repartirlos entre los distritos que quieras de tu ciudad — la búsqueda no se limita a uno solo. Válido 30 días.</div>
     </div>
 
     <div class="faq-item" onclick="this.classList.toggle('open')">
