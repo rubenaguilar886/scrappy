@@ -54,9 +54,64 @@
 
   .tagline{color:var(--sub);font-size:14px;margin:2px 0 26px;}
   .hero{margin:4px 0 20px;}
+  .hero-badge{
+    display:inline-flex;align-items:center;gap:6px;background:var(--card);
+    border:1px solid var(--line);border-radius:999px;padding:5px 12px;
+    font-size:11.5px;font-weight:600;color:var(--accent-deep);margin-bottom:14px;
+  }
+  .hero-badge svg{width:12px;height:12px;flex:0 0 auto;}
   .hero-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600;line-height:1.25;margin:0 0 8px;}
   .hero-title span{color:var(--ink);}
   .hero-sub{font-size:13.5px;color:var(--sub);line-height:1.55;margin:0;}
+  .hero-trust{font-size:12px;color:var(--sub);line-height:1.5;margin:12px 0 0;}
+
+  /* ── Precios y planes ─────────────────────────────── */
+  .pricing-section{margin-top:36px;padding-top:28px;border-top:1.5px solid var(--line);}
+  .pricing-head{text-align:center;margin-bottom:20px;}
+  .pricing-head h2{font-size:21px;margin-bottom:8px;}
+  .pricing-head p{font-size:13px;color:var(--sub);line-height:1.5;}
+  .price-card{
+    border:1.5px solid var(--line);border-radius:14px;padding:20px;
+    margin-bottom:14px;background:#fff;position:relative;
+  }
+  .price-card.featured{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft) inset;}
+  .price-card-badge{
+    display:inline-block;font-size:10px;font-weight:700;background:var(--accent-soft);
+    color:var(--accent-deep);padding:3px 9px;border-radius:999px;margin-bottom:10px;
+    text-transform:uppercase;letter-spacing:.03em;
+  }
+  .price-card h3{font-size:15px;margin-bottom:8px;}
+  .price-amount{font-size:26px;font-weight:700;color:var(--ink);font-family:'Space Grotesk',sans-serif;}
+  .price-amount span{font-size:12.5px;font-weight:500;color:var(--sub);}
+  .price-desc{font-size:12.5px;color:var(--sub);margin:8px 0 14px;line-height:1.5;}
+  .price-features{list-style:none;margin:0 0 16px;padding:0;}
+  .price-features li{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--ink);margin-bottom:8px;line-height:1.4;}
+  .price-features li svg{width:13px;height:13px;color:var(--ok);flex:0 0 auto;margin-top:2px;}
+  .price-features li.muted{color:var(--sub);}
+  .price-features li.muted svg{color:var(--sub);}
+  .price-cta{
+    display:block;width:100%;text-align:center;padding:12.5px;border-radius:10px;
+    font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;border:none;
+    transition:transform .12s ease;
+  }
+  .price-cta:active{transform:scale(.98);}
+  .price-cta.primary{background:var(--ink);color:#fff;}
+  .price-cta.accent{background:var(--accent);color:var(--navy-deep);}
+  .price-cta.ghost{background:var(--card);color:var(--ink);}
+  .pricing-guarantee{font-size:11.5px;color:var(--sub);text-align:center;margin:4px 0 16px;line-height:1.5;}
+  .enterprise-email{font-size:12px;color:var(--sub);text-align:center;margin:10px 0 0;}
+  .enterprise-email a{color:var(--accent-deep);font-weight:600;text-decoration:none;}
+
+  /* ── FAQ ───────────────────────────────────────────── */
+  .faq-section{margin-top:8px;}
+  .faq-section h2{font-size:19px;margin-bottom:14px;text-align:center;}
+  .faq-item{border-bottom:1px solid var(--line);padding:14px 0;cursor:pointer;}
+  .faq-item:last-child{border-bottom:none;}
+  .faq-q{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13.5px;font-weight:600;color:var(--ink);}
+  .faq-q svg{width:13px;height:13px;color:var(--sub);flex:0 0 auto;transition:transform .18s ease;}
+  .faq-item.open .faq-q svg{transform:rotate(45deg);}
+  .faq-a{max-height:0;overflow:hidden;font-size:12.5px;color:var(--sub);line-height:1.55;transition:max-height .2s ease;}
+  .faq-item.open .faq-a{max-height:260px;margin-top:10px;}
 
   .field{margin-bottom:16px;}
   .field label{display:block;font-size:12.5px;font-weight:600;color:var(--sub);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;}
@@ -332,13 +387,18 @@
 
   <!-- Hero — solo se muestra a alguien que aún no tiene cuenta ni usó su prueba gratis -->
   <div class="hero hidden" id="heroSection">
+    <span class="hero-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      Scrappy · prospectos locales, listos para contactar
+    </span>
     <h1 class="hero-title">Encuentra negocios <span>sin web</span>, listos para contactar</h1>
     <p class="hero-sub">Buscamos en Google Maps los negocios de tu rubro y ciudad que no tienen sitio web — te damos su contacto (WhatsApp, email, Instagram) y un mensaje listo para vender tu servicio.</p>
+    <p class="hero-trust">Tu primera búsqueda es gratis: 10 prospectos completos, sin tarjeta. Planes desde S/39, sin suscripción forzosa.</p>
   </div>
 
   <!-- Paquetes activos — clic para autocompletar y evitar mismatches de texto -->
   <div class="packs-box hidden" id="packsBox">
-    <p class="packs-label">Tus paquetes activos</p>
+    <p class="packs-label">Tus búsquedas y planes activos</p>
     <div id="packsList"></div>
   </div>
 
@@ -346,7 +406,7 @@
   <div class="trial-banner hidden" id="trialBanner">
     <span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5z"/></svg>
-      Tu primera búsqueda es gratis — 3 prospectos completos, sin correo.
+      Tu primera búsqueda es gratis — 10 prospectos completos, sin correo.
     </span>
     <button type="button" onclick="document.getElementById('loginBox').classList.remove('hidden'); document.getElementById('loginBox').scrollIntoView({behavior:'smooth'});">¿Ya tienes cuenta?</button>
   </div>
@@ -436,6 +496,103 @@
     <p class="results-subtitle" id="resultsSubtitle"></p>
   </div>
 
+  <!-- Precios y planes — siempre visible, para poder mandar tráfico directo a esta misma página -->
+  <div class="pricing-section" id="pricingSection">
+    <div class="pricing-head">
+      <h2>Planes y precios</h2>
+      <p>Tu primera búsqueda es gratis, sin tarjeta. Después, compra una búsqueda única o suscríbete.</p>
+    </div>
+
+    <div class="price-card">
+      <h3>Gratis</h3>
+      <div class="price-amount">S/0</div>
+      <p class="price-desc">Para probar Scrappy sin ningún compromiso.</p>
+      <ul class="price-features">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>10 oportunidades completas</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Mensaje de outreach generado</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Copiar mensaje</li>
+        <li class="muted"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 12h14"/></svg>Sin exportación CSV ni historial</li>
+      </ul>
+      <button type="button" class="price-cta ghost" onclick="document.getElementById('searchForm').scrollIntoView({behavior:'smooth'})">Empezar gratis</button>
+    </div>
+
+    <div class="price-card">
+      <h3>Búsqueda Única</h3>
+      <div class="price-amount">S/39 <span>pago único</span></div>
+      <p class="price-desc">100 prospectos completos de un rubro y una ciudad, sin suscripción.</p>
+      <ul class="price-features">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>100 prospectos completos de tu rubro y ciudad</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Mensajes listos por WhatsApp, email e Instagram</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Exportación a CSV</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Válido 30 días, sin renovaciones ni cargos ocultos</li>
+      </ul>
+      <button type="button" class="price-cta primary" onclick="startPurchase('busqueda_unica')">Comprar Búsqueda Única · S/39</button>
+    </div>
+
+    <div class="price-card featured">
+      <span class="price-card-badge">Mejor precio por prospecto</span>
+      <h3>Plan Lite</h3>
+      <div class="price-amount">S/59 <span>/mes</span></div>
+      <p class="price-desc">Uso completo, cualquier rubro y ciudad. Cancela cuando quieras.</p>
+      <ul class="price-features">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Prospección ilimitada, cualquier rubro y ciudad</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Exportación a CSV ilimitada</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Historial y marcar contactados</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Seguimiento básico cada semana</li>
+      </ul>
+      <button type="button" class="price-cta accent" onclick="startPurchase('lite')">Suscribirme · S/59/mes</button>
+    </div>
+
+    <p class="pricing-guarantee">Garantía: si durante tus primeros 30 días con el Plan Lite sientes que no te ayudó a encontrar oportunidades útiles, te devolvemos tu dinero. No prometemos clientes — solo oportunidades.</p>
+
+    <div class="price-card">
+      <h3>Enterprise</h3>
+      <p class="price-desc">Para agencias y equipos con necesidades a medida. Sin precio público.</p>
+      <button type="button" class="price-cta ghost" onclick="startPurchase('enterprise')">Agenda una llamada</button>
+      <p class="enterprise-email">O escríbenos directo a <a href="mailto:ruben.aguilar@scrappy-studio.com?subject=Scrappy%20Enterprise">ruben.aguilar@scrappy-studio.com</a></p>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-section" id="faqSection">
+    <h2>Preguntas frecuentes</h2>
+
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">¿De dónde salen los datos?
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 5v14M5 12h14"/></svg>
+      </div>
+      <div class="faq-a">De información pública de Google Maps: nombre, teléfono, sitio web, calificación y número de reseñas. No usamos perfiles personales ni datos privados.</div>
+    </div>
+
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">¿Necesito tarjeta para probar?
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 5v14M5 12h14"/></svg>
+      </div>
+      <div class="faq-a">No. Tu primera búsqueda es gratis e incluye 10 prospectos completos y totalmente usables, sin tarjeta. Cuando quieras más, compras la Búsqueda Única de S/39 una sola vez o te suscribes al Plan Lite.</div>
+    </div>
+
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">¿Qué incluye la Búsqueda Única?
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 5v14M5 12h14"/></svg>
+      </div>
+      <div class="faq-a">Por S/39, una sola vez y sin suscripción, recibes 100 prospectos completos de un rubro y una ciudad, con mensajes listos y exportación a CSV. La usas en las búsquedas que necesites durante 30 días.</div>
+    </div>
+
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">¿Qué desbloquea el Plan Lite?
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 5v14M5 12h14"/></svg>
+      </div>
+      <div class="faq-a">Uso completo sin límite de rubro o ciudad, exportación a CSV ilimitada, historial de tus búsquedas y la opción de marcar negocios como contactados para no perder seguimiento. Cancela cuando quieras.</div>
+    </div>
+
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">¿Prometen conseguirme clientes?
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 5v14M5 12h14"/></svg>
+      </div>
+      <div class="faq-a">No. Scrappy te da oportunidades reales para contactar — el cierre depende de ti. Por eso nuestra garantía es sobre encontrar oportunidades útiles, no sobre ventas.</div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -470,6 +627,23 @@
     opts.headers = Object.assign({}, opts.headers, { 'X-Scrappy-Session': SESSION_ID });
     return fetch(url, opts);
   }
+
+  /* ── Compra de planes ────────────────────────────────────────────── */
+  /* Todavía no hay pasarela de pago conectada (Culqi pendiente), así    */
+  /* que por ahora el botón de compra abre WhatsApp con un mensaje      */
+  /* pre-armado para coordinar el pago (Yape/Plin/tarjeta) y activar el */
+  /* acceso a mano. Cuando se conecte Culqi, solo hay que reemplazar    */
+  /* esta función para que apunte al link de pago en vez de a WhatsApp. */
+  var CONTACT_WHATSAPP = '51984235158';
+  window.startPurchase = function (plan) {
+    var messages = {
+      busqueda_unica: 'Hola, quiero comprar la Búsqueda Única de Scrappy (S/39, 100 prospectos completos de un rubro y una ciudad, pago único).',
+      lite: 'Hola, quiero suscribirme al Plan Lite de Scrappy (S/59/mes, uso completo).',
+      enterprise: 'Hola, quiero agendar una llamada para conversar sobre el plan Enterprise de Scrappy.',
+    };
+    var text = messages[plan] || 'Hola, quiero más información sobre Scrappy.';
+    window.open('https://wa.me/' + CONTACT_WHATSAPP + '?text=' + encodeURIComponent(text), '_blank');
+  };
 
   /* ── Login (magic link) ─────────────────────────────────────────── */
   window.requestLink = async function () {
@@ -553,7 +727,7 @@
       var subChip = document.createElement('div');
       subChip.className = 'pack-chip';
       subChip.style.cursor = 'default';
-      subChip.innerHTML = '<span><b>Plan Pro</b> — cualquier rubro/ciudad</span><span>' + subscription.daily_limit + '/día</span>';
+      subChip.innerHTML = '<span><b>Plan Lite</b> — cualquier rubro/ciudad</span><span>' + subscription.daily_limit + '/día</span>';
       list.appendChild(subChip);
     }
 
@@ -754,7 +928,7 @@
           var lockedCount = (status.metrics && status.metrics.lockedCount) || 0;
           if (lockedCount > 0) {
             var banner = document.getElementById('upgradeBanner');
-            banner.textContent = 'Hay ' + lockedCount + ' prospectos más para este rubro y ciudad — compra un Paquete Ciudad o el Plan Pro para desbloquearlos.';
+            banner.textContent = 'Hay ' + lockedCount + ' prospectos más para este rubro y ciudad — compra una Búsqueda Única o el Plan Lite para desbloquearlos.';
             banner.classList.add('show');
           }
 

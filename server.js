@@ -854,8 +854,8 @@ app.post("/api/public/scrape", async (req, res) => {
 
   if (access.remaining <= 0) {
     job.error = isAnonTrial
-      ? "Ya usaste tu búsqueda de prueba gratis. Inicia sesión para comprar un paquete o el Plan Pro y seguir buscando."
-      : "No tienes créditos disponibles para este rubro y ciudad. Compra un Paquete Ciudad o suscríbete al Plan Pro.";
+      ? "Ya usaste tu búsqueda de prueba gratis. Inicia sesión para comprar una Búsqueda Única o el Plan Lite y seguir buscando."
+      : "No tienes créditos disponibles para este rubro y ciudad. Compra una Búsqueda Única o suscríbete al Plan Lite.";
     job.progress = { stage: "error", message: job.error };
     job.running = false;
     job.metrics = { needsPayment: true, accessType: access.type, needsAuth: isAnonTrial };
@@ -1011,7 +1011,7 @@ app.post("/api/admin/activate-citypack", requireAdmin, async (req, res) => {
       "INSERT INTO city_packs (user_id, rubro, ciudad, credits_total, expires_at) VALUES ($1, $2, $3, $4, $5)",
       [userId, rubro, ciudad, creditsTotal, expiresAt]
     );
-    res.json({ ok: true, message: `Paquete Ciudad activado para ${email}: ${rubro} en ${ciudad}, ${creditsTotal} créditos, vence ${expiresAt.toISOString().slice(0, 10)}.` });
+    res.json({ ok: true, message: `Búsqueda Única activada para ${email}: ${rubro} en ${ciudad}, ${creditsTotal} créditos, vence ${expiresAt.toISOString().slice(0, 10)}.` });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -1030,7 +1030,7 @@ app.post("/api/admin/activate-subscription", requireAdmin, async (req, res) => {
       "INSERT INTO subscriptions (user_id, daily_limit) VALUES ($1, $2)",
       [userId, dailyLimit]
     );
-    res.json({ ok: true, message: `Plan Pro activado para ${email}: ${dailyLimit} prospectos/día.` });
+    res.json({ ok: true, message: `Plan Lite activado para ${email}: ${dailyLimit} prospectos/día.` });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
