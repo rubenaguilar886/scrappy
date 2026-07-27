@@ -367,6 +367,60 @@
   .pack-chip .pack-chip-right{display:flex;align-items:center;gap:6px;flex:0 0 auto;}
   .pack-chip span{font-size:12px;color:var(--sub);white-space:nowrap;}
   .pack-chip .pack-chip-arrow{width:15px;height:15px;color:var(--accent-deep);flex:0 0 auto;}
+
+  /* ── Nav de escritorio ─────────────────────────────── */
+  /* Oculto por defecto (móvil) — solo aparece dentro del media query de   */
+  /* abajo, así que no cambia nada de la vista móvil.                     */
+  .desktop-nav{display:none;}
+
+  /* ══════════════════════════════════════════════════════════════════
+     ESCRITORIO — todo lo de abajo solo aplica en pantallas anchas.
+     La vista móvil (todo el CSS de arriba) queda intacta.
+     ══════════════════════════════════════════════════════════════════ */
+  @media (min-width: 900px) {
+    .wrap{max-width:1120px;padding:0 40px 72px;}
+
+    header{
+      padding:24px 0;margin-bottom:0;border-bottom:1px solid var(--line);
+    }
+    header .name{font-size:20px;}
+    .desktop-nav{display:flex;align-items:center;gap:28px;margin-left:auto;}
+    .desktop-nav a{color:var(--ink);font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;}
+    .desktop-nav a:hover{color:var(--accent-deep);}
+    .desktop-nav .nav-cta{background:var(--ink);color:#fff;padding:10px 20px;border-radius:8px;}
+    .desktop-nav .nav-cta:hover{color:#fff;opacity:.88;}
+    .header-account{margin-left:20px;}
+
+    .hero{max-width:760px;margin:56px auto 44px;padding:0;}
+    .hero-title{font-size:40px;}
+    .hero-sub{font-size:16px;max-width:520px;}
+
+    .packs-box,.trial-banner,.login-box{max-width:640px;margin-left:auto;margin-right:auto;}
+
+    #searchForm{
+      max-width:960px;margin:0 auto 32px;background:#fff;
+      border:1.5px solid var(--line);border-radius:16px;padding:30px 34px;
+      box-shadow:0 4px 24px rgba(4,44,83,.06);
+    }
+    .field-row{display:flex;gap:22px;align-items:flex-start;}
+    .field-row > .field{flex:1;margin-bottom:0;}
+    .field-row > .toggle-row{flex:0 0 auto;margin-top:30px;}
+    #searchForm > .btn-search{max-width:280px;margin:20px auto 0;}
+
+    .error-banner,.upgrade-banner{max-width:960px;margin-left:auto;margin-right:auto;}
+    .loading,.results{max-width:960px;margin-left:auto;margin-right:auto;}
+
+    .pricing-section{max-width:1000px;margin:64px auto 0;padding-top:40px;}
+    .pricing-head h2{font-size:26px;}
+    .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch;}
+    .price-grid .price-card{margin-bottom:0;display:flex;flex-direction:column;}
+    .price-grid .price-card .price-cta{margin-top:auto;}
+    .pricing-guarantee{max-width:760px;margin:28px auto 24px;}
+    .price-card.enterprise{max-width:480px;margin:0 auto;}
+
+    .faq-section{max-width:720px;margin:48px auto 0;padding-top:32px;}
+    .site-footer{max-width:1000px;margin:48px auto 0;}
+  }
 </style>
 </head>
 <body>
@@ -374,6 +428,12 @@
 
   <header>
     <span class="name">Scrappy</span>
+    <!-- Nav de escritorio — en móvil queda oculto, no cambia nada de esa vista -->
+    <nav class="desktop-nav">
+      <a href="#pricingSection">Precios</a>
+      <a href="#faqSection">FAQ</a>
+      <a class="nav-cta" onclick="window.scrollTo({top:0,behavior:'smooth'})">Probar gratis</a>
+    </nav>
     <!-- Estado de sesión — chip chico, no una tarjeta aparte, para no robarle protagonismo a la búsqueda -->
     <div class="header-account hidden" id="accountBar">
       <b id="accountEmail"></b>
@@ -423,15 +483,17 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
         Qué y dónde buscar
       </p>
-      <div class="field">
-        <label for="rubro">Rubro</label>
-        <input id="rubro" type="text" placeholder="Ej. Tatuajes, veterinarias, spas">
-      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="rubro">Rubro</label>
+          <input id="rubro" type="text" placeholder="Ej. Tatuajes, veterinarias, spas">
+        </div>
 
-      <div class="field">
-        <label for="ciudad">Distrito, ciudad</label>
-        <input id="ciudad" type="text" placeholder="Ej. Miraflores, Lima">
-        <p class="login-hint" style="margin-top:6px;">Busca por distrito (no toda la ciudad de una vez) — tu paquete cubre cualquier distrito de la misma ciudad, así que puedes repetir la búsqueda cambiando solo el distrito para llegar a más negocios.</p>
+        <div class="field">
+          <label for="ciudad">Distrito, ciudad</label>
+          <input id="ciudad" type="text" placeholder="Ej. Miraflores, Lima">
+          <p class="login-hint" style="margin-top:6px;">Busca por distrito (no toda la ciudad de una vez) — tu paquete cubre cualquier distrito de la misma ciudad, así que puedes repetir la búsqueda cambiando solo el distrito para llegar a más negocios.</p>
+        </div>
       </div>
     </div>
 
@@ -440,18 +502,20 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
         Personaliza (opcional)
       </p>
-      <div class="field">
-        <label for="servicio">Servicio que ofreces</label>
-        <input id="servicio" type="text" placeholder="Ej. Diseño de landing pages">
-      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="servicio">Servicio que ofreces</label>
+          <input id="servicio" type="text" placeholder="Ej. Diseño de landing pages">
+        </div>
 
-      <div class="toggle-row">
-        <span>Solo negocios sin sitio web</span>
-        <label class="switch">
-          <input type="checkbox" id="onlyNoWeb" checked>
-          <span class="track"></span>
-          <span class="knob"></span>
-        </label>
+        <div class="toggle-row">
+          <span>Solo negocios sin sitio web</span>
+          <label class="switch">
+            <input type="checkbox" id="onlyNoWeb" checked>
+            <span class="track"></span>
+            <span class="knob"></span>
+          </label>
+        </div>
       </div>
     </div>
 
@@ -498,6 +562,7 @@
       <p>Tu primera búsqueda es gratis, sin tarjeta. Después, compra una búsqueda única o suscríbete.</p>
     </div>
 
+    <div class="price-grid">
     <div class="price-card">
       <h3>Gratis</h3>
       <div class="price-amount">S/0</div>
@@ -537,10 +602,11 @@
       </ul>
       <button type="button" class="price-cta accent" onclick="startPurchase('lite')">Suscribirme · S/59/mes</button>
     </div>
+    </div>
 
     <p class="pricing-guarantee">Garantía Scrappy: si en tus primeros 30 días con el Plan Lite no encuentras oportunidades reales para contactar, te devolvemos tu dinero. Nuestro trabajo es ponerte frente a los negocios correctos, para que tú puedas aplicar tu talento de cerrar ventas.</p>
 
-    <div class="price-card">
+    <div class="price-card enterprise">
       <h3>Enterprise</h3>
       <p class="price-desc">Para agencias y equipos con necesidades a medida. Sin precio público.</p>
       <button type="button" class="price-cta ghost" onclick="startPurchase('enterprise')">Agenda una llamada</button>
