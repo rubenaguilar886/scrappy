@@ -69,11 +69,13 @@
     box-shadow:0 2px 10px rgba(4,44,83,.05);
   }
   .price-card.featured{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft) inset,0 4px 14px rgba(239,159,39,.15);}
+  .price-card.coming-soon{opacity:.72;}
   .price-card-badge{
     display:inline-block;font-size:10px;font-weight:700;background:var(--accent-soft);
     color:var(--accent-deep);padding:3px 9px;border-radius:999px;margin-bottom:10px;
     text-transform:uppercase;letter-spacing:.03em;
   }
+  .price-card-badge.soon{background:#e5e7eb;color:#6b7280;}
   .price-card h3{font-size:15px;margin-bottom:8px;}
   .price-amount{font-size:26px;font-weight:700;color:var(--ink);font-family:'Space Grotesk',sans-serif;}
   .price-amount span{font-size:12.5px;font-weight:500;color:var(--sub);}
@@ -559,7 +561,7 @@
   <div class="pricing-section" id="pricingSection">
     <div class="pricing-head">
       <h2>Planes y precios</h2>
-      <p>Tu primera búsqueda es gratis, sin tarjeta. Después, compra una búsqueda única o suscríbete.</p>
+      <p>Tu primera búsqueda es gratis, sin tarjeta. Después, compra una Búsqueda Única cuando la necesites.</p>
     </div>
 
     <div class="price-grid">
@@ -589,8 +591,8 @@
       <button type="button" class="price-cta primary" onclick="startPurchase('busqueda_unica')">Comprar Búsqueda Única · S/39</button>
     </div>
 
-    <div class="price-card featured">
-      <span class="price-card-badge">Mejor precio por prospecto</span>
+    <div class="price-card coming-soon">
+      <span class="price-card-badge soon">Próximamente</span>
       <h3>Plan Lite</h3>
       <div class="price-amount">S/59 <span>/mes</span></div>
       <p class="price-desc">Uso completo, cualquier rubro y ciudad. Cancela cuando quieras.</p>
@@ -600,11 +602,11 @@
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Historial y marcar contactados</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Seguimiento básico cada semana</li>
       </ul>
-      <button type="button" class="price-cta accent" onclick="startPurchase('lite')">Suscribirme · S/59/mes</button>
+      <button type="button" class="price-cta ghost" onclick="startPurchase('lite_waitlist')">Avísame cuando esté disponible</button>
     </div>
     </div>
 
-    <p class="pricing-guarantee">Garantía Scrappy: si en tus primeros 30 días con el Plan Lite no encuentras oportunidades reales para contactar, te devolvemos tu dinero. Nuestro trabajo es ponerte frente a los negocios correctos, para que tú puedas aplicar tu talento de cerrar ventas.</p>
+    <p class="pricing-guarantee">Cuando lancemos el Plan Lite tendrás la Garantía Scrappy: si en tus primeros 30 días no encuentras oportunidades reales para contactar, te devolvemos tu dinero. Nuestro trabajo es ponerte frente a los negocios correctos, para que tú puedas aplicar tu talento de cerrar ventas.</p>
 
     <div class="price-card enterprise">
       <h3>Enterprise</h3>
@@ -643,7 +645,7 @@
       <div class="faq-q">¿Qué desbloquea el Plan Lite?
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 5v14M5 12h14"/></svg>
       </div>
-      <div class="faq-a">Uso completo sin límite de rubro o ciudad, exportación a CSV ilimitada, historial de tus búsquedas y la opción de marcar negocios como contactados para no perder seguimiento. Cancela cuando quieras.</div>
+      <div class="faq-a">Uso completo sin límite de rubro o ciudad, exportación a CSV ilimitada, historial de tus búsquedas y la opción de marcar negocios como contactados para no perder seguimiento. Cancela cuando quieras. Está por lanzarse — mientras tanto, puedes usar tu prueba gratis o la Búsqueda Única.</div>
     </div>
 
     <div class="faq-item" onclick="this.classList.toggle('open')">
@@ -712,7 +714,7 @@
   window.startPurchase = function (plan) {
     var messages = {
       busqueda_unica: 'Hola, quiero comprar la Búsqueda Única de Scrappy (S/39, 100 prospectos completos de un rubro y una ciudad, pago único).',
-      lite: 'Hola, quiero suscribirme al Plan Lite de Scrappy (S/59/mes, uso completo).',
+      lite_waitlist: 'Hola, quiero que me avisen cuando el Plan Lite de Scrappy (S/59/mes) esté disponible.',
       enterprise: 'Hola, quiero agendar una llamada para conversar sobre el plan Enterprise de Scrappy.',
     };
     var text = messages[plan] || 'Hola, quiero más información sobre Scrappy.';
