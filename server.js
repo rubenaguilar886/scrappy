@@ -69,6 +69,15 @@ async function callClaude(systemPrompt, userMessage) {
 const app = express();
 const PORT = process.env.PORT || 3847;
 app.use(express.json());
+
+// La raíz del dominio ahora sirve Scrappy Lite (el MVP móvil), no la
+// herramienta completa — desde que se pausó la venta de webs, Scrappy Lite
+// es el único producto activo. Esta ruta va ANTES de express.static para
+// que gane la carrera contra el index.html que serviría por defecto.
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "scrappy-mvp-movil.html"));
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 
 // ── Jobs por sesión ──────────────────────────────────────────────────
