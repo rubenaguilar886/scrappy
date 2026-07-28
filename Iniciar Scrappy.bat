@@ -40,7 +40,7 @@ echo  NO cierres esta ventana mientras uses Scrappy.
 echo  Para cerrar Scrappy, cierra esta ventana.
 echo.
 
-start "" "http://localhost:3847"
+start "" "http://localhost:3847/index.html"
 node server.js
 
 pause
