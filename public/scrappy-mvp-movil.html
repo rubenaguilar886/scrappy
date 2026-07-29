@@ -3,6 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1046353961661334');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 <meta name="color-scheme" content="light">
 <meta name="supported-color-schemes" content="light">
 <title>Scrappy — Encuentra tus próximos clientes</title>
@@ -955,6 +972,11 @@
         throw new Error('Tu sesión expiró. Vuelve a pedir tu link de acceso.');
       }
       if (!res.ok) throw new Error(data.error || 'Error al iniciar búsqueda.');
+
+      // Evento personalizado: alguien de verdad mandó una búsqueda (más
+      // allá de solo cargar la página) — clave para saber si el problema
+      // está en la landing o más adelante en el embudo.
+      if (window.fbq) fbq('trackCustom', 'BusquedaIniciada', { rubro: rubro, ciudad: ciudad });
     } catch (e) {
       document.getElementById('loading').classList.remove('show');
       setSearching(false);
@@ -1002,6 +1024,12 @@
 
           var results = status.results || [];
           if (onlyNoWeb) results = results.filter(function (b) { return b.locked || !b.website; });
+
+          // Evento personalizado: la búsqueda terminó con éxito y vio
+          // resultados reales — esta es la señal de "probó el producto"
+          // que más adelante usaremos para optimizar una campaña de
+          // Conversión (no solo Tráfico).
+          if (window.fbq) fbq('trackCustom', 'BusquedaExitosa', { cantidad: results.length });
 
           var lockedCount = (status.metrics && status.metrics.lockedCount) || 0;
           if (lockedCount > 0) {
