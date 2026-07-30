@@ -487,7 +487,7 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
        vistazo. Por eso esto es una sola linea + flecha animada apuntando
        al formulario, en vez de badge+titulo+subtitulo. -->
   <div class="hero hidden" id="heroSection">
-    <h1 class="hero-title">Prueba gratis, <span>sin registro</span> ↓</h1>
+    <h1 class="hero-title">Prueba gratis, <span>sin registro</span></h1>
     <div class="hero-arrow">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 4v16M5 13l7 7 7-7"/></svg>
     </div>
@@ -612,19 +612,6 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
 
     <div class="price-grid">
     <div class="price-card">
-      <h3>Gratis</h3>
-      <div class="price-amount">S/0</div>
-      <p class="price-desc">Para probar Scrappy sin ningún compromiso.</p>
-      <ul class="price-features">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>10 oportunidades completas</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Mensaje de outreach generado</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Copiar mensaje</li>
-        <li class="muted"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 12h14"/></svg>Sin exportación CSV ni historial</li>
-      </ul>
-      <button type="button" class="price-cta ghost" onclick="document.getElementById('searchForm').scrollIntoView({behavior:'smooth'})">Empezar gratis</button>
-    </div>
-
-    <div class="price-card">
       <h3>Búsqueda Única</h3>
       <div class="price-amount">S/39 <span>pago único</span></div>
       <p class="price-desc">100 prospectos completos de un rubro en tu ciudad, sin suscripción.</p>
@@ -637,22 +624,9 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
       <button type="button" class="price-cta primary" onclick="startPurchase('busqueda_unica')">Comprar Búsqueda Única · S/39</button>
     </div>
 
-    <div class="price-card coming-soon">
-      <span class="price-card-badge soon">Próximamente</span>
-      <h3>Plan Lite</h3>
-      <div class="price-amount">S/59 <span>/mes</span></div>
-      <p class="price-desc">Uso completo, cualquier rubro y ciudad. Cancela cuando quieras.</p>
-      <ul class="price-features">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Prospección ilimitada, cualquier rubro y ciudad</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Exportación a CSV ilimitada</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Historial y marcar contactados</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Seguimiento básico cada semana</li>
-      </ul>
-      <button type="button" class="price-cta ghost" onclick="startPurchase('lite_waitlist')">Avísame cuando esté disponible</button>
-    </div>
     </div>
 
-    <p class="pricing-guarantee">Cuando lancemos el Plan Lite tendrás la Garantía Scrappy: si en tus primeros 30 días no encuentras oportunidades reales para contactar, te devolvemos tu dinero. Nuestro trabajo es ponerte frente a los negocios correctos, para que tú puedas aplicar tu talento de cerrar ventas.</p>
+    <p class="pricing-guarantee">Garantía Scrappy: si en tus primeros 30 días no encuentras oportunidades reales para contactar, te devolvemos tu dinero. Nuestro trabajo es ponerte frente a los negocios correctos, para que tú puedas aplicar tu talento de cerrar ventas.</p>
 
     <div class="price-card enterprise">
       <h3>Enterprise</h3>
@@ -677,7 +651,7 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
       <div class="faq-q">¿Necesito tarjeta para probar?
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 5v14M5 12h14"/></svg>
       </div>
-      <div class="faq-a">No. Tu primera búsqueda es gratis e incluye 10 prospectos completos y totalmente usables, sin tarjeta. Cuando quieras más, compras la Búsqueda Única de S/39 una sola vez o te suscribes al Plan Lite.</div>
+      <div class="faq-a">No. Tu primera búsqueda es gratis e incluye 10 prospectos completos y totalmente usables, sin tarjeta. Cuando quieras más, compras la Búsqueda Única de S/39 una sola vez.</div>
     </div>
 
     <div class="faq-item" onclick="this.classList.toggle('open')">
@@ -685,13 +659,6 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 5v14M5 12h14"/></svg>
       </div>
       <div class="faq-a">Por S/39, una sola vez y sin suscripción, recibes 100 prospectos completos de un rubro, con mensajes listos y exportación a CSV. Puedes repartirlos entre los distritos que quieras de tu ciudad — la búsqueda no se limita a uno solo. Válido 30 días.</div>
-    </div>
-
-    <div class="faq-item" onclick="this.classList.toggle('open')">
-      <div class="faq-q">¿Qué desbloquea el Plan Lite?
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 5v14M5 12h14"/></svg>
-      </div>
-      <div class="faq-a">Uso completo sin límite de rubro o ciudad, exportación a CSV ilimitada, historial de tus búsquedas y la opción de marcar negocios como contactados para no perder seguimiento. Cancela cuando quieras. Está por lanzarse — mientras tanto, puedes usar tu prueba gratis o la Búsqueda Única.</div>
     </div>
 
     <div class="faq-item" onclick="this.classList.toggle('open')">
@@ -1061,7 +1028,7 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
           var lockedCount = (status.metrics && status.metrics.lockedCount) || 0;
           if (lockedCount > 0) {
             var banner = document.getElementById('upgradeBanner');
-            banner.textContent = 'Hay ' + lockedCount + ' prospectos más para este rubro y ciudad — compra una Búsqueda Única o el Plan Lite para desbloquearlos.';
+            banner.textContent = 'Hay ' + lockedCount + ' prospectos más para este rubro y ciudad — compra una Búsqueda Única para desbloquearlos.';
             banner.classList.add('show');
           }
 
