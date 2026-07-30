@@ -74,16 +74,21 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
   }
   .header-account button:hover{color:var(--ink);}
 
-  .hero{margin:4px 0 24px;padding:34px 6px 38px;text-align:center;}
-  .hero-badge{
-    display:inline-flex;align-items:center;gap:6px;background:var(--card);
-    border:1px solid var(--line);border-radius:999px;padding:5px 12px;
-    font-size:11.5px;font-weight:600;color:var(--accent-deep);margin-bottom:18px;
+  .hero{margin:2px 0 14px;padding:10px 6px 4px;text-align:center;}
+  .hero-title{
+    font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:700;line-height:1.25;
+    margin:0 0 6px;
   }
-  .hero-badge svg{width:12px;height:12px;flex:0 0 auto;}
-  .hero-title{font-family:'Space Grotesk',sans-serif;font-size:25px;font-weight:600;line-height:1.28;margin:0 0 12px;}
-  .hero-title span{color:var(--ink);}
-  .hero-sub{font-size:14px;color:var(--sub);line-height:1.55;margin:0 auto;max-width:360px;}
+  .hero-title span{color:var(--accent-deep);}
+  .hero-arrow{
+    display:flex;justify-content:center;margin-top:2px;color:var(--accent-deep);
+    animation:heroBounce 1.4s ease-in-out infinite;
+  }
+  .hero-arrow svg{width:20px;height:20px;}
+  @keyframes heroBounce{
+    0%,100%{transform:translateY(0);opacity:.55;}
+    50%{transform:translateY(6px);opacity:1;}
+  }
 
   /* ── Precios y planes ─────────────────────────────── */
   .pricing-section{margin-top:36px;padding-top:28px;border-top:1.5px solid var(--line);}
@@ -156,6 +161,10 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
   }
   .search-group .field input{background:#fff;}
   .prefs-group{margin-bottom:22px;}
+  .prefs-summary{cursor:pointer;list-style:none;user-select:none;}
+  .prefs-summary::-webkit-details-marker{display:none;}
+  .prefs-group[open] .prefs-summary{margin-bottom:10px;}
+  .prefs-group .field-row{margin-top:2px;}
   .field input{
     width:100%;border:1.5px solid var(--line);border-radius:10px;padding:13px 14px;
     font-family:inherit;font-size:15px;background:var(--card);color:var(--ink);
@@ -355,16 +364,18 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
   .login-hint{font-size:12.5px;color:var(--sub);margin-top:10px;line-height:1.5;}
   .login-hint a{color:var(--accent-deep);font-weight:600;text-decoration:none;}
   .trial-banner{
-    display:flex;align-items:center;justify-content:space-between;gap:10px;
-    padding:10px 14px;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:10px;
-    margin-bottom:18px;font-size:12.5px;color:var(--accent-deep);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:10px;
   }
-  .trial-banner span{display:flex;align-items:center;gap:8px;}
-  .trial-banner svg{width:15px;height:15px;flex:0 0 auto;}
   .trial-banner button{
-    background:none;border:none;color:var(--accent-deep);font-size:12px;font-weight:600;
-    text-decoration:underline;cursor:pointer;font-family:inherit;flex:0 0 auto;white-space:nowrap;
+    background:none;border:none;color:var(--sub);font-size:12.5px;font-weight:600;
+    text-decoration:underline;cursor:pointer;font-family:inherit;
   }
+  .search-trial-note{
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    margin-top:10px;font-size:12.5px;color:var(--accent-deep);text-align:center;
+  }
+  .search-trial-note svg{width:14px;height:14px;flex:0 0 auto;}
   .upgrade-banner{
     display:none;margin-top:16px;padding:14px;background:var(--accent-soft);
     border:1.5px solid var(--accent);border-radius:10px;font-size:13px;color:var(--accent-deep);
@@ -420,9 +431,8 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
     .desktop-nav .nav-cta:hover{color:#fff;opacity:.88;}
     .header-account{margin-left:20px;}
 
-    .hero{max-width:760px;margin:56px auto 44px;padding:0;}
-    .hero-title{font-size:40px;}
-    .hero-sub{font-size:16px;max-width:520px;}
+    .hero{max-width:760px;margin:36px auto 28px;padding:0;}
+    .hero-title{font-size:32px;}
 
     .packs-box,.trial-banner,.login-box{max-width:640px;margin-left:auto;margin-right:auto;}
 
@@ -471,14 +481,16 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
     </div>
   </header>
 
-  <!-- Hero — solo se muestra a alguien que aún no tiene cuenta ni usó su prueba gratis -->
+  <!-- Hero — ahora es un CTA corto y directo, no una intro para leer.
+       La data de Clarity mostró 24% de scroll promedio y solo 5s de los
+       30s totales activos — la gente no lee parrafos, decide en un
+       vistazo. Por eso esto es una sola linea + flecha animada apuntando
+       al formulario, en vez de badge+titulo+subtitulo. -->
   <div class="hero hidden" id="heroSection">
-    <span class="hero-badge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      Scrappy · encuentra a quién venderle hoy
-    </span>
-    <h1 class="hero-title">Encuentra negocios, <span>listos para contactar</span></h1>
-    <p class="hero-sub">Buscamos en Google Maps los negocios de tu rubro y ciudad, te damos su contacto disponible y un mensaje listo para vender tu servicio.</p>
+    <h1 class="hero-title">Prueba gratis, <span>sin registro</span> ↓</h1>
+    <div class="hero-arrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 4v16M5 13l7 7 7-7"/></svg>
+    </div>
   </div>
 
   <!-- Paquetes activos — clic para autocompletar y evitar mismatches de texto -->
@@ -487,13 +499,11 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
     <div id="packsList"></div>
   </div>
 
-  <!-- Prueba gratis sin cuenta — se oculta sola si ya la usaste o si ya iniciaste sesión -->
+  <!-- El aviso de "ya tienes cuenta" queda chico y aparte — la reafirmacion
+       de "gratis, sin correo" se movio a una linea bajo el boton de
+       Buscar (ver mas abajo), justo donde importa: en el momento de actuar. -->
   <div class="trial-banner hidden" id="trialBanner">
-    <span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5z"/></svg>
-      Tu primera búsqueda es gratis — 10 prospectos completos, sin correo.
-    </span>
-    <button type="button" onclick="document.getElementById('loginBox').classList.remove('hidden'); document.getElementById('loginBox').scrollIntoView({behavior:'smooth'});">¿Ya tienes cuenta?</button>
+    <button type="button" onclick="document.getElementById('loginBox').classList.remove('hidden'); document.getElementById('loginBox').scrollIntoView({behavior:'smooth'});">¿Ya tienes cuenta? Inicia sesión</button>
   </div>
 
   <!-- Login (magic link) -->
@@ -527,11 +537,15 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
       </div>
     </div>
 
-    <div class="prefs-group">
-      <p class="section-label">
+    <!-- Colapsado por defecto — antes ocupaba el mismo espacio visual que
+         los campos obligatorios, alargando la distancia hasta el boton.
+         El toggle "onlyNoWeb" sigue marcado por defecto aunque esto este
+         cerrado, asi que el comportamiento no cambia si nadie lo abre. -->
+    <details class="prefs-group">
+      <summary class="section-label prefs-summary">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
-        Personaliza (opcional)
-      </p>
+        Personalizar (opcional)
+      </summary>
       <div class="field-row">
         <div class="field">
           <label for="servicio">Servicio que ofreces</label>
@@ -547,12 +561,16 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
           </label>
         </div>
       </div>
-    </div>
+    </details>
 
     <button class="btn-search" id="btnSearch" onclick="runSearch()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       Buscar prospectos
     </button>
+    <p class="search-trial-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5z"/></svg>
+      Gratis · 10 prospectos completos · sin correo
+    </p>
   </div>
 
   <div class="error-banner" id="errorBanner"></div>
