@@ -472,6 +472,53 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
   }
   .whatsapp-float svg{width:28px;height:28px;}
   .whatsapp-float:active{transform:scale(.94);}
+
+  /* ── Demo interactiva animada ────────────────────────────────────────
+     Recrea el flujo real de Scrappy Lite (buscar → resultados → mensaje)
+     con los mismos componentes visuales del resto de la app, dentro de un
+     marco de celular, con un cursor falso que "usa" la herramienta sola. */
+  .demo-section{margin:44px 0 8px;text-align:center;}
+  .demo-section .section-label{justify-content:center;margin-bottom:16px;}
+  .phone-frame{
+    display:inline-block;background:#0b0f1a;border-radius:40px;padding:16px 11px;
+    box-shadow:0 24px 60px rgba(4,44,83,.28);position:relative;
+  }
+  .phone-frame__notch{
+    position:absolute;top:16px;left:50%;transform:translateX(-50%);
+    width:84px;height:16px;border-radius:0 0 12px 12px;background:#0b0f1a;z-index:5;
+  }
+  .demo-app{
+    position:relative;width:272px;aspect-ratio:9/19.5;
+    background:var(--bg);border-radius:24px;overflow:hidden;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+  }
+  .demo-scene{display:none;position:absolute;inset:0;overflow:hidden;text-align:left;}
+  .demo-scene.is-active{display:block;}
+  .demo-scene .pad{padding:16px 14px;}
+  .demo-cursor{
+    position:absolute;width:16px;height:16px;border-radius:50%;
+    background:rgba(239,159,39,.9);border:2px solid #fff;
+    transform:translate(-50%,-50%);
+    transition:left .55s cubic-bezier(.4,0,.2,1),top .55s cubic-bezier(.4,0,.2,1),opacity .25s ease;
+    pointer-events:none;z-index:20;opacity:0;box-shadow:0 2px 6px rgba(0,0,0,.35);
+  }
+  .demo-cursor.is-active{opacity:1;}
+  .demo-cursor.is-clicking{animation:demoCursorClick .28s ease;}
+  @keyframes demoCursorClick{
+    0%{transform:translate(-50%,-50%) scale(1);}
+    50%{transform:translate(-50%,-50%) scale(.55);}
+    100%{transform:translate(-50%,-50%) scale(1);}
+  }
+  .demo-btn-flash{animation:demoBtnFlash .3s ease;}
+  @keyframes demoBtnFlash{0%{filter:brightness(1);}50%{filter:brightness(1.3);}100%{filter:brightness(1);}}
+  .demo-toast{
+    position:absolute;left:50%;bottom:14px;transform:translate(-50%,16px);
+    background:var(--ink);color:#fff;font-size:11.5px;font-weight:600;
+    padding:8px 14px;border-radius:20px;opacity:0;transition:all .3s ease;
+    pointer-events:none;white-space:nowrap;z-index:15;
+  }
+  .demo-toast.show{opacity:1;transform:translate(-50%,0);}
+  .demo-caption{margin-top:16px;font-size:12.5px;color:var(--sub);}
 </style>
 </head>
 <body>
@@ -613,6 +660,69 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
       <span id="progressCount"></span>
     </div>
     <p class="results-subtitle" id="resultsSubtitle"></p>
+  </div>
+
+  <!-- Demo interactiva animada — recrea el flujo real (buscar → resultados
+       → mensaje) con los mismos componentes visuales del resto de la app.
+       Arranca sola cuando entra en pantalla (ver IntersectionObserver). -->
+  <div class="demo-section" id="demoSection">
+    <p class="section-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5z"/></svg>
+      Así funciona, en vivo
+    </p>
+    <div class="phone-frame">
+      <div class="phone-frame__notch"></div>
+      <div class="demo-app" id="demoApp">
+        <div class="demo-cursor" id="demoCursor"></div>
+
+        <!-- Escena 1: búsqueda -->
+        <div class="demo-scene is-active" id="demoScene1">
+          <div class="pad">
+            <p class="section-label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+              Qué y dónde buscar
+            </p>
+            <div class="field">
+              <label>Rubro</label>
+              <input type="text" id="demoRubro" placeholder="Ej. Tatuajes, veterinarias, spas" readonly>
+            </div>
+            <div class="field">
+              <label>Distrito, ciudad</label>
+              <input type="text" id="demoCiudad" placeholder="Ej. Miraflores, Lima" readonly>
+            </div>
+            <button class="btn-search" id="demoBtnBuscar" style="margin-top:6px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+              Buscar prospectos
+            </button>
+          </div>
+        </div>
+
+        <!-- Escena 2: cargando -->
+        <div class="demo-scene" id="demoScene2">
+          <div class="pad">
+            <div class="loading show" style="display:block;">
+              <div class="loading-row">
+                <div class="spinner"></div>
+                <span>Buscando en Google Maps...</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" id="demoProgress" style="width:0%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Escena 3: resultados + mensaje -->
+        <div class="demo-scene" id="demoScene3">
+          <div class="pad">
+            <div class="results-head" style="margin-bottom:10px;">
+              <h2 style="font-size:16px;">3 negocios encontrados</h2>
+            </div>
+            <div id="demoCardsList"></div>
+          </div>
+          <div class="demo-toast" id="demoToast">✓ Mensaje copiado</div>
+        </div>
+      </div>
+    </div>
+    <p class="demo-caption">Datos de ejemplo — así se ve una búsqueda real en Scrappy Lite.</p>
   </div>
 
   <!-- Precios y planes — siempre visible, para poder mandar tráfico directo a esta misma página -->
@@ -1413,6 +1523,264 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
       }
     } catch (_) {}
   })();
+
+  /* ── Demo interactiva animada ────────────────────────────────────── */
+  /* Recrea el flujo real (buscar → resultados → mensaje) con un cursor  */
+  /* falso, dentro del marco de celular. Corre en loop, y se pausa sola  */
+  /* cuando la sección sale de pantalla (IntersectionObserver) para no   */
+  /* gastar recursos de mas. Ver tambien /demo-standalone.html, que usa  */
+  /* el mismo guion pero arranca de inmediato (para grabar video).       */
+  function initScrappyDemo(opts) {
+    opts = opts || {};
+    var autoStart = !!opts.autoStart;
+
+    var demoApp    = document.getElementById('demoApp');
+    var cursor     = document.getElementById('demoCursor');
+    if (!demoApp || !cursor) return;
+
+    var scene1 = document.getElementById('demoScene1');
+    var scene2 = document.getElementById('demoScene2');
+    var scene3 = document.getElementById('demoScene3');
+    var demoRubro   = document.getElementById('demoRubro');
+    var demoCiudad  = document.getElementById('demoCiudad');
+    var demoBtn     = document.getElementById('demoBtnBuscar');
+    var demoProgress = document.getElementById('demoProgress');
+    var demoCardsList = document.getElementById('demoCardsList');
+    var demoToast   = document.getElementById('demoToast');
+
+    var DEMO_BUSINESSES = [
+      {
+        name: 'Veterinaria San Miguel', category: 'Veterinaria', distrito: 'Miraflores',
+        rating: '4.6', reviews: '82', quality: 'Excelente prospecto',
+        diagnostico: [
+          'Tiene 4.6★ con 82 reseñas pero no aparece con web propia — está perdiendo búsquedas directas.',
+          'Su categoría suele convertir bien con presencia digital básica.'
+        ],
+        mensaje: 'Hola! Vi que Veterinaria San Miguel tiene muy buena reputación en Miraflores (4.6★, 82 reseñas) pero no encontré su web. Ayudo a negocios como el suyo a aprovechar mejor ese interés que ya generan online. ¿Conversamos 5 min?'
+      },
+      {
+        name: 'Pet Spa Lima', category: 'Veterinaria', distrito: 'Miraflores',
+        rating: '4.8', reviews: '54', quality: '',
+        diagnostico: [
+          '4.8★ con 54 reseñas — calificación muy alta, buen momento para reforzar su presencia.'
+        ],
+        mensaje: 'Hola equipo de Pet Spa! Su calificación de 4.8★ llama la atención. Ayudo a negocios así a convertir ese buen nombre en más clientes nuevos. ¿Les interesa ver cómo?'
+      },
+      {
+        name: 'Huellitas Vet Clinic', category: 'Veterinaria', distrito: 'Miraflores',
+        rating: '4.5', reviews: '31', quality: 'Buen prospecto',
+        diagnostico: [
+          '31 reseñas y 4.5★ — base sólida para empezar a atraer más pacientes por internet.'
+        ],
+        mensaje: 'Hola! Vi el perfil de Huellitas Vet Clinic en Miraflores, 4.5★. Ayudo a clínicas como la suya a conseguir más citas desde internet. ¿Te cuento cómo en un mensaje corto?'
+      }
+    ];
+
+    function esc(s) {
+      return String(s || '').replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    function cardHtml(biz, idx) {
+      var qualityTag = biz.quality ? '<div class="quality-tag">' + esc(biz.quality) + '</div>' : '';
+      return (
+        '<div class="card" id="demoCard' + idx + '">' +
+          '<div class="card-top">' +
+            '<div class="card-left">' +
+              '<div class="contact-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10"/></svg></div>' +
+              '<div>' +
+                '<div class="card-name">' + esc(biz.name) + '</div>' +
+                '<div class="card-category">' + esc(biz.category) + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="card-tags">' +
+              '<div class="no-web-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="9"/><path d="M4.5 4.5l15 15"/></svg>Sin web</div>' +
+              qualityTag +
+            '</div>' +
+            '<div class="expand-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 18l6-6-6-6"/></svg></div>' +
+          '</div>' +
+          '<div class="card-details">' +
+            '<div class="card-meta"><span>' + biz.rating + '★ (' + biz.reviews + ')</span><span>' + esc(biz.distrito) + '</span></div>' +
+            '<button class="msg-toggle">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 18l6-6-6-6"/></svg>' +
+              'Ver diagnóstico y mensajes' +
+            '</button>' +
+            '<div class="msg-body">' +
+              '<div class="diagnostico-content">' +
+                '<div class="diagnostico-box"><p>Diagnóstico para vender</p><ul>' +
+                  biz.diagnostico.map(function (d) { return '<li>' + esc(d) + '</li>'; }).join('') +
+                '</ul></div>' +
+              '</div>' +
+              '<div class="channel-tabs">' +
+                '<button type="button" class="channel-tab active">WhatsApp</button>' +
+                '<button type="button" class="channel-tab">Email</button>' +
+                '<button type="button" class="channel-tab">Instagram</button>' +
+              '</div>' +
+              '<div class="outreach-content">' +
+                '<button type="button" class="copy-inline" style="float:right;">Copiar</button>' +
+                '<div class="msg-text">' + esc(biz.mensaje) + '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    var cancelled = false;
+    var pending = null;
+    function sleep(ms) {
+      return new Promise(function (resolve) {
+        pending = setTimeout(resolve, ms);
+      });
+    }
+
+    function moveCursorTo(el) {
+      if (!el) return;
+      var target = el.getBoundingClientRect();
+      var container = demoApp.getBoundingClientRect();
+      cursor.style.left = (target.left - container.left + target.width / 2) + 'px';
+      cursor.style.top = (target.top - container.top + target.height / 2) + 'px';
+      cursor.classList.add('is-active');
+    }
+
+    function clickFx(el) {
+      cursor.classList.add('is-clicking');
+      setTimeout(function () { cursor.classList.remove('is-clicking'); }, 280);
+      if (el) {
+        el.classList.add('demo-btn-flash');
+        setTimeout(function () { el.classList.remove('demo-btn-flash'); }, 300);
+      }
+    }
+
+    function showScene(scene) {
+      [scene1, scene2, scene3].forEach(function (s) { s.classList.remove('is-active'); });
+      scene.classList.add('is-active');
+    }
+
+    function typeInto(input, text) {
+      return new Promise(function (resolve) {
+        var i = 0;
+        input.value = '';
+        var iv = setInterval(function () {
+          input.value += text[i];
+          i++;
+          if (i >= text.length) { clearInterval(iv); resolve(); }
+        }, 45);
+        pending = iv;
+      });
+    }
+
+    async function runDemo() {
+      while (!cancelled) {
+        // ── Escena 1: llenar el formulario ──
+        showScene(scene1);
+        demoRubro.value = '';
+        demoCiudad.value = '';
+        cursor.classList.remove('is-active');
+        await sleep(500);
+        if (cancelled) return;
+
+        moveCursorTo(demoRubro);
+        await sleep(400);
+        await typeInto(demoRubro, 'Veterinarias');
+        if (cancelled) return;
+
+        moveCursorTo(demoCiudad);
+        await sleep(350);
+        await typeInto(demoCiudad, 'Miraflores, Lima');
+        if (cancelled) return;
+
+        await sleep(300);
+        moveCursorTo(demoBtn);
+        await sleep(450);
+        clickFx(demoBtn);
+        await sleep(400);
+        if (cancelled) return;
+
+        // ── Escena 2: cargando ──
+        showScene(scene2);
+        demoProgress.style.width = '0%';
+        await sleep(150);
+        demoProgress.style.width = '55%';
+        await sleep(500);
+        demoProgress.style.width = '100%';
+        await sleep(500);
+        if (cancelled) return;
+
+        // ── Escena 3: resultados ──
+        showScene(scene3);
+        demoCardsList.innerHTML = '';
+        cursor.classList.remove('is-active');
+        for (var i = 0; i < DEMO_BUSINESSES.length; i++) {
+          demoCardsList.insertAdjacentHTML('beforeend', cardHtml(DEMO_BUSINESSES[i], i));
+          await sleep(220);
+          if (cancelled) return;
+        }
+
+        await sleep(500);
+        var firstCard = document.getElementById('demoCard0');
+        var nameEl = firstCard.querySelector('.card-name');
+        moveCursorTo(nameEl);
+        await sleep(450);
+        clickFx(nameEl);
+        firstCard.classList.add('expanded');
+        await sleep(500);
+        if (cancelled) return;
+
+        var msgToggle = firstCard.querySelector('.msg-toggle');
+        moveCursorTo(msgToggle);
+        await sleep(400);
+        clickFx(msgToggle);
+        msgToggle.classList.add('open');
+        firstCard.querySelector('.msg-body').classList.add('open');
+        await sleep(700);
+        if (cancelled) return;
+
+        var copyBtn = firstCard.querySelector('.copy-inline');
+        moveCursorTo(copyBtn);
+        await sleep(400);
+        clickFx(copyBtn);
+        demoToast.classList.add('show');
+        await sleep(1600);
+        if (cancelled) return;
+        demoToast.classList.remove('show');
+
+        // ── Pausa antes de reiniciar el loop ──
+        await sleep(1800);
+      }
+    }
+
+    var started = false;
+    function start() {
+      if (started) return;
+      started = true;
+      cancelled = false;
+      runDemo();
+    }
+    function stop() {
+      cancelled = true;
+      started = false;
+      if (pending) { clearTimeout(pending); clearInterval(pending); }
+    }
+
+    if (autoStart) {
+      start();
+    } else if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) start(); else stop();
+        });
+      }, { threshold: 0.35 });
+      observer.observe(demoApp);
+    } else {
+      start(); // navegadores viejos sin IntersectionObserver: corre igual
+    }
+  }
+
+  if (document.getElementById('demoApp')) {
+    initScrappyDemo({ autoStart: false });
+  }
 
   checkAuthOnLoad();
 
