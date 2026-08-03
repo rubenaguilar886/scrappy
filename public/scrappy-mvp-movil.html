@@ -33,6 +33,7 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
 <meta name="supported-color-schemes" content="light">
 <title>Scrappy — Encuentra tus próximos clientes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=optional" rel="stylesheet">
 <style>
   :root{
@@ -376,6 +377,15 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
     margin-top:10px;font-size:12.5px;color:var(--accent-deep);text-align:center;
   }
   .search-trial-note svg{width:14px;height:14px;flex:0 0 auto;}
+  .today-count{
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    margin-top:6px;font-size:12px;color:var(--sub);text-align:center;
+  }
+  .today-count::before{
+    content:'';width:7px;height:7px;border-radius:50%;background:var(--ok);
+    flex:0 0 auto;animation:todayPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes todayPulse{0%,100%{opacity:.5;}50%{opacity:1;}}
   .upgrade-banner{
     display:none;margin-top:16px;padding:14px;background:var(--accent-soft);
     border:1.5px solid var(--accent);border-radius:10px;font-size:13px;color:var(--accent-deep);
@@ -477,7 +487,18 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
      Recrea el flujo real de Scrappy Lite (buscar → resultados → mensaje)
      con los mismos componentes visuales del resto de la app, dentro de un
      marco de celular, con un cursor falso que "usa" la herramienta sola. */
-  .demo-section{margin:44px 0 8px;text-align:center;}
+  .demo-section{margin:8px 0 8px;text-align:center;}
+  .demo-controls{display:flex;justify-content:center;gap:10px;margin-top:14px;}
+  .demo-ctrl-btn{
+    width:36px;height:36px;border-radius:50%;border:1.5px solid var(--line);
+    background:#fff;color:var(--ink);display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:border-color .15s ease,transform .12s ease;padding:0;
+  }
+  .demo-ctrl-btn:hover{border-color:var(--accent);}
+  .demo-ctrl-btn:active{transform:scale(.92);}
+  .demo-ctrl-btn svg{width:16px;height:16px;}
+  .demo-cta{margin:18px 0 26px;text-align:center;}
+  .demo-cta .btn-search{max-width:340px;margin:0 auto;}
   .demo-section .section-label{justify-content:center;margin-bottom:16px;}
   .phone-frame{
     display:inline-block;background:#0b0f1a;border-radius:40px;padding:16px 11px;
@@ -552,6 +573,83 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
     </div>
   </div>
 
+  <!-- Demo interactiva animada — va ANTES del formulario a proposito: la
+       gente llegaba al formulario pero no entendia bien que iba a pasar al
+       tocar "Buscar", asi que primero se lo mostramos en vivo y recien
+       despues le pedimos que actue. Arranca sola cuando entra en pantalla
+       (ver IntersectionObserver) y tiene controles de pausa/reinicio. -->
+  <div class="demo-section" id="demoSection">
+    <p class="section-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5z"/></svg>
+      Así funciona, en vivo
+    </p>
+    <div class="phone-frame">
+      <div class="phone-frame__notch"></div>
+      <div class="demo-app" id="demoApp">
+        <div class="demo-cursor" id="demoCursor"></div>
+
+        <!-- Escena 1: búsqueda -->
+        <div class="demo-scene is-active" id="demoScene1">
+          <div class="pad">
+            <p class="section-label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+              Qué y dónde buscar
+            </p>
+            <div class="field">
+              <label>Rubro</label>
+              <input type="text" id="demoRubro" placeholder="Ej. Tatuajes, veterinarias, spas" readonly>
+            </div>
+            <div class="field">
+              <label>Distrito, ciudad</label>
+              <input type="text" id="demoCiudad" placeholder="Ej. Miraflores, Lima" readonly>
+            </div>
+            <button class="btn-search" id="demoBtnBuscar" style="margin-top:6px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+              Buscar clientes
+            </button>
+          </div>
+        </div>
+
+        <!-- Escena 2: cargando -->
+        <div class="demo-scene" id="demoScene2">
+          <div class="pad">
+            <div class="loading show" style="display:block;">
+              <div class="loading-row">
+                <div class="spinner"></div>
+                <span>Buscando en Google Maps...</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" id="demoProgress" style="width:0%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Escena 3: resultados + mensaje -->
+        <div class="demo-scene" id="demoScene3">
+          <div class="pad">
+            <div class="results-head" style="margin-bottom:10px;">
+              <h2 style="font-size:16px;">3 negocios encontrados</h2>
+            </div>
+            <div id="demoCardsList"></div>
+          </div>
+          <div class="demo-toast" id="demoToast">✓ Mensaje copiado</div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-controls">
+      <button type="button" class="demo-ctrl-btn" id="demoPauseBtn" onclick="window.demoTogglePause && demoTogglePause()" aria-label="Pausar o reanudar la demo">
+        <svg id="demoPauseIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l14 8-14 8V4z"/></svg>
+      </button>
+      <button type="button" class="demo-ctrl-btn" onclick="window.demoRestart && demoRestart()" aria-label="Reiniciar la demo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M5.1 15a8 8 0 1 0 .5-8.5L4 10"/></svg>
+      </button>
+    </div>
+    <p class="demo-caption">Datos de ejemplo — así se ve una búsqueda real en Scrappy Lite.</p>
+  </div>
+
+  <div class="demo-cta">
+    <button type="button" class="btn-search" onclick="scrollToAction()">Prueba gratis, sin registro</button>
+  </div>
+
   <!-- Paquetes activos — clic para autocompletar y evitar mismatches de texto -->
   <div class="packs-box hidden" id="packsBox">
     <p class="packs-label">Tus búsquedas y planes activos</p>
@@ -624,12 +722,13 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
 
     <button class="btn-search" id="btnSearch" onclick="runSearch()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      Buscar prospectos
+      Buscar clientes
     </button>
     <p class="search-trial-note">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5z"/></svg>
-      Gratis · 10 prospectos completos · sin correo
+      Gratis · 10 clientes potenciales completos · sin correo
     </p>
+    <p class="today-count hidden" id="todayCount"></p>
   </div>
 
   <div class="error-banner" id="errorBanner"></div>
@@ -662,69 +761,6 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
     <p class="results-subtitle" id="resultsSubtitle"></p>
   </div>
 
-  <!-- Demo interactiva animada — recrea el flujo real (buscar → resultados
-       → mensaje) con los mismos componentes visuales del resto de la app.
-       Arranca sola cuando entra en pantalla (ver IntersectionObserver). -->
-  <div class="demo-section" id="demoSection">
-    <p class="section-label">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5z"/></svg>
-      Así funciona, en vivo
-    </p>
-    <div class="phone-frame">
-      <div class="phone-frame__notch"></div>
-      <div class="demo-app" id="demoApp">
-        <div class="demo-cursor" id="demoCursor"></div>
-
-        <!-- Escena 1: búsqueda -->
-        <div class="demo-scene is-active" id="demoScene1">
-          <div class="pad">
-            <p class="section-label">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-              Qué y dónde buscar
-            </p>
-            <div class="field">
-              <label>Rubro</label>
-              <input type="text" id="demoRubro" placeholder="Ej. Tatuajes, veterinarias, spas" readonly>
-            </div>
-            <div class="field">
-              <label>Distrito, ciudad</label>
-              <input type="text" id="demoCiudad" placeholder="Ej. Miraflores, Lima" readonly>
-            </div>
-            <button class="btn-search" id="demoBtnBuscar" style="margin-top:6px;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-              Buscar prospectos
-            </button>
-          </div>
-        </div>
-
-        <!-- Escena 2: cargando -->
-        <div class="demo-scene" id="demoScene2">
-          <div class="pad">
-            <div class="loading show" style="display:block;">
-              <div class="loading-row">
-                <div class="spinner"></div>
-                <span>Buscando en Google Maps...</span>
-              </div>
-              <div class="progress-track"><div class="progress-fill" id="demoProgress" style="width:0%"></div></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Escena 3: resultados + mensaje -->
-        <div class="demo-scene" id="demoScene3">
-          <div class="pad">
-            <div class="results-head" style="margin-bottom:10px;">
-              <h2 style="font-size:16px;">3 negocios encontrados</h2>
-            </div>
-            <div id="demoCardsList"></div>
-          </div>
-          <div class="demo-toast" id="demoToast">✓ Mensaje copiado</div>
-        </div>
-      </div>
-    </div>
-    <p class="demo-caption">Datos de ejemplo — así se ve una búsqueda real en Scrappy Lite.</p>
-  </div>
-
   <!-- Precios y planes — siempre visible, para poder mandar tráfico directo a esta misma página -->
   <div class="pricing-section" id="pricingSection">
     <div class="pricing-head">
@@ -736,9 +772,9 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
     <div class="price-card">
       <h3>Búsqueda Única</h3>
       <div class="price-amount">S/39 <span>pago único</span></div>
-      <p class="price-desc">100 prospectos completos de un rubro en tu ciudad, sin suscripción.</p>
+      <p class="price-desc">100 clientes potenciales completos de un rubro en tu ciudad, sin suscripción.</p>
       <ul class="price-features">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>100 prospectos completos de tu rubro — repite por distrito para completar tu ciudad</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>100 clientes potenciales completos de tu rubro — repite por distrito para completar tu ciudad</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Mensajes listos por WhatsApp, email e Instagram</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Exportación a CSV</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 13l4 4L19 7"/></svg>Válido 30 días, sin renovaciones ni cargos ocultos</li>
@@ -773,14 +809,14 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
       <div class="faq-q">¿Necesito tarjeta para probar?
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 5v14M5 12h14"/></svg>
       </div>
-      <div class="faq-a">No. Tu primera búsqueda es gratis e incluye 10 prospectos completos y totalmente usables, sin tarjeta. Cuando quieras más, compras la Búsqueda Única de S/39 una sola vez.</div>
+      <div class="faq-a">No. Tu primera búsqueda es gratis e incluye 10 clientes potenciales completos y totalmente usables, sin tarjeta. Cuando quieras más, compras la Búsqueda Única de S/39 una sola vez.</div>
     </div>
 
     <div class="faq-item" onclick="this.classList.toggle('open')">
       <div class="faq-q">¿Qué incluye la Búsqueda Única?
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 5v14M5 12h14"/></svg>
       </div>
-      <div class="faq-a">Por S/39, una sola vez y sin suscripción, recibes 100 prospectos completos de un rubro, con mensajes listos y exportación a CSV. Puedes repartirlos entre los distritos que quieras de tu ciudad — la búsqueda no se limita a uno solo. Válido 30 días.</div>
+      <div class="faq-a">Por S/39, una sola vez y sin suscripción, recibes 100 clientes potenciales completos de un rubro, con mensajes listos y exportación a CSV. Puedes repartirlos entre los distritos que quieras de tu ciudad — la búsqueda no se limita a uno solo. Válido 30 días.</div>
     </div>
 
     <div class="faq-item" onclick="this.classList.toggle('open')">
@@ -861,7 +897,7 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
   var CONTACT_WHATSAPP = '51984235158';
   window.startPurchase = function (plan) {
     var messages = {
-      busqueda_unica: 'Hola, quiero comprar la Búsqueda Única de Scrappy (S/39, 100 prospectos completos de un rubro y una ciudad, pago único).',
+      busqueda_unica: 'Hola, quiero comprar la Búsqueda Única de Scrappy (S/39, 100 clientes potenciales completos de un rubro y una ciudad, pago único).',
       lite_waitlist: 'Hola, quiero que me avisen cuando el Plan Lite de Scrappy (S/59/mes) esté disponible.',
       enterprise: 'Hola, quiero agendar una llamada para conversar sobre el plan Enterprise de Scrappy.',
     };
@@ -898,6 +934,18 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
     } catch (e) {
       hint.textContent = e.message;
     }
+  };
+
+  // Botón "Prueba gratis, sin registro" bajo la demo — hace scroll al
+  // siguiente paso que corresponda según el estado real de la persona
+  // (formulario si tiene prueba disponible, login si ya la gastó), en vez
+  // de asumir siempre el formulario, que podría estar oculto.
+  window.scrollToAction = function () {
+    var target = document.getElementById('searchForm');
+    if (!target || target.classList.contains('hidden')) {
+      target = document.getElementById('loginBox');
+    }
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   window.logout = async function () {
@@ -1058,7 +1106,7 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
       btn.innerHTML =
         '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">' +
         '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>' +
-        'Buscar prospectos';
+        'Buscar clientes';
     }
   }
 
@@ -1163,7 +1211,7 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
           var lockedCount = (status.metrics && status.metrics.lockedCount) || 0;
           if (lockedCount > 0) {
             var banner = document.getElementById('upgradeBanner');
-            banner.textContent = 'Hay ' + lockedCount + ' prospectos más para este rubro y ciudad — compra una Búsqueda Única para desbloquearlos.';
+            banner.textContent = 'Hay ' + lockedCount + ' clientes potenciales más para este rubro y ciudad — compra una Búsqueda Única para desbloquearlos.';
             banner.classList.add('show');
           }
 
@@ -1293,8 +1341,8 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
       return card;
     }
 
-    var qualityLabel = biz.opportunityTier === 'A' ? 'Excelente prospecto'
-      : biz.opportunityTier === 'B' ? 'Buen prospecto' : '';
+    var qualityLabel = biz.opportunityTier === 'A' ? 'Excelente oportunidad'
+      : biz.opportunityTier === 'B' ? 'Buena oportunidad' : '';
 
     card.innerHTML =
       '<div class="card-top">' +
@@ -1551,7 +1599,7 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
     var DEMO_BUSINESSES = [
       {
         name: 'Veterinaria San Miguel', category: 'Veterinaria', distrito: 'Miraflores',
-        rating: '4.6', reviews: '82', quality: 'Excelente prospecto',
+        rating: '4.6', reviews: '82', quality: 'Excelente oportunidad',
         diagnostico: [
           'Tiene 4.6★ con 82 reseñas pero no aparece con web propia — está perdiendo búsquedas directas.',
           'Su categoría suele convertir bien con presencia digital básica.'
@@ -1568,7 +1616,7 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
       },
       {
         name: 'Huellitas Vet Clinic', category: 'Veterinaria', distrito: 'Miraflores',
-        rating: '4.5', reviews: '31', quality: 'Buen prospecto',
+        rating: '4.5', reviews: '31', quality: 'Buena oportunidad',
         diagnostico: [
           '31 reseñas y 4.5★ — base sólida para empezar a atraer más pacientes por internet.'
         ],
@@ -1751,25 +1799,54 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
       }
     }
 
+    // Íconos de play/pausa del botón manual — separados del autoplay por
+    // IntersectionObserver, para que si la persona pausa a propósito, no
+    // se reanude sola al volver a hacer scroll hacia la demo.
+    var pauseIcon = document.getElementById('demoPauseIcon');
+    var ICON_PLAY  = '<path d="M7 4l14 8-14 8V4z"/>';
+    var ICON_PAUSE = '<rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/>';
+    function setPauseIcon(playing) {
+      if (pauseIcon) pauseIcon.innerHTML = playing ? ICON_PAUSE : ICON_PLAY;
+    }
+
     var started = false;
+    var manualPaused = false;
     function start() {
       if (started) return;
       started = true;
       cancelled = false;
+      setPauseIcon(true);
       runDemo();
     }
     function stop() {
       cancelled = true;
       started = false;
+      setPauseIcon(false);
       if (pending) { clearTimeout(pending); clearInterval(pending); }
     }
+
+    window.demoTogglePause = function () {
+      if (started) {
+        manualPaused = true;
+        stop();
+      } else {
+        manualPaused = false;
+        start();
+      }
+    };
+
+    window.demoRestart = function () {
+      manualPaused = false;
+      stop();
+      start();
+    };
 
     if (autoStart) {
       start();
     } else if ('IntersectionObserver' in window) {
       var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
-          if (entry.isIntersecting) start(); else stop();
+          if (entry.isIntersecting) { if (!manualPaused) start(); } else { stop(); }
         });
       }, { threshold: 0.35 });
       observer.observe(demoApp);
@@ -1781,6 +1858,25 @@ src="https://www.facebook.com/tr?id=1046353961661334&ev=PageView&noscript=1"
   if (document.getElementById('demoApp')) {
     initScrappyDemo({ autoStart: false });
   }
+
+  // Prueba social honesta: cuenta real de búsquedas gratis completadas hoy
+  // (viene de session_trials en la BD, no un número inventado). Si el
+  // conteo es 0 simplemente no se muestra nada — mostrar "0 búsquedas hoy"
+  // sería peor que no decir nada.
+  (async function loadTodayCount() {
+    try {
+      var res = await fetch('/api/public/stats/today');
+      var data = await res.json();
+      var count = data.count || 0;
+      if (count > 0) {
+        var el = document.getElementById('todayCount');
+        el.textContent = count === 1
+          ? '1 búsqueda completada hoy'
+          : count + ' búsquedas completadas hoy';
+        el.classList.remove('hidden');
+      }
+    } catch (_) {}
+  })();
 
   checkAuthOnLoad();
 

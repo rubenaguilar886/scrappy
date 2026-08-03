@@ -995,6 +995,24 @@ app.post("/api/public/reset", (req, res) => {
   res.json({ ok: true });
 });
 
+// ── /api/public/stats/today ────────────────────────────────────────────
+// Conteo real (no inventado) de búsquedas gratis completadas hoy, para
+// mostrar prueba social honesta en la landing ("X búsquedas hoy"). Cuenta
+// filas de session_trials cuyo used_at cae en el día de hoy (hora del
+// servidor). Si la base de datos no está configurada, responde count: 0
+// en vez de tumbar la landing.
+app.get("/api/public/stats/today", async (req, res) => {
+  try {
+    if (!db.isConfigured()) return res.json({ count: 0 });
+    const r = await db.query(
+      "SELECT COUNT(*)::int AS count FROM session_trials WHERE used_at::date = CURRENT_DATE"
+    );
+    res.json({ count: r.rows[0]?.count || 0 });
+  } catch (err) {
+    res.json({ count: 0 });
+  }
+});
+
 // ── /api/admin/* ──────────────────────────────────────────────────────
 // Panel mínimo para activar accesos manualmente (pagos por Yape/Plin,
 // o mientras no esté conectado el webhook de Culqi). Protegido por un
