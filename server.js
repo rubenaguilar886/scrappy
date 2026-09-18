@@ -28,7 +28,7 @@ const { searchGoogleMaps, searchCombinations } = require("./scraper/google-maps"
 const { detectChains } = require("./scraper/classify");
 const { readProduceCSV, toProduceSheetRow } = require("./scraper/produce-directory");
 const { enrichBusinesses } = require("./scraper/produce-enrich");
-const { validateBusinesses } = require("./scraper/sunat-validate");
+const { validateBusinesses, lookupBusinessAge, enrichBusinessAge } = require("./scraper/sunat-validate");
 const leadsDb = require("./lib/leads-db");
 const sheetsClient = require("./lib/sheets-client");
 const messageCache = require("./lib/message-cache");
@@ -64,6 +64,67 @@ async function callClaude(systemPrompt, userMessage) {
   }
   const data = await response.json();
   return data.content[0].text;
+}
+
+// ── Outreach: mensaje 1 (calificación) y mensaje 2 (presentación) ───────
+// Mensaje 1 es una plantilla fija (sin IA) a propósito — el vendedor pidió
+// que nunca varíe ni mencione producto/precio, solo confirme quién decide.
+// Mensaje 2 sí usa Claude, pero solo después de saber cuál de los dos
+// productos corresponde según el rubro del negocio.
+const PRODUCTS = {
+  "landing-page": {
+    name: "Landing Page",
+    price: "S/750",
+    pitch: "Página para captar citas y consultas por WhatsApp — para negocios que venden un servicio agendado, no un producto con carrito. Entrega en 10 días.",
+  },
+  "tienda-online": {
+    name: "Tienda Online",
+    price: "S/2,800",
+    pitch: "Tienda con catálogo, carrito de compras y pasarela de pago integrada — para negocios que venden productos por unidad. Entrega en 4 semanas.",
+  },
+};
+
+const TIENDA_KEYWORDS = [
+  "ropa", "calzado", "boutique", "moda", "zapateria", "zapatería",
+  "cosmetica", "cosmética", "maquillaje", "perfumeria", "perfumería",
+  "bazar",
+  "decoracion", "decoración", "muebles", "articulos para el hogar", "artículos para el hogar", "menaje",
+  "panaderia", "panadería", "pasteleria", "pastelería", "reposteria", "repostería",
+  "tienda de mascotas", "pet shop", "insumos para mascotas",
+  "joyeria", "joyería", "bisuteria", "bisutería",
+  "suplementos", "nutricion deportiva", "nutrición deportiva",
+];
+
+const LANDING_KEYWORDS = [
+  "salon de belleza", "salón de belleza", "peluqueria", "peluquería",
+  "barberia", "barbería",
+  "estudio de tatuajes", "tatuajes", "tattoo",
+  "spa",
+  "veterinaria", "veterinario", "clinica veterinaria", "clínica veterinaria",
+  "consultorio dental", "clinica dental", "clínica dental", "dentista", "odontologia", "odontología",
+  "estetica", "estética", "medicina estetica", "medicina estética",
+  "gimnasio", "fitness",
+  "academia", "instituto",
+];
+
+/** Clasifica el rubro en "landing-page" | "tienda-online" | "ambiguous" — nunca adivina si hay señales de ambos o de ninguno. */
+function classifyProductFit(category) {
+  const c = (category || "").toLowerCase();
+  const tienda  = TIENDA_KEYWORDS.some(k => c.includes(k));
+  const landing = LANDING_KEYWORDS.some(k => c.includes(k));
+  if (tienda && landing) return "ambiguous";
+  if (tienda)  return "tienda-online";
+  if (landing) return "landing-page";
+  return "ambiguous";
+}
+
+/** Mensaje 1 — plantilla fija, sin IA. Nunca inventa rating/reseñas si no existen. */
+function buildQualifyMessage(business) {
+  const hasReviewData = typeof business.rating === "number" && business.reviewsCount != null;
+  const hook = hasReviewData
+    ? `Vi ${business.name} en Maps — ${business.rating}★ con ${business.reviewsCount} reseñas 👀`
+    : `Vi ${business.name} en Maps 👀`;
+  return `Hola! ${hook}\n¿De casualidad hablo con el dueño o encargado del negocio?`;
 }
 
 const app = express();
@@ -230,6 +291,35 @@ app.get("/api/debug/sunat", async (req, res) => {
   }
 });
 
+// ── /api/debug/business-age ───────────────────────────────────────────
+// Resuelve antiguedad real (SUNAT) de UN negocio para probar el matching
+// antes de correrlo sobre un batch completo. Usa ?ruc=... si ya se conoce,
+// o ?name=... para probar la busqueda por razon social (el caso normal
+// para leads de Google Maps).
+app.get("/api/debug/business-age", async (req, res) => {
+  const ruc  = (req.query.ruc  || "").trim();
+  const name = (req.query.name || "").trim();
+  if (!ruc && !name) return res.status(400).json({ error: "Falta ?ruc=... o ?name=..." });
+
+  const { chromium } = require("playwright");
+  try {
+    const browser = await chromium.launch({
+      headless: true,
+      args: ["--disable-blink-features=AutomationControlled", "--no-sandbox"],
+    });
+    const context = await browser.newContext({
+      locale: "es-PE",
+      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    });
+    const page = await context.newPage();
+    const result = await lookupBusinessAge(page, { ruc, name });
+    await browser.close();
+    res.json(result);
+  } catch (err) {
+    res.json({ error: err.message });
+  }
+});
+
 // ── /api/status ───────────────────────────────────────────────────────
 app.get("/api/status", (req, res) => {
   const job = getJob(getSessionId(req));
@@ -255,7 +345,7 @@ app.post("/api/scrape", async (req, res) => {
   const sid = getSessionId(req);
   if (getJob(sid)?.running) return res.status(409).json({ error: "Ya hay una busqueda en progreso." });
 
-  const { query = "", location = "Lima, Peru", maxResults = 20, deepScan = true } = req.body || {};
+  const { query = "", location = "Lima, Peru", maxResults = 20, deepScan = true, checkAge = false } = req.body || {};
   const queries = parseLines(query);
   const locations = parseLines(location);
   if (!queries.length)   return res.status(400).json({ error: "Escribe al menos una busqueda." });
@@ -298,6 +388,11 @@ app.post("/api/scrape", async (req, res) => {
     }
     results.sort((a, b) => (b.contactabilityScore ?? 0) - (a.contactabilityScore ?? 0));
     results = detectChains(results);
+
+    if (checkAge && results.length) {
+      results = await enrichBusinessAge(results, { concurrency: 2, onProgress: progressCallback });
+    }
+
     const n = results.length || 1;
     if (job.metrics) {
       job.metrics.pctWhatsApp = Math.round(results.filter(b => b.whatsapp).length / n * 100);
@@ -545,10 +640,65 @@ app.post("/api/tone-config", (req, res) => {
 // devuelve un formato enriquecido con diagnóstico de venta + secuencia
 // de seguimiento + tono/formato adaptado al canal.
 app.post("/api/outreach", async (req, res) => {
-  const { business, bd, regenerate, channel } = req.body || {};
+  const { business, bd, regenerate, channel, stage = "qualify", product } = req.body || {};
   if (!business?.name) return res.status(400).json({ error: "Faltan datos del negocio." });
 
   const phone = business.phone || business.whatsapp || "";
+
+  // ── Mensaje 1 (calificar quién decide) — plantilla fija, sin IA ────────
+  if (!channel && stage === "qualify") {
+    return res.json({ message: buildQualifyMessage(business), cached: false });
+  }
+
+  // ── Mensaje 2 (presentar el producto correcto) ──────────────────────────
+  if (!channel && stage === "pitch") {
+    const chosenProduct = product || classifyProductFit(business.category);
+
+    if (chosenProduct === "ambiguous") {
+      return res.json({
+        needsClarification: true,
+        category: business.category || null,
+        options: [
+          { slug: "landing-page", label: PRODUCTS["landing-page"].name + " — " + PRODUCTS["landing-page"].price },
+          { slug: "tienda-online", label: PRODUCTS["tienda-online"].name + " — " + PRODUCTS["tienda-online"].price },
+        ],
+      });
+    }
+
+    const productInfo = PRODUCTS[chosenProduct];
+    if (!productInfo) return res.status(400).json({ error: "Producto invalido: " + chosenProduct });
+
+    const cacheKey = phone ? `${phone}|pitch|${chosenProduct}` : "";
+    if (cacheKey && !regenerate) {
+      const cached = messageCache.getCachedRaw(cacheKey);
+      if (cached) return res.json({ ...cached, cached: true });
+    }
+
+    const toneConfig = loadToneConfig();
+    const system = toneConfig.extraInstructions
+      ? toneConfig.systemPrompt + "\n\n" + toneConfig.extraInstructions
+      : toneConfig.systemPrompt;
+
+    const pitchUser =
+      "Datos del prospecto (ya confirmo ser el dueno o encargado del negocio):\n" +
+      "- Nombre: " + business.name + "\n" +
+      "- Categoria: " + (business.category || "no especificada") + "\n" +
+      "\nProducto a presentar:\n" +
+      "- Nombre: " + productInfo.name + "\n" +
+      "- Precio: " + productInfo.price + "\n" +
+      "- Para que sirve: " + productInfo.pitch + "\n" +
+      "\nGenera el mensaje 2 (presentacion del producto) en Espanol neutro latinoamericano.";
+
+    try {
+      const text = await callClaude(system, pitchUser);
+      const result = { message: text, product: chosenProduct };
+      if (cacheKey) messageCache.setCachedRaw(cacheKey, result);
+      return res.json({ ...result, cached: false });
+    } catch (err) {
+      console.error("outreach pitch error:", err.message);
+      return res.status(500).json({ error: err.message });
+    }
+  }
 
   if (channel) {
     const cacheKey = phone ? `${phone}|${channel}` : "";
@@ -556,9 +706,6 @@ app.post("/api/outreach", async (req, res) => {
       const cached = messageCache.getCachedRaw(cacheKey);
       if (cached) return res.json({ ...cached, cached: true });
     }
-  } else if (phone && !regenerate) {
-    const cached = messageCache.getCached(phone);
-    if (cached) return res.json({ message: cached.message, cached: true });
   }
 
   // Lee el config en cada request — cambios en /settings toman efecto sin reiniciar
@@ -587,19 +734,6 @@ app.post("/api/outreach", async (req, res) => {
     "- Telefono: " + (business.phone || "no disponible") +
     webLine +
     "\n\nGenera el mensaje de outreach en Espanol neutro latinoamericano.";
-
-  if (!channel) {
-    // Comportamiento de siempre — sin tocar (lo usa la herramienta interna).
-    try {
-      const text = await callClaude(system, user);
-      if (phone) messageCache.setCached(phone, text);
-      res.json({ message: text, cached: false });
-    } catch (err) {
-      console.error("outreach error:", err.message);
-      res.status(500).json({ error: err.message });
-    }
-    return;
-  }
 
   // ── Formato enriquecido para el MVP público ───────────────────────────
   const CHANNEL_INSTRUCTIONS = {

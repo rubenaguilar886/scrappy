@@ -394,71 +394,6 @@ function restoreSearchResults() {
 //  FIN BLOQUE BUSINESS DISCOVERY — código original a continuación
 // ═══════════════════════════════════════════════════════════════════════
 
-// ── Source selector (dropdown) ────────────────────────────────────────
-let activeSource = "googlemaps"; // "googlemaps" | "produce"
-
-const sourceSelect = document.getElementById("source-select");
-const gmForm       = document.getElementById("search-form");
-const produceForm  = document.getElementById("produce-form");
-
-function applySourceDisplay(source) {
-  activeSource = source;
-  const filterBar  = document.getElementById("filter-bar");
-  const exportJson = document.getElementById("export-json");
-
-  if (source === "googlemaps") {
-    gmForm.style.display      = "";
-    produceForm.style.display = "none";
-    if (filterBar)  filterBar.style.display  = "";
-    if (exportJson) exportJson.style.display = "";
-  } else {
-    gmForm.style.display      = "none";
-    produceForm.style.display = "";
-    if (filterBar)  filterBar.style.display  = "none";
-    if (exportJson) exportJson.style.display = "none";
-  }
-}
-
-if (sourceSelect) {
-  sourceSelect.addEventListener("change", () => applySourceDisplay(sourceSelect.value));
-}
-
-// ── PRODUCE form submit ───────────────────────────────────────────────
-document.getElementById("produce-form")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const ciiu          = document.getElementById("produce-ciiu").value.trim();
-  const dep           = (document.getElementById("produce-dep").value || "LIMA").trim().toUpperCase();
-  const sector        = document.getElementById("produce-sector").value || null;
-  const max           = parseInt(document.getElementById("produce-max").value, 10) || 100;
-  const enrich        = document.getElementById("produce-enrich").checked;
-  const rucType       = document.getElementById("produce-ruc-type").value || null;
-
-  const ciuuList = ciiu ? ciiu.split(",").map(s => s.trim()).filter(Boolean) : [];
-
-  setLoading(true);
-  hideError();
-  emptyState?.classList.add("hidden");
-  resultsSection?.classList.add("hidden");
-  setProgressBar(3);
-
-  try {
-    const resp = await sessionFetch("/api/scrape-produce", {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ ciiu: ciuuList, departamento: dep, sector, maxResults: max, enrich, rucType }),
-    });
-
-    const data = await resp.json();
-    if (!resp.ok) throw new Error(data.error || "No se pudo iniciar la búsqueda PRODUCE.");
-
-    startPolling();
-  } catch (err) {
-    setLoading(false);
-    showError(err.message);
-  }
-});
-
 const form         = document.getElementById("search-form");
 const searchBtn    = document.getElementById("search-btn");
 const progress     = document.getElementById("progress");
@@ -499,6 +434,7 @@ let uniqueOnly        = false;
 let tierFilter        = "all";   // "all" | "A" | "B" | "C" | "D"
 let reviewPowerFilter = "all";   // "all" | "Very High" | "High" | "Medium" | "Low" | "No Data"
 let reputationFilter  = "all";   // "all" | "Excelente" | "Buena" | "Regular" | "Sin datos"
+let growthFilter       = "all";  // "all" | "Listo" | "Posible" | "No listo" | "Sin datos"
 
 // ─── Hint dinámico de combinaciones ─────────────────────────────────────────
 
@@ -536,6 +472,7 @@ form.addEventListener("submit", async (event) => {
   const location  = document.getElementById("location").value;
   const maxResults = document.getElementById("max-results").value;
   const deepScan  = document.getElementById("deep-scan").checked;
+  const checkAge  = document.getElementById("check-age").checked;
 
   if (!query) return;
 
@@ -549,7 +486,7 @@ form.addEventListener("submit", async (event) => {
     const response = await sessionFetch("/api/scrape", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query, location, maxResults, deepScan }),
+      body: JSON.stringify({ query, location, maxResults, deepScan, checkAge }),
     });
 
     const data = await response.json();
@@ -766,8 +703,9 @@ function showResults(businesses) {
   // Reset all filters on new search
   audienceFilter = "all"; chainsOnly = false; uniqueOnly = false;
   tierFilter = "all"; reviewPowerFilter = "all"; reputationFilter = "all";
+  growthFilter = "all";
 
-  ["filter-audience", "filter-tier", "filter-review-power", "filter-reputation"].forEach(id => {
+  ["filter-audience", "filter-tier", "filter-review-power", "filter-reputation", "filter-growth"].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = "all";
   });
@@ -877,6 +815,8 @@ function renderTable(businesses) {
       <th class="sortable" data-col="reputationScore">Reputación <span class="sort-icon"></span></th>
       <th class="sortable" data-col="opportunityScore">Opp. Score <span class="sort-icon"></span></th>
       <th class="sortable" data-col="opportunityTier">Opp. Tier <span class="sort-icon"></span></th>
+      <th class="sortable" data-col="businessAgeYears">Antigüedad <span class="sort-icon"></span></th>
+      <th class="sortable" data-col="growthStage">Listo p/ crecer <span class="sort-icon"></span></th>
       <th class="sortable" data-col="audience">Audience <span class="sort-icon"></span></th>
       <th class="sortable" data-col="businessGroup">Grupo <span class="sort-icon"></span></th>
       <th class="sortable" data-col="locationsCount">Sucursales <span class="sort-icon"></span></th>
@@ -942,6 +882,8 @@ function renderTable(businesses) {
       <td>${reputationCell(business)}</td>
       <td class="num-cell">${business.opportunityScore ?? computeOpportunityScore(business)}</td>
       <td>${opportunityTierCell(business)}</td>
+      <td class="num-cell">${businessAgeCell(business)}</td>
+      <td>${growthStageCell(business)}</td>
       <td>${audienceCell(business.audience ?? computeAudience(business))}</td>
       <td>${escapeHtml(business.businessGroup || business.name || "-")}</td>
       <td>${chainCell(business)}</td>
@@ -1118,6 +1060,12 @@ function applyFilters(businesses) {
     );
   }
 
+  if (growthFilter !== "all") {
+    result = result.filter(b =>
+      (b.growthStage ?? computeGrowthStage(b)) === growthFilter
+    );
+  }
+
   return result;
 }
 
@@ -1273,6 +1221,55 @@ function computeOpportunityTier(b) {
   return "D";
 }
 
+// ─── "Listo para crecer" — etapa del negocio, separado de Opportunity ─────────
+// Opportunity mide el hueco (sin web). Esto mide si vale la pena venderle:
+// negocio ya establecido (ni recien nacido, ni un local de toda la vida
+// estancado) que ya invierte esfuerzo en marketing. La antiguedad viene de
+// SUNAT (real, verificada) — si no se corrio "Verificar antiguedad" o SUNAT
+// no encontro un match confiable, queda sin ese punto, nunca se inventa.
+//
+// OJO — antiguedad es un BONUS, no un requisito: SUNAT solo matchea bien
+// negocios formalmente constituidos (S.A.C., E.I.R.L., etc.), cuyo nombre
+// legal se parece al comercial. Un negocio de persona natural (la mayoria
+// de salones, veterinarias chicas, etc.) esta registrado bajo el nombre
+// del DUEÑO, no el nombre comercial de Maps — ahi SUNAT nunca va a matchear,
+// sin que eso signifique que el negocio es peor. Por eso los pesos estan
+// calibrados para que un lead con excelentes reseñas+rating+redes+sin web
+// pueda llegar a "Listo" aunque nunca se resuelva su antiguedad.
+function computeGrowthScore(b) {
+  let pts = 0;
+
+  const age = b.businessAgeYears;
+  if (typeof age === "number") {
+    if (age >= 1 && age <= 8) pts += 25;
+    else if (age > 8 && age <= 15) pts += 10;
+    // < 1 año (muy nuevo) o > 15 años sin más señales -> 0 pts en este eje
+  }
+
+  const reviews = b.reviewsCount || 0;
+  if (reviews >= 15 && reviews <= 300) pts += 30;
+  else if (reviews > 300) pts += 15;
+
+  if ((b.rating || 0) >= 4.0) pts += 15;
+  if (b.instagram || b.facebook) pts += 15;
+  if (!b.website) pts += 15;
+
+  return Math.min(pts, 100);
+}
+
+/**
+ * "Sin datos" cuando no hay antigüedad real de SUNAT — ya sea porque no se
+ * marcó "Verificar antigüedad" en la búsqueda, o porque no hubo un match
+ * confiable. Nunca se etiqueta "No listo" a un negocio solo por falta de
+ * ese dato — eso sería inventar una señal que no existe.
+ */
+function computeGrowthStage(b) {
+  const score = typeof b.growthScore === "number" ? b.growthScore : computeGrowthScore(b);
+  if (score >= 70) return "Listo";
+  if (score >= 45) return "Posible";
+  return "No listo";
+}
+
 // ─── Chain Detection (frontend fallback — union-find on full array) ───────────
 
 function normalizeUrl(url) {
@@ -1396,6 +1393,28 @@ const TIER_META = {
   D: { cls: "tier-d", label: "📉 D" },
 };
 
+const GROWTH_META = {
+  "Listo":     { cls: "tier-a", label: "🚀 Listo" },
+  "Posible":   { cls: "tier-c", label: "🌱 Posible" },
+  "No listo":  { cls: "tier-d", label: "🌰 No listo" },
+};
+
+function growthStageCell(business) {
+  const stage = business.growthStage ?? computeGrowthStage(business);
+  const meta  = GROWTH_META[stage] || GROWTH_META["No listo"];
+  const score = business.growthScore ?? computeGrowthScore(business);
+  const title = business.businessAgeYears == null
+    ? `Growth Score: ${score} (sin antigüedad confirmada)`
+    : `Growth Score: ${score}`;
+  return `<span class="tier-badge ${meta.cls}" title="${title}">${meta.label} <small>${score}</small></span>`;
+}
+
+function businessAgeCell(business) {
+  const age = business.businessAgeYears;
+  if (age == null) return "-";
+  return age < 1 ? `${Math.round(age * 12)} meses` : `${age} años`;
+}
+
 function opportunityTierCell(business) {
   const score = business.opportunityScore ?? computeOpportunityScore(business);
   const tier  = business.opportunityTier  ?? computeOpportunityTier({ ...business, opportunityScore: score });
@@ -1451,6 +1470,9 @@ function buildExportRow(b) {
     "Reputation Score":      b.reputationScore ?? computeReputationScore(b),
     "Opportunity Score":     b.opportunityScore ?? computeOpportunityScore(b),
     "Opportunity Tier":      b.opportunityTier  ?? computeOpportunityTier({ ...b, opportunityScore: b.opportunityScore ?? computeOpportunityScore(b) }),
+    "Antigüedad (años)":     b.businessAgeYears ?? "",
+    "Listo para crecer":     b.growthStage ?? computeGrowthStage(b),
+    "Growth Score":          b.growthScore ?? computeGrowthScore(b),
     Audience:                audience,
     Opportunity:             audience || "-",
     "Grupo empresarial":     group,
@@ -1523,6 +1545,7 @@ wireSelect("filter-audience",     v => { audienceFilter    = v; });
 wireSelect("filter-tier",         v => { tierFilter        = v; });
 wireSelect("filter-review-power", v => { reviewPowerFilter = v; });
 wireSelect("filter-reputation",   v => { reputationFilter  = v; });
+wireSelect("filter-growth",       v => { growthFilter       = v; });
 
 document.getElementById("filter-chains-only")?.addEventListener("change", e => {
   chainsOnly = e.target.checked;
@@ -1605,8 +1628,34 @@ const liCloseBtn = document.getElementById("li-close-btn");
 const liCopyBtn  = document.getElementById("li-copy-btn");
 const liRegenBtn = document.getElementById("li-regen-btn");
 const liSyncEl   = document.getElementById("li-sync-status");
+const liPicker   = document.getElementById("li-product-picker");
+const liStageQualifyBtn = document.getElementById("li-stage-qualify");
+const liStagePitchBtn   = document.getElementById("li-stage-pitch");
 
-let liCurrentBiz = null; // negocio mostrado actualmente en el modal
+let liCurrentBiz     = null; // negocio mostrado actualmente en el modal
+let liCurrentStage   = "qualify"; // "qualify" (mensaje 1) | "pitch" (mensaje 2)
+let liCurrentProduct = null; // producto elegido a mano cuando el rubro es ambiguo
+
+function setLiStage(stage) {
+  liCurrentStage = stage;
+  liCurrentProduct = null;
+  [liStageQualifyBtn, liStagePitchBtn].forEach(btn => btn?.classList.remove("active"));
+  (stage === "pitch" ? liStagePitchBtn : liStageQualifyBtn)?.classList.add("active");
+  if (liPicker) liPicker.hidden = true;
+  if (liCurrentBiz) generateOutreach(liCurrentBiz, false, stage);
+}
+
+liStageQualifyBtn?.addEventListener("click", () => setLiStage("qualify"));
+liStagePitchBtn?.addEventListener("click", () => setLiStage("pitch"));
+
+liPicker?.querySelectorAll(".li-picker-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (!liCurrentBiz) return;
+    liCurrentProduct = btn.dataset.product;
+    liPicker.hidden = true;
+    generateOutreach(liCurrentBiz, false, "pitch", liCurrentProduct);
+  });
+});
 
 liBackdrop?.addEventListener("click", closeLeadIntel);
 liCloseBtn?.addEventListener("click",  closeLeadIntel);
@@ -1644,7 +1693,7 @@ liCopyBtn?.addEventListener("click", () => {
 
 liRegenBtn?.addEventListener("click", () => {
   if (!liCurrentBiz) return;
-  generateOutreach(liCurrentBiz, true);
+  generateOutreach(liCurrentBiz, true, liCurrentStage, liCurrentProduct);
 });
 
 function showLiSync(msg, type) {
@@ -1654,10 +1703,19 @@ function showLiSync(msg, type) {
   liSyncEl.className = "li-sync-status " + (type || "");
 }
 
-function generateOutreach(biz, regenerate) {
+// Cada llamada se marca con un numero de secuencia — si el usuario cambia de
+// pestaña (o de lead) antes de que responda el servidor, la respuesta vieja
+// se descarta en vez de pisar lo que ya se muestra en pantalla.
+let liRequestSeq = 0;
+
+function generateOutreach(biz, regenerate, stage, product) {
+  stage = stage || "qualify";
+  const seq = ++liRequestSeq;
   const outreachEl = document.getElementById("li-outreach");
   const copyBtn    = document.getElementById("li-copy-btn");
-  outreachEl.textContent = regenerate ? "✨ Regenerando mensaje..." : "✨ Generando mensaje personalizado...";
+  if (liPicker) liPicker.hidden = true;
+  outreachEl.hidden = false;
+  outreachEl.textContent = regenerate ? "✨ Regenerando mensaje..." : "✨ Generando mensaje...";
   if (copyBtn)    copyBtn.disabled = true;
   if (liRegenBtn) liRegenBtn.disabled = true;
   if (liSyncEl)   liSyncEl.hidden = true;
@@ -1665,21 +1723,30 @@ function generateOutreach(biz, regenerate) {
   return fetch('/api/outreach', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ business: biz, bd: loadBD(), regenerate: Boolean(regenerate) }),
+    body: JSON.stringify({ business: biz, bd: loadBD(), regenerate: Boolean(regenerate), stage, product }),
   })
   .then(r => r.json())
   .then(result => {
+    if (seq !== liRequestSeq) return; // llegó tarde — ya no es la pestaña/lead activo
+    if (result.needsClarification) {
+      outreachEl.hidden = true;
+      if (liPicker) liPicker.hidden = false;
+      if (copyBtn) copyBtn.disabled = true;
+      return;
+    }
+    if (result.product) liCurrentProduct = result.product;
     outreachEl.textContent = result.error
-      ? buildSuggestedNarrative(biz)   // fallback to template
+      ? (stage === "pitch" ? buildPitchFallback(biz, product || liCurrentProduct) : buildQualifyFallback(biz))
       : result.message;
     if (copyBtn) copyBtn.disabled = false;
   })
   .catch(() => {
-    outreachEl.textContent = buildSuggestedNarrative(biz);
+    if (seq !== liRequestSeq) return;
+    outreachEl.textContent = stage === "pitch" ? buildPitchFallback(biz, product || liCurrentProduct) : buildQualifyFallback(biz);
     if (copyBtn) copyBtn.disabled = false;
   })
   .finally(() => {
-    if (liRegenBtn) liRegenBtn.disabled = false;
+    if (seq === liRequestSeq && liRegenBtn) liRegenBtn.disabled = false;
   });
 }
 
@@ -1691,12 +1758,18 @@ function openLeadIntel(biz) {
   if (!liModal) return;
 
   liCurrentBiz = biz;
+  liCurrentStage = "qualify";
+  liCurrentProduct = null;
+  [liStageQualifyBtn, liStagePitchBtn].forEach(btn => btn?.classList.remove("active"));
+  liStageQualifyBtn?.classList.add("active");
+  if (liPicker) liPicker.hidden = true;
 
   biz.audience         = biz.audience         ?? computeAudience(biz);
   biz.opportunityScore = biz.opportunityScore  ?? computeOpportunityScore(biz);
   biz.opportunityTier  = biz.opportunityTier   ?? computeOpportunityTier(biz);
   biz.reviewPower      = biz.reviewPower       ?? computeReviewPower(biz);
   biz.reputationScore  = biz.reputationScore   ?? computeReputationScore(biz);
+  biz.growthStage      = biz.growthStage       ?? computeGrowthStage(biz);
 
   // Header
   document.getElementById("li-biz-name").textContent = biz.name || "";
@@ -1740,6 +1813,8 @@ function buildOverview(b) {
     ["Reputación",      rep               || "—"],
     ["Opp. Score",      score !== null && score !== undefined ? `${score}/100` : "—"],
     ["Opp. Tier",       tier              || "—"],
+    ["Antigüedad",      b.businessAgeYears != null ? (b.businessAgeYears < 1 ? `${Math.round(b.businessAgeYears * 12)} meses` : `${b.businessAgeYears} años`) : "— (sin verificar)"],
+    ["Listo p/ crecer", b.growthStage     || "—"],
     ["Website",         b.website         ? `<a href="${escapeAttr(b.website)}" target="_blank" rel="noopener">${escapeHtml(b.website)}</a>` : "—"],
     ["Instagram",       b.instagram       ? `<a href="${escapeAttr('https://instagram.com/'+b.instagram.replace(/^@/,''))}" target="_blank" rel="noopener">${escapeHtml(b.instagram)}</a>` : "—"],
     ["WhatsApp",        b.whatsapp        ? `<a href="https://wa.me/${b.whatsapp.replace(/\D/g,'')}" target="_blank" rel="noopener">${escapeHtml(b.whatsapp)}</a>` : "—"],
@@ -1839,65 +1914,23 @@ function buildBottleneckLine(b) {
   return "La captación de clientes nuevos depende principalmente del boca a boca.";
 }
 
-function buildSuggestedNarrative(b) {
-  const name  = b.name || "su negocio";
-  const r     = b.reviewsCount;
-  const rt    = b.rating;
-  const locs  = b.locationsCount || 1;
-  const chain = b.isChain && locs > 1;
-  const cat   = (b.category || "negocio").toLowerCase();
+// ─── Fallbacks offline para outreach (si /api/outreach falla) ────────────────
+// Mensaje 1 replica exactamente la plantilla fija del servidor — nunca debe
+// verse distinto solo porque la llamada a la API falló.
+function buildQualifyFallback(b) {
+  const hasReviewData = typeof b.rating === "number" && b.reviewsCount != null;
+  const hook = hasReviewData
+    ? `Vi ${b.name} en Maps — ${b.rating}★ con ${b.reviewsCount} reseñas 👀`
+    : `Vi ${b.name} en Maps 👀`;
+  return `Hola! ${hook}\n¿De casualidad hablo con el dueño o encargado del negocio?`;
+}
 
-  // ── ACTIVO ─────────────────────────────────────────────────────────────────
-  let activo;
-  if (r > 100 && rt >= 4.5)
-    activo = `Tienen ${r.toLocaleString("es-PE")} reseñas y ${rt}⭐ en Google. Eso demuestra que hay clientes reales que confían en ustedes y los recomiendan.`;
-  else if (r > 50 && rt)
-    activo = `Tienen ${r.toLocaleString("es-PE")} reseñas y ${rt}⭐ en Google. Eso es una señal clara de un negocio con demanda real y clientes satisfechos.`;
-  else if (r > 20 && rt)
-    activo = `Vi que tienen ${r.toLocaleString("es-PE")} reseñas y ${rt}⭐ en Google — suficiente para saber que hay clientes que eligen y valoran ${name}.`;
-  else if (chain)
-    activo = `Tienen ${locs} sedes operativas${rt ? ` y ${rt}⭐ en Google` : ""} — eso habla de un negocio que sabe crecer.`;
-  else if (b.instagram && r)
-    activo = `Tienen ${r.toLocaleString("es-PE")} reseñas en Google y actividad constante en Instagram. Eso muestra un negocio presente y con clientes que los siguen.`;
-  else if (r)
-    activo = `Tienen ${r.toLocaleString("es-PE")} reseñas en Google${rt ? ` y ${rt}⭐` : ""}. Hay clientes reales que los eligen y se toman el tiempo de recomendarlos.`;
-  else
-    activo = `Vi el perfil de ${name} en Google — se nota que es un negocio establecido con presencia en la zona.`;
-
-  // ── OPORTUNIDAD ────────────────────────────────────────────────────────────
-  let oportunidad;
-  if (!b.website && r > 50)
-    oportunidad = `Lo que ocurre es que gran parte de esa reputación se queda en Google sin convertirse necesariamente en nuevas reservas. Cada mes hay personas que leen esas reseñas y quieren contactarlos, pero no encuentran un lugar claro donde hacerlo.`;
-  else if (!b.website && b.instagram)
-    oportunidad = `Lo que noté es que toda esa actividad pasa por Instagram y WhatsApp. Eso funciona, pero hay personas que los buscan y no siempre encuentran la forma directa de reservar o consultar.`;
-  else if (!b.website && b.whatsapp)
-    oportunidad = `Lo que noté es que las consultas y reservas dependen de que alguien esté disponible para responder por WhatsApp. Eso genera oportunidades perdidas fuera del horario o en momentos de alta demanda.`;
-  else if (!b.website)
-    oportunidad = `Lo que observé es que fuera de Google Maps no tienen un lugar donde los clientes puedan obtener información o iniciar una consulta directamente.`;
-  else if (chain)
-    oportunidad = `Lo que observé es que con ${locs} sedes, cada ubicación capta clientes de forma independiente, sin un punto central que muestre la dimensión real del negocio.`;
-  else if (b.website && !b.instagram)
-    oportunidad = `Lo que noté es que el sitio web existe pero no está acompañado de presencia visual activa, lo que dificulta llegar a clientes que aún no los conocen.`;
-  else
-    oportunidad = `Lo que observé es que hay potencial de captar más clientes nuevos de forma activa, más allá de quienes ya los conocen por recomendación.`;
-
-  // ── OFERTA ─────────────────────────────────────────────────────────────────
-  let oferta;
-  if (!b.website && r > 30)
-    oferta = `Justamente trabajo con negocios locales ayudándolos a aprovechar mejor ese tráfico mediante una página orientada a reservas y captación de clientes — usando la reputación que ya construyeron como punto de partida.`;
-  else if (!b.website && b.whatsapp)
-    oferta = `Justamente trabajo con ${cat}s locales ayudándolos a organizar mejor cómo reciben y convierten consultas — para que las oportunidades no se pierdan fuera del horario.`;
-  else if (chain)
-    oferta = `Justamente trabajo con negocios con varias sedes ayudándolos a unificar su presencia y que cada ubicación capture más clientes de forma consistente.`;
-  else if (b.website && !b.instagram)
-    oferta = `Justamente trabajo con negocios locales ayudándolos a generar más clientes nuevos a través de su presencia digital, conectando lo que ya tienen con canales que aún no están activos.`;
-  else
-    oferta = `Justamente trabajo con negocios locales como ${name} ayudándolos a convertir mejor su visibilidad en Google en consultas y clientes nuevos.`;
-
-  // ── PREGUNTA ───────────────────────────────────────────────────────────────
-  const pregunta = `¿Es algo que han evaluado o les interesaría explorar?`;
-
-  return `Hola, estuve revisando ${name}.\n\n${activo}\n\n${oportunidad}\n\n${oferta}\n\n${pregunta}`;
+const PITCH_FALLBACK = {
+  "landing-page": "Justo por eso te escribía — armamos una Landing Page (S/750) para que tus clientes agenden directo por WhatsApp. ¿Agendamos una llamada rápida para verlo?",
+  "tienda-online": "Te cuento rápido: armamos una Tienda Online (S/2,800) con catálogo y pasarela de pago integrada, para vender directo sin depender solo de tus redes. ¿Te sirve una llamada corta para verlo?",
+};
+function buildPitchFallback(b, product) {
+  return PITCH_FALLBACK[product] || "Tenemos algo que puede servirte — ¿agendamos una llamada corta para contarte?";
 }
 
 // ─── Contact Reason (kept for any legacy reference) ──────────────────────────

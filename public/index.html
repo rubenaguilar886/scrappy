@@ -172,17 +172,6 @@
             <section class="search-card">
               <h2>Nueva búsqueda</h2>
 
-              <!-- Source selector -->
-              <div class="source-selector">
-                <label for="source-select" class="source-label">Fuente de datos</label>
-                <div class="source-select-wrap">
-                  <select id="source-select">
-                    <option value="googlemaps">🗺️ Google Maps</option>
-                    <option value="produce">🏭 Directorio PRODUCE</option>
-                  </select>
-                </div>
-              </div>
-
               <!-- ── Formulario Google Maps ── -->
               <form id="search-form">
                 <div class="field">
@@ -228,67 +217,17 @@
                   </span>
                 </label>
 
-                <button type="submit" id="search-btn" class="btn-primary">
-                  Buscar negocios
-                </button>
-              </form>
-
-              <!-- ── Formulario PRODUCE ── -->
-              <form id="produce-form" style="display:none">
-                <div class="field-row">
-                  <div class="field">
-                    <label for="produce-ciiu">Código(s) CIIU</label>
-                    <input type="text" id="produce-ciiu" placeholder="Ej: 7310, 7320 (separados por coma)" />
-                    <p class="field-hint">Vacío = todas las actividades</p>
-                  </div>
-                  <div class="field field-small">
-                    <label for="produce-max">Cantidad</label>
-                    <select id="produce-max">
-                      <option value="50">50</option>
-                      <option value="100" selected>100</option>
-                      <option value="200">200</option>
-                      <option value="500">500</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="field-row">
-                  <div class="field">
-                    <label for="produce-dep">Departamento</label>
-                    <input type="text" id="produce-dep" value="LIMA" placeholder="LIMA" />
-                  </div>
-                  <div class="field">
-                    <label for="produce-sector">Sector (opcional)</label>
-                    <select id="produce-sector">
-                      <option value="">Todos los sectores</option>
-                      <option value="SERVICIO">Servicio</option>
-                      <option value="INDUSTRIA">Industria</option>
-                      <option value="COMERCIO">Comercio</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="field-row">
-                  <div class="field">
-                    <label for="produce-ruc-type">Tipo de RUC (opcional)</label>
-                    <select id="produce-ruc-type">
-                      <option value="">Todos</option>
-                      <option value="20">RUC 20 — Persona jurídica</option>
-                      <option value="10">RUC 10 — Persona natural</option>
-                    </select>
-                  </div>
-                </div>
-
                 <label class="checkbox-field">
-                  <input type="checkbox" id="produce-enrich" checked>
+                  <input type="checkbox" id="check-age">
                   <span>
-                    <strong>Buscar contacto en Google</strong> — consulta datosperu.org por cada empresa (gerente, estado SUNAT, fecha de constitución), busca LinkedIn del gerente, y extrae teléfono/WhatsApp vía Google.
-                    Más lento pero más completo.
+                    <strong>Verificar antigüedad (SUNAT)</strong> — resuelve hace cuántos años opera cada negocio,
+                    para el filtro "Listo para crecer". Bastante más lento (~2-4s por negocio); si el nombre no
+                    tiene un match confiable en SUNAT, queda marcado como dato faltante en vez de adivinar.
                   </span>
                 </label>
 
-                <button type="submit" id="produce-btn" class="btn-primary">
-                  Buscar en directorio PRODUCE
+                <button type="submit" id="search-btn" class="btn-primary">
+                  Buscar negocios
                 </button>
               </form>
 
@@ -369,6 +308,15 @@
                     <option value="Sin datos">— Sin datos</option>
                   </select>
                 </div>
+                <div class="filter-item">
+                  <label class="filter-label" for="filter-growth">Listo para crecer</label>
+                  <select id="filter-growth" class="filter-select">
+                    <option value="all">Todos</option>
+                    <option value="Listo">🚀 Listo (≥70)</option>
+                    <option value="Posible">🌱 Posible (45-69)</option>
+                    <option value="No listo">🌰 No listo (&lt;45)</option>
+                  </select>
+                </div>
                 <div class="filter-item filter-checks">
                   <label class="filter-toggle-label">
                     <input type="checkbox" id="filter-chains-only"> Solo cadenas
@@ -434,8 +382,11 @@
             <div class="st-page-header">
               <h1 class="st-page-title">Tono &amp; Mensajes</h1>
               <p class="st-page-sub">
-                Controla cómo Claude escribe los mensajes de outreach. Los cambios se aplican
-                en el siguiente mensaje que generes, sin reiniciar el servidor.
+                Esto controla solo el <strong>mensaje 2</strong> (presentación de producto, una vez que el
+                prospecto confirmó ser el dueño o encargado). El <strong>mensaje 1</strong> (calificar quién
+                decide) es una plantilla fija sin IA — no se edita aquí, así nunca varía ni menciona
+                producto o precio antes de tiempo. Los cambios se aplican en el siguiente mensaje 2 que
+                generes, sin reiniciar el servidor.
               </p>
             </div>
 
@@ -443,14 +394,14 @@
 
               <div class="st-field">
                 <div class="st-field-header">
-                  <label class="st-label" for="f-system-prompt">System prompt base</label>
+                  <label class="st-label" for="f-system-prompt">System prompt del mensaje 2</label>
                   <button type="button" class="st-btn-reset" id="btn-reset-prompt" title="Restaurar prompt por defecto">
                     ↺ Restaurar
                   </button>
                 </div>
                 <p class="st-hint">
-                  El marco completo que define el rol y el formato del mensaje.
-                  Cuidado al editar — cualquier cambio afecta todos los mensajes futuros.
+                  El marco que define cómo se presenta Landing Page o Tienda Online una vez calificado el
+                  prospecto. Cuidado al editar — cualquier cambio afecta todos los mensajes 2 futuros.
                 </p>
                 <textarea id="f-system-prompt" class="st-textarea st-textarea--tall"
                   rows="14" placeholder="Cargando..."></textarea>
@@ -596,10 +547,19 @@
           <div class="li-section-header">
             <span class="li-section-icon">✉️</span>
             <span class="li-section-title">Mensaje sugerido</span>
+            <div class="li-stage-tabs">
+              <button type="button" class="li-stage-tab active" id="li-stage-qualify" data-stage="qualify">1️⃣ Calificar</button>
+              <button type="button" class="li-stage-tab" id="li-stage-pitch" data-stage="pitch">2️⃣ Presentar</button>
+            </div>
             <button class="li-regen-btn" id="li-regen-btn" title="Genera un mensaje nuevo, ignorando el guardado">🔄 Regenerar</button>
             <button class="li-copy-btn" id="li-copy-btn">📋 Copiar</button>
           </div>
           <pre id="li-outreach" class="li-outreach-text"></pre>
+          <div id="li-product-picker" class="li-product-picker" hidden>
+            <p class="li-picker-hint">El rubro no deja claro qué producto ofrecer — elige uno:</p>
+            <button type="button" class="li-picker-btn" data-product="landing-page">Landing Page — S/750</button>
+            <button type="button" class="li-picker-btn" data-product="tienda-online">Tienda Online — S/2,800</button>
+          </div>
           <div id="li-sync-status" class="li-sync-status" hidden></div>
         </section>
 
